@@ -1,0 +1,100 @@
+/* Sonic-Style BTY Fitness Navbar */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  background: rgba(12, 16, 24, 0.72); /* softer, blended */
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
+
+  padding: 0.65rem 1.25rem; /* tighter Sonic spacing */
+}
+
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem; /* adds breathing room */
+}
+
+/* Brand */
+.nav-brand {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+.brand-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--accent-cyan); /* Sonic neon accent */
+  letter-spacing: 0.5px;
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-main);
+  opacity: 0.85;
+  font-weight: 600;
+}
+
+/* Links */
+.nav-links {
+  display: flex;
+  gap: 1.5rem; /* Sonic spacing */
+  list-style: none;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-link {
+  color: #4b5563; /* Sonic muted gray */
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+/* CTA Button */
+.nav-cta-btn {
+  background: linear-gradient(135deg, var(--accent-cyan), #4be3ff);
+  color: #0d0f12;
+  font-weight: 700;
+
+  padding: 0.45rem 1.1rem;
+  border-radius: 6px; /* softer */
+  border: none;
+
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.35);
+  transition: all 0.2s ease;
+}
+
+.nav-cta-btn:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 0 18px rgba(0, 255, 255, 0.45);
+}
+
+.nav-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px var(--accent-cyan-glow);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+}

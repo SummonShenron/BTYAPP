@@ -1,0 +1,201 @@
+/* ==========================================
+   ADMIN DASHBOARD STYLES
+   ========================================== */
+
+.admin-page {
+  padding: 3rem 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  color: #ffffff;
+  font-family: inherit;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  background: #141519;
+  padding: 1.75rem 2rem;
+  border-radius: 16px;
+  border: 1px solid #262830;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+}
+
+.admin-stats {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.stat-badge {
+  background: #0d0e11;
+  border: 1px solid #262830;
+  border-radius: 12px;
+  padding: 0.85rem 1.25rem;
+  text-align: center;
+  min-width: 110px;
+}
+
+.stat-num {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #38C2DE;
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  color: #8b8f9a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+.admin-filters {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 0.6rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 8px;
+  background: #141519;
+  border: 1px solid #262830;
+  color: #8b8f9a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  color: #ffffff;
+  border-color: #38C2DE;
+}
+
+.active-filter {
+  border-color: #38C2DE !important;
+  color: #0d0e11 !important;
+  background: #38C2DE !important;
+  box-shadow: 0 0 12px rgba(56, 194, 222, 0.3);
+}
+
+/* Lead Cards */
+.leads-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.lead-card {
+  background: #141519;
+  border: 1px solid #262830;
+  border-radius: 16px;
+  padding: 1.75rem;
+  transition: all 0.2s ease;
+}
+
+.lead-card:hover {
+  border-color: rgba(56, 194, 222, 0.4);
+}
+
+.lead-main-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.lead-header-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.lead-meta {
+  font-size: 0.875rem;
+  color: #8b8f9a;
+  margin-bottom: 0.35rem;
+}
+
+.lead-notes {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #0d0e11;
+  border-radius: 10px;
+  border: 1px solid #262830;
+  font-size: 0.875rem;
+  color: #e2e8f0;
+}
+
+/* Status Pills */
+.status-pill {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-pending {
+  background: rgba(255, 193, 7, 0.12);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.status-contacted {
+  background: rgba(0, 170, 255, 0.12);
+  color: #00aaff;
+  border: 1px solid rgba(0, 170, 255, 0.3);
+}
+
+.status-confirmed {
+  background: rgba(56, 194, 222, 0.12);
+  color: #38C2DE;
+  border: 1px solid rgba(56, 194, 222, 0.3);
+}
+
+/* Action Controls */
+.lead-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.lead-action-label {
+  font-size: 0.75rem;
+  color: #8b8f9a;
+  font-weight: 700;
+}
+
+.action-button-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.status-btn {
+  background: #0d0e11;
+  border: 1px solid #262830;
+  color: #ffffff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.status-btn:hover {
+  border-color: #38C2DE;
+  color: #38C2DE;
+}

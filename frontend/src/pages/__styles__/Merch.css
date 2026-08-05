@@ -1,0 +1,85 @@
+/* Merch Page Specific Styles */
+.merch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.merch-card {
+  background: var(--bg-secondary, #1C1C1E);
+  border: 1px solid var(--border-color, #3a3a42);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.merch-card:hover {
+  border-color: var(--accent-cyan);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(56, 194, 222, 0.2);
+}
+
+.merch-image-container {
+  height: 220px;
+  background: radial-gradient(circle at center, rgba(56, 194, 222, 0.08) 0%, #121316 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-bottom: 1px solid var(--border-color, #3a3a42);
+  padding: 1.5rem;
+}
+
+.merch-category-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(18, 19, 22, 0.85);
+  backdrop-filter: blur(8px);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(56, 194, 222, 0.3);
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.7rem;
+  border-radius: 20px;
+}
+
+.merch-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.merch-size-btn {
+  background: var(--bg-primary, #121316);
+  color: var(--text-muted, #A0A5AA);
+  border: 1px solid var(--border-color, #3a3a42);
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.merch-size-btn:hover {
+  border-color: rgba(56, 194, 222, 0.5);
+  color: var(--text-main, #FFFFFF);
+}
+
+.merch-size-btn.active {
+  background: var(--accent-cyan);
+  color: #121316;
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 12px var(--accent-cyan-glow);
+}

@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pymongo
+motor
+python-dotenv
+PyJWT
+cryptography
+pydantic
+PyJWT[crypto]
