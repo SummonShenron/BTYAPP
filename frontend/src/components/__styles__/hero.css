@@ -90,6 +90,14 @@
   font-weight: 600;
 }
 
+.sidebar-logo {
+  width: min(78%, 260px);
+  max-height: 140px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.32));
+}
+
 .sidebar-card-content {
   padding: 1.25rem;
 }

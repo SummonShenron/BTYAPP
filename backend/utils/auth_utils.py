@@ -11,7 +11,7 @@ security = HTTPBearer(auto_error=False)
 CLERK_JWKS_URL = os.getenv("CLERK_JWKS_URL", "https://<your-clerk-domain>/.well-known/jwks.json")
 
 # Explicit admin email allowlist
-ADMIN_EMAILS = ["madspear9@gmail.com", "jackharper0517@gmail.com"]
+ADMIN_EMAILS = ["jackharper0517@outlook.com", "jackharper0517@gmail.com", "madspear9@gmail.com"]
 
 async def get_optional_user(credentials: HTTPAuthorizationCredentials = Security(security)):
     """Returns user payload if logged in, or None if browsing as guest."""

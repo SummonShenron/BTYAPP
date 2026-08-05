@@ -21,7 +21,7 @@ export const Book: React.FC = () => {
     const payload = {
         sessionType,
         ...bookingData,
-        recipientEmail: 'madspear9@gmail.com'
+        recipientEmail: 'jackharper0517@outlook.com'
     };
 
     try {

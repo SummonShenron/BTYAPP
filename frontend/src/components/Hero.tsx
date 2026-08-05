@@ -1,6 +1,7 @@
 // components/Hero.tsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import logo from '../assets/logo.png';
 import './__styles__/hero.css';
 
 export default function Hero() {
@@ -47,8 +48,7 @@ export default function Hero() {
           {/* Action/Featured Photo Card */}
           <div className="hero-sidebar-card">
             <div className="sidebar-image-slot">
-              <span className="photo-icon">🏋️‍♀️</span>
-              <span className="photo-label">Madison Spear / Client Action Shot</span>
+              <img src={logo} alt="BTY Fitness Logo" className="sidebar-logo" />
             </div>
 
             <div className="sidebar-card-content">

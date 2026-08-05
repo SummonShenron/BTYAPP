@@ -7,7 +7,7 @@ load_dotenv()
 logger = logging.getLogger("uvicorn")
 
 RESEND_API_KEY = os.getenv("RESEND_API_KEY")
-COACH_EMAIL = "madspear9@gmail.com"
+COACH_EMAIL = "jackharper0517@outlook.com"
 
 async def notify_madison_of_lead(lead_data: dict):
     """

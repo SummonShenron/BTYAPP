@@ -63,7 +63,7 @@ async def submit_consultation(lead: ConsultationLead, background_tasks: Backgrou
     """
     saved_lead = await save_lead(lead)
     
-    # Send background email alert to madspear9@gmail.com
+    # Send background email alert to jackharper0517@outlook.com
     background_tasks.add_task(notify_madison_of_lead, saved_lead)
     
     return {
@@ -91,7 +91,7 @@ async def create_booking(
     
     # 2. Add metadata for email alert
     saved_booking["client_type"] = "Registered Client" if user else "Guest"
-    saved_booking["target_email"] = "madspear9@gmail.com"
+    saved_booking["target_email"] = "jackharper0517@outlook.com"
 
     # 3. Fire background task
     background_tasks.add_task(notify_madison_of_lead, saved_booking)
