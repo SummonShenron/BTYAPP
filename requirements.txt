@@ -8,3 +8,4 @@ cryptography
 pydantic
 PyJWT[crypto]
 pydantic[email]
+resend
