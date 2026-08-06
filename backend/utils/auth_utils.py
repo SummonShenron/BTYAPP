@@ -15,13 +15,26 @@ logger = logging.getLogger("BTY Logger")
 # Example: "https://your-app.clerk.accounts.dev/.well-known/jwks.json"
 CLERK_JWKS_URL = os.getenv("CLERK_JWKS_URL", "https://<your-clerk-domain>/.well-known/jwks.json")
 
-# Explicit admin email allowlist
-ADMIN_EMAILS = ["jackharper0517@outlook.com", "jackharper0517@gmail.com", "madspear9@gmail.com"]
-ADMIN_USER_IDS = [
-    user_id.strip()
-    for user_id in os.getenv("ADMIN_USER_IDS", "").split(",")
-    if user_id.strip()
+DEFAULT_ADMIN_EMAILS = [
+    "jackharper0517@outlook.com",
+    "jackharper0517@gmail.com",
+    "madspear9@gmail.com",
 ]
+
+# Fallback ID observed in production logs to prevent lockout if ADMIN_USER_IDS is missing.
+# Prefer setting ADMIN_USER_IDS in the deployment environment.
+DEFAULT_ADMIN_USER_IDS = ["user_3HTW1PdzsTodTAbiyDSf9hLewTQ"]
+
+
+def _parse_csv_env(env_name: str, fallback_values: list[str]) -> list[str]:
+    raw_value = os.getenv(env_name, "")
+    if not raw_value.strip():
+        return fallback_values
+    return [value.strip() for value in raw_value.split(",") if value.strip()]
+
+
+ADMIN_EMAILS = [email.lower() for email in _parse_csv_env("ADMIN_EMAILS", DEFAULT_ADMIN_EMAILS)]
+ADMIN_USER_IDS = _parse_csv_env("ADMIN_USER_IDS", DEFAULT_ADMIN_USER_IDS)
 
 
 def _extract_user_email(user: dict) -> str | None:
@@ -87,13 +100,14 @@ async def verify_admin(credentials: HTTPAuthorizationCredentials = Security(secu
     # Extract email from Clerk JWT payload (handles different claim formats)
     user_email = _extract_user_email(user)
     user_id = user.get("sub")
+    normalized_email = user_email.lower() if isinstance(user_email, str) else None
     
     # Log the resolved identity so admin access failures are easier to debug.
     # Avoid logging the full token payload.
-    logger.info("verify_admin resolved email=%s user_id=%s", user_email, user_id)
+    logger.info("verify_admin resolved email=%s user_id=%s", normalized_email, user_id)
     
     # Check against the strict admin allowlists
-    if user_email not in ADMIN_EMAILS and user_id not in ADMIN_USER_IDS:
+    if normalized_email not in ADMIN_EMAILS and user_id not in ADMIN_USER_IDS:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Access denied. Admin privileges required."

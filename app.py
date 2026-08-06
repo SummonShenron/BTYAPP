@@ -216,14 +216,14 @@ async def get_master_schedule(admin: dict = Depends(verify_admin)):
     return {"status": "Master schedule data"}
 
 @app.get("/api/admin/leads", response_model=List[dict])
-async def get_consultation_leads():
+async def get_consultation_leads(admin: dict = Depends(verify_admin)):
     logger.info("Admin leads fetch requested")
     leads = await fetch_all_leads()
     logger.info("Admin leads fetch returned count=%s", len(leads))
     return leads
 
 @app.patch("/api/admin/leads/{lead_id}/status")
-async def update_lead_status(lead_id: str, status_data: StatusUpdate):
+async def update_lead_status(lead_id: str, status_data: StatusUpdate, admin: dict = Depends(verify_admin)):
     """Update a lead's status (pending, contacted, confirmed)."""
     try:
         logger.info("Lead status update requested: lead_id=%s status=%s", lead_id, status_data.status)
