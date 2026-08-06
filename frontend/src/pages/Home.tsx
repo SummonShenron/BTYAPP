@@ -65,11 +65,6 @@ export default function Home() {
               description="Custom training plans, weekly video form audits, and direct message check-ins via our client portal."
               onSelect={() => navigate('/programs')}
             />
-            <ProgramCard
-              title="Nutrition & Macro Strategy"
-              description="Flexible macro plans focused on sustainable habits, performance fuel, body recomposition, and longevity."
-              onSelect={() => navigate('/consultation', { state: { selectedProgram: 'Nutrition & Macro Strategy' } })}
-            />
           </div>
 
           {/* Right Column: Visual Media Feature Card */}

@@ -96,7 +96,6 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialProgr
             >
               <option value="1-on-1 Private Coaching">1-on-1 Private Coaching</option>
               <option value="Online Hybrid Fitness">Online Hybrid Fitness</option>
-              <option value="Nutrition & Macro Strategy">Nutrition & Macro Strategy</option>
               <option value="General Consultation">General Consultation</option>
             </select>
           </div>

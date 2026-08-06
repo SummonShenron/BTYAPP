@@ -18,7 +18,7 @@ export const About: React.FC = () => {
             developing mental resilience, and committing to being Better Than Yesterday.
           </p>
           <p className="about-text">
-            With customized training protocols and dedicated nutrition coaching, my goal is to help you
+            With customized training protocols and dedicated coaching support, my goal is to help you
             break past your plateaus and achieve results you never thought possible.
           </p>
 

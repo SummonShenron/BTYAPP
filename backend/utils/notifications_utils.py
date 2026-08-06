@@ -1,13 +1,18 @@
 import os
 import logging
-import resend
 from dotenv import load_dotenv
 
+try:
+    import resend
+except ImportError:
+    resend = None
+
 load_dotenv()
-logger = logging.getLogger("uvicorn")
+logger = logging.getLogger("BTY Logger")
 
 RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 COACH_EMAIL = "jackharper0517@outlook.com"
+RESEND_FROM_EMAIL = os.getenv("RESEND_FROM_EMAIL", "BTY Fitness <bty@sonicassistant.com>")
 
 async def notify_madison_of_lead(lead_data: dict):
     """
@@ -34,15 +39,10 @@ async def notify_madison_of_lead(lead_data: dict):
         pref_date = lead_data.get("preferred_date", "N/A")
         pref_time = lead_data.get("preferred_time", "N/A")
 
-        # Dev / Console Logging
-        logger.info("==========================================")
-        logger.info(f"NEW LEAD RECEIVED FOR MADISON:")
-        logger.info(f"Name: {name} | Email: {email} | Phone: {phone}")
-        logger.info(f"Service: {service}")
-        logger.info("==========================================")
+        logger.info("Lead notification started: name=%s email=%s service=%s", name, email, service)
 
         # Dispatch real email if API key is set
-        if RESEND_API_KEY:
+        if RESEND_API_KEY and resend is not None:
             resend.api_key = RESEND_API_KEY
             
             email_body = f"""
@@ -58,17 +58,19 @@ async def notify_madison_of_lead(lead_data: dict):
             """
 
             resend.Emails.send({
-                "from": "BTY Fitness <onboarding@resend.dev>",  # Replace with verified domain in production
+                "from": RESEND_FROM_EMAIL,
                 "to": [COACH_EMAIL],
                 "subject": f"New Lead: {name} ({service})",
                 "html": email_body,
             })
-            logger.info(f"Notification email successfully sent to {COACH_EMAIL}")
+            logger.info("Notification email sent from %s to %s", RESEND_FROM_EMAIL, COACH_EMAIL)
+        elif RESEND_API_KEY and resend is None:
+            logger.warning("RESEND_API_KEY is present but resend package is not installed; skipping email")
         else:
             logger.warning("RESEND_API_KEY missing in .env. Skipping email delivery.")
 
         return True
 
     except Exception as e:
-        logger.error(f"Failed to send lead notification: {e}")
+        logger.error("Failed to send lead notification: %s", str(e))
         return False

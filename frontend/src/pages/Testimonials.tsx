@@ -14,7 +14,7 @@ const testimonials = [
     role: 'Hybrid Coaching Client'
   },
   {
-    quote: 'The attention to detail completely changed the way I approach fitness and nutrition.',
+    quote: 'The attention to detail completely changed the way I approach training and consistency.',
     name: 'Tessa L.',
     role: 'Performance Client'
   }

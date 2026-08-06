@@ -14,8 +14,8 @@ const qualifications = [
     year: 'Applied'
   },
   {
-    title: 'Nutrition & Lifestyle Coaching',
-    detail: 'Specialized in sustainable fueling strategies and habit-based progress.',
+    title: 'Accountability & Client Support Systems',
+    detail: 'Structured check-ins, progress reviews, and coaching adjustments that keep momentum high.',
     year: 'Integrated'
   }
 ];
