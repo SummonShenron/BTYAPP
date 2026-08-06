@@ -30,10 +30,10 @@ export default function Consultation() {
             <div className="space-y-5">
               <div className="flex gap-4 items-start">
                 <div className="w-8 h-8 rounded-full bg-[#38C2DE]/20 border border-[#38C2DE]/40 text-[#38C2DE] font-black text-sm flex items-center justify-center shrink-0">
-                  1
+                  
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">Movement Screening</h4>
+                  <h4 className="text-sm font-bold text-white">1. Movement Screening</h4>
                   <p className="text-xs text-[#A0A5AA] mt-1 leading-relaxed">
                     We review joint mobility, past injury history, and daily postural habits.
                   </p>
@@ -42,10 +42,10 @@ export default function Consultation() {
 
               <div className="flex gap-4 items-start">
                 <div className="w-8 h-8 rounded-full bg-[#38C2DE]/20 border border-[#38C2DE]/40 text-[#38C2DE] font-black text-sm flex items-center justify-center shrink-0">
-                  2
+                    
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">Goal Blueprinting</h4>
+                  <h4 className="text-sm font-bold text-white">2. Goal Blueprinting</h4>
                   <p className="text-xs text-[#A0A5AA] mt-1 leading-relaxed">
                     Define concrete targets for muscle building, fat loss, athletic power, or mobility.
                   </p>
@@ -54,10 +54,10 @@ export default function Consultation() {
 
               <div className="flex gap-4 items-start">
                 <div className="w-8 h-8 rounded-full bg-[#38C2DE]/20 border border-[#38C2DE]/40 text-[#38C2DE] font-black text-sm flex items-center justify-center shrink-0">
-                  3
+                  
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">Custom Plan Roadmap</h4>
+                  <h4 className="text-sm font-bold text-white">3. Custom Plan Roadmap</h4>
                   <p className="text-xs text-[#A0A5AA] mt-1 leading-relaxed">
                     Get recommended program structures and training cadence tailored for you.
                   </p>

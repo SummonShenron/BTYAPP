@@ -21,8 +21,17 @@ export default function Hero() {
           </h1>
 
           <p className="hero-subtitle">
-            Custom personal training and strength conditioning tailored directly to your biomechanics with Madison Spear.
-          </p>
+            Whether your goal is to build strength, lose weight, improve your health, or simply feel more confident, we're here to support you every step of the way.
+            </p>
+            <p className="hero-subtitle">Our gym is a friendly and welcoming environment where people of all fitness levels can feel comfortable, encouraged, and challenged at their own pace.
+            </p>
+            <p className="hero-subtitle">
+              With personalized training, expert guidance, and a community that genuinely wants to see you succeed, you'll have the support you need to reach your goals and enjoy the journey along the way.
+            </p>
+            <p className="hero-subtitle">
+              Your fitness journey starts here. 
+              Let's be Better Than Yesterday.
+            </p>
 
           <div className="hero-actions">
             <button 

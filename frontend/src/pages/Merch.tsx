@@ -1,4 +1,3 @@
-// pages/Merch.tsx
 import React, { useState } from 'react';
 import logoImg from '../assets/logo.png';
 
@@ -11,7 +10,7 @@ interface Product {
   image: string;
   sizes?: string[];
   inStock: boolean;
-  venmoUsername: string; // Her Venmo handle (e.g., "Jane-Doe-BTY")
+  venmoUsername: string;
 }
 
 const merchData: Product[] = [
@@ -24,39 +23,18 @@ const merchData: Product[] = [
     image: logoImg,
     sizes: ['S', 'M', 'L', 'XL', '2XL'],
     inStock: true,
-    venmoUsername: 'YourVenmoHandle', // Replace with her actual Venmo username
+    venmoUsername: '@Madison-Spear3',
   },
   {
     id: 'bty-tee-01',
-    name: 'Better Than Yesterday Pump Cover',
+    name: 'Better Than Yesterday Logo T-Shirt',
     category: 'Apparel',
     price: '$38.00',
     description: '100% combed ring-spun cotton drop-shoulder tee engineered for freedom of movement during heavy lifts.',
     image: logoImg,
     sizes: ['S', 'M', 'L', 'XL'],
     inStock: true,
-    venmoUsername: 'YourVenmoHandle',
-  },
-  {
-    id: 'bty-shaker-01',
-    name: 'Matte Stealth Shaker Bottle (28oz)',
-    category: 'Accessories',
-    price: '$22.00',
-    description: 'BPA-free stainless steel insulated shaker bottle. Keeps drinks sub-zero for up to 12 hours.',
-    image: logoImg,
-    inStock: true,
-    venmoUsername: 'YourVenmoHandle',
-  },
-  {
-    id: 'bty-straps-01',
-    name: 'Padded Neoprene Lifting Straps',
-    category: 'Gear',
-    price: '$18.00',
-    description: 'Heavy-duty cotton webbing with 5mm neoprene padding to eliminate wrist strain on heavy pulls.',
-    image: logoImg,
-    sizes: ['One Size'],
-    inStock: true,
-    venmoUsername: 'YourVenmoHandle',
+    venmoUsername: '@Madison-Spear3',
   },
 ];
 
@@ -70,18 +48,66 @@ export default function Merch() {
   const handleBuyClick = (product: Product) => {
     const size = selectedSizes[product.id] || (product.sizes ? product.sizes[0] : 'One Size');
     
-    // Construct a clean Venmo URL with a pre-filled note containing the item and size
+    // Clean Venmo handle string if it already contains '@'
+    const handle = product.venmoUsername.replace(/^@/, '');
     const note = encodeURIComponent(`${product.name} (Size: ${size})`);
     const amount = product.price.replace('$', '');
     
-    // Venmo web URL format
-    const venmoUrl = `https://venmo.com/${product.venmoUsername}?txn=pay&amount=${amount}&note=${note}`;
+    const venmoUrl = `https://venmo.com/${handle}?txn=pay&amount=${amount}&note=${note}`;
     
     window.open(venmoUrl, '_blank');
   };
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '4rem 1.5rem', fontFamily: 'inherit' }}>
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '4rem 1.5rem', fontFamily: 'inherit', position: 'relative' }}>
+      
+      {/* --- Diagonal Caution Tape Banner --- */}
+      <div 
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          pointerEvents: 'none', // Allows underlying page to remain viewable/interactive
+          overflow: 'hidden',
+          zIndex: 99,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <div 
+          style={{
+            width: '160vw',
+            height: '64px',
+            backgroundColor: '#38C2DE',
+            backgroundImage: 'repeating-linear-gradient(-45deg, transparent, transparent 20px, rgba(18, 19, 22, 0.45) 20px, rgba(18, 19, 22, 0.45) 40px)',
+            transform: 'rotate(-20deg)',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderTop: '2px solid rgba(255, 255, 255, 0.4)',
+            borderBottom: '2px solid rgba(255, 255, 255, 0.4)'
+          }}
+        >
+          <span 
+            style={{
+              color: '#121316',
+              fontSize: '1.4rem',
+              fontWeight: 900,
+              letterSpacing: '0.35em',
+              textTransform: 'uppercase',
+              textShadow: '0 1px 2px rgba(255, 255, 255, 0.3)',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            🚧 COMING SOON 🚧
+          </span>
+        </div>
+      </div>
+
       {/* Page Header */}
       <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
         <span style={{ 
@@ -193,7 +219,7 @@ export default function Merch() {
                       <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: '#A0A5AA', letterSpacing: '0.05em' }}>
                         Size
                       </span>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 900, color: '#38C2DE', background: 'rgba(56, 194, 222, 0.1)', padding: '0.1rem 0.5rem', borderRadius: '4px', border: '1px solid rgba(56, 194, 222, 0.2)' }}>
+                      <span style={{ fontSize: '0.75rem', color: '#38C2DE', background: 'rgba(56, 194, 222, 0.1)', padding: '0.1rem 0.5rem', borderRadius: '4px', border: '1px solid rgba(56, 194, 222, 0.2)' }}>
                         {currentSize}
                       </span>
                     </div>
