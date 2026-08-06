@@ -4,9 +4,19 @@ import './__styles__/BrandPages.css';
 
 const qualifications = [
   {
-    title: 'Exercise Science & Movement Foundations',
-    detail: 'A strong base in biomechanics, strength development, and performance training.',
-    year: 'Foundation'
+    title: 'M.S.E. in Exercise Science',
+    detail: 'Advanced academic grounding in biomechanics, physiological adaptation, and performance optimization.',
+    year: 'Master’s'
+  },
+  {
+    title: 'B.A. in Human Performance',
+    detail: 'Comprehensive foundation in motor learning, functional anatomy, and structured athletic development.',
+    year: 'Bachelor’s'
+  },
+  {
+    title: 'First Aid & CPR Certified',
+    detail: 'Fully certified in emergency safety protocols, ensuring a secure and reliable training environment.',
+    year: 'Certified'
   },
   {
     title: 'Coaching & Programming Methodology',
@@ -33,8 +43,7 @@ export default function Qualifications() {
         <span className="brand-kicker">Qualifications</span>
         <h1 className="brand-title">Built on education, sharpened by real client outcomes.</h1>
         <p className="brand-subtitle">
-          Every recommendation in BTY coaching is rooted in movement science and practical coaching experience. Add your exact degrees,
-          certifications, and issuing institutions here when ready.
+          Every recommendation in BTY coaching is rooted in formal movement science—backed by an M.S.E. in Exercise Science, a B.A. in Human Performance, and practical coaching experience.
         </p>
       </header>
 

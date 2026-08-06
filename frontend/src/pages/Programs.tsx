@@ -8,8 +8,8 @@ interface ProgramDetail {
   title: string;
   tagline: string;
   description: string;
-  price: string;
-  period: string;
+  price?: string;
+  period?: string;
   features: string[];
   popular?: boolean;
 }
@@ -21,25 +21,22 @@ const programsData: ProgramDetail[] = [
     title: '1-on-1 Private Coaching',
     tagline: 'Maximum accountability & real-time form correction.',
     description: 'High-intensity strength & conditioning tailored directly to your unique biomechanics, movement patterns, and specific physical targets.',
-    price: '$95',
-    period: '/ session',
     features: [
       'Full body biomechanical screening',
       'Dedicated 60-minute private sessions',
       'Real-time posture & joint angle tracking',
       'Progress tracking with clear weekly milestones',
       'Direct 24/7 client portal chat access',
+      'Come 1x, 2x or 3x per week for maximum results',
     ],
     popular: true,
   },
   {
-    id: 'hybrid',
+    id: 'Online',
     badge: 'Most Flexible',
     title: 'Online Hybrid Fitness',
     tagline: 'Train anywhere with elite guidance in your pocket.',
     description: 'Custom training programming updated weekly, paired with video form audits and direct check-ins via our dedicated client portal.',
-    price: '$199',
-    period: '/ month',
     features: [
       'Custom app-based workout structure',
       'Weekly video form review & critiques',
