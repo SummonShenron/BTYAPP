@@ -16,7 +16,7 @@ logger = logging.getLogger("BTY Logger")
 CLERK_JWKS_URL = os.getenv("CLERK_JWKS_URL", "https://<your-clerk-domain>/.well-known/jwks.json")
 
 DEFAULT_ADMIN_EMAILS = [
-    "jackharper0517@outlook.com",
+    "madspear9@gmail.com",
     "jackharper0517@gmail.com",
     "madspear9@gmail.com",
 ]

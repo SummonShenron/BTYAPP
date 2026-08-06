@@ -1,4 +1,3 @@
-// pages/Programs.tsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,6 +29,21 @@ const programsData: ProgramDetail[] = [
       'Come 1x, 2x or 3x per week for maximum results',
     ],
     popular: true,
+  },
+  {
+    id: 'duo',
+    badge: 'Semi-Private',
+    title: 'Duo Partner Coaching',
+    tagline: 'Shared energy, individual focus & joint accountability.',
+    description: 'Train alongside a friend, partner, or teammate while receiving customized exercise modifications for both of your fitness levels.',
+    features: [
+      'Joint movement screening & goal alignment',
+      'Dedicated 60-minute partner sessions',
+      'Individualized exercise scaling & load management',
+      'Shared accountability and team motivation',
+      'Direct 24/7 client portal chat access',
+      'Flexible 1x, 2x, or 3x per week partner scheduling',
+    ],
   },
   {
     id: 'Online',
@@ -91,10 +105,12 @@ export default function Programs() {
               </div>
 
               {/* Price Tag */}
-              <div className="flex items-baseline gap-1 py-3 border-y border-[#2a2a32]">
-                <span className="text-3xl font-black text-white">{program.price}</span>
-                <span className="text-xs text-[#A0A5AA]">{program.period}</span>
-              </div>
+              {program.price && (
+                <div className="flex items-baseline gap-1 py-3 border-y border-[#2a2a32]">
+                  <span className="text-3xl font-black text-white">{program.price}</span>
+                  <span className="text-xs text-[#A0A5AA]">{program.period}</span>
+                </div>
+              )}
 
               <p className="text-xs text-[#A0A5AA] leading-relaxed">
                 {program.description}
