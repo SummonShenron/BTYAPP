@@ -1,0 +1,323 @@
+.book-session-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 0 3rem;
+  color: var(--text-main);
+}
+
+.book-session-page--success {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 55vh;
+}
+
+.book-session-intro {
+  max-width: 760px;
+  margin: 0 auto 1.75rem;
+  text-align: center;
+}
+
+.book-session-kicker {
+  display: inline-block;
+  color: #82e6f7;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(56, 194, 222, 0.12);
+  border: 1px solid rgba(56, 194, 222, 0.35);
+}
+
+.book-session-title {
+  margin: 0.85rem 0 0.65rem;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+.book-session-copy {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+.book-session-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.book-session-main-column {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.book-session-panel {
+  background: linear-gradient(145deg, rgba(16, 18, 22, 0.95), rgba(24, 26, 31, 0.9));
+  border: 1px solid rgba(160, 165, 170, 0.18);
+  border-radius: 24px;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.42);
+  padding: 1.5rem;
+}
+
+.book-session-panel--success {
+  max-width: 620px;
+  width: 100%;
+  text-align: center;
+}
+
+.book-session-section-title {
+  margin: 0.5rem 0 0;
+  font-size: 1.8rem;
+  line-height: 1.1;
+  font-weight: 900;
+}
+
+.session-type-grid {
+  margin-top: 1.15rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.session-type-card {
+  appearance: none;
+  border: 1px solid rgba(160, 165, 170, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-main);
+  border-radius: 18px;
+  padding: 1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.session-type-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(130, 230, 247, 0.45);
+}
+
+.session-type-card--active {
+  border-color: rgba(56, 194, 222, 0.9);
+  background: rgba(56, 194, 222, 0.12);
+  box-shadow: 0 0 24px rgba(56, 194, 222, 0.14);
+}
+
+.session-type-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.session-type-duration {
+  margin-top: 0.45rem;
+  color: #82e6f7;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.session-type-copy {
+  margin: 0.7rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.book-session-status {
+  margin-top: 1rem;
+  border-radius: 18px;
+  border: 1px solid rgba(160, 165, 170, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 1rem 1.1rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.book-session-status--error {
+  border-color: rgba(248, 113, 113, 0.35);
+  background: rgba(248, 113, 113, 0.11);
+  color: #ffd6d6;
+}
+
+.slot-day-list {
+  margin-top: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.slot-day-card {
+  border-radius: 20px;
+  border: 1px solid rgba(160, 165, 170, 0.18);
+  background: rgba(13, 14, 17, 0.92);
+  padding: 1rem;
+}
+
+.slot-day-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.slot-day-card__title {
+  margin-top: 0.2rem;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.slot-day-card__count {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.slot-grid {
+  margin-top: 0.9rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.slot-chip {
+  appearance: none;
+  border: 1px solid rgba(160, 165, 170, 0.16);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-main);
+  border-radius: 16px;
+  padding: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.slot-chip:hover {
+  transform: translateY(-1px);
+  border-color: rgba(56, 194, 222, 0.45);
+}
+
+.slot-chip--active {
+  border-color: rgba(56, 194, 222, 0.95);
+  background: rgba(56, 194, 222, 0.12);
+}
+
+.slot-chip__label {
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.slot-chip__timezone {
+  margin-top: 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.booking-summary {
+  margin-top: 1rem;
+  border-radius: 18px;
+  border: 1px solid rgba(56, 194, 222, 0.22);
+  background: rgba(56, 194, 222, 0.06);
+  padding: 1rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.booking-summary strong {
+  color: var(--text-main);
+}
+
+.booking-summary__warning {
+  color: #ffd6d6;
+}
+
+.book-session-form {
+  margin-top: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.book-session-label {
+  margin-bottom: 0.5rem;
+  display: inline-block;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.book-session-primary-button {
+  appearance: none;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  padding: 0.95rem 1.3rem;
+  background: linear-gradient(135deg, #38c2de, #82e6f7);
+  color: #0f1115;
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  box-shadow: 0 0 24px rgba(56, 194, 222, 0.18);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.book-session-primary-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 0 30px rgba(56, 194, 222, 0.28);
+}
+
+.book-session-primary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.book-session-primary-button--full {
+  width: 100%;
+}
+
+.book-session-sidebar {
+  position: sticky;
+  top: 1.5rem;
+}
+
+@media (max-width: 1100px) {
+  .book-session-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .book-session-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 900px) {
+  .session-type-grid,
+  .slot-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .book-session-page {
+    padding-top: 0.25rem;
+  }
+
+  .book-session-panel {
+    padding: 1.2rem;
+    border-radius: 20px;
+  }
+
+  .book-session-title {
+    font-size: clamp(1.8rem, 9vw, 2.6rem);
+  }
+
+  .book-session-section-title {
+    font-size: 1.45rem;
+  }
+}

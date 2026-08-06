@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth, UserButton } from '@clerk/clerk-react';
+import ScheduleManager from '../components/ScheduleManager';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
@@ -136,6 +137,10 @@ export default function AdminDashboard() {
             <span style={statLabelStyle}>Confirmed</span>
           </div>
         </div>
+      </div>
+
+      <div style={{ marginBottom: '2rem' }}>
+        <ScheduleManager />
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>

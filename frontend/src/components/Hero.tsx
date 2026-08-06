@@ -21,7 +21,7 @@ export default function Hero() {
           </h1>
 
           <p className="hero-subtitle">
-            Custom personal training, strength conditioning, and nutrition coaching tailored directly to your biomechanics with Madison Spear.
+            Custom personal training and strength conditioning tailored directly to your biomechanics with Madison Spear.
           </p>
 
           <div className="hero-actions">

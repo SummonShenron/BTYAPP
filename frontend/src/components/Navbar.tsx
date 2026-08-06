@@ -1,5 +1,5 @@
 // components/Navbar.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './__styles__/Navbar.css';
 
@@ -15,6 +15,14 @@ const toggleTheme = () => {
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const handleBookSession = () => {
+    navigate('/book');
+    setIsMobileMenuOpen(false);
+  };
+
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
   return (
     <nav className="navbar">
@@ -51,16 +59,41 @@ export default function Navbar() {
           </li>
         </ul>
 
-        {/* CTA Button */}
-        <button 
-          onClick={() => navigate('/book')}
-          className="nav-cta-btn"
-        >
-          Book Session
-        </button>
-        <button onClick={toggleTheme} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-        {/* ☀️ / 🌙 */}
-        </button>
+        <div className="nav-actions">
+          {/* CTA Button */}
+          <button onClick={handleBookSession} className="nav-cta-btn nav-cta-desktop">
+            Book Session
+          </button>
+
+          <button
+            type="button"
+            className="nav-mobile-toggle"
+            aria-label="Toggle navigation menu"
+            aria-expanded={isMobileMenuOpen}
+            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+          >
+            <span className="nav-mobile-toggle-line" />
+            <span className="nav-mobile-toggle-line" />
+            <span className="nav-mobile-toggle-line" />
+          </button>
+
+          <button onClick={toggleTheme} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+          {/* ☀️ / 🌙 */}
+          </button>
+        </div>
+
+        <div className={`nav-mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
+          <Link to="/" className="nav-mobile-link" onClick={closeMobileMenu}>Home</Link>
+          <Link to="/programs" className="nav-mobile-link" onClick={closeMobileMenu}>Programs</Link>
+          <Link to="/consultation" className="nav-mobile-link" onClick={closeMobileMenu}>Consultation</Link>
+          <Link to="/merch" className="nav-mobile-link" onClick={closeMobileMenu}>Merch</Link>
+          <Link to="/about" className="nav-mobile-link" onClick={closeMobileMenu}>About</Link>
+          <Link to="/qualifications" className="nav-mobile-link" onClick={closeMobileMenu}>Qualifications</Link>
+          <Link to="/testimonials" className="nav-mobile-link" onClick={closeMobileMenu}>Testimonials</Link>
+          <button type="button" onClick={handleBookSession} className="nav-mobile-cta">
+            Book Session
+          </button>
+        </div>
 
       </div>
     </nav>

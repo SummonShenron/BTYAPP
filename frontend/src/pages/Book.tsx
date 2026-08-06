@@ -19,9 +19,13 @@ export const Book: React.FC = () => {
     e.preventDefault();
 
     const payload = {
-        sessionType,
-        ...bookingData,
-        recipientEmail: 'jackharper0517@outlook.com'
+        session_type: sessionType,
+        name: bookingData.name,
+        email: bookingData.email,
+        phone: bookingData.phone,
+        preferred_date: bookingData.preferredDate,
+        preferred_time: bookingData.preferredTime,
+        notes: bookingData.notes,
     };
 
     try {
@@ -81,7 +85,7 @@ export const Book: React.FC = () => {
           >
             <h3>Online Coaching Intake</h3>
             <p className="session-price">Custom • 45 Mins</p>
-            <p className="session-desc">Virtual walkthrough of your custom workout protocols and nutrition plan.</p>
+            <p className="session-desc">Virtual walkthrough of your custom workout protocols and coaching roadmap.</p>
           </div>
         </div>
 
