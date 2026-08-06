@@ -60,6 +60,11 @@ export default function Home() {
             description="High-intensity strength & conditioning tailored directly to your biomechanics and personal targets."
             onSelect={() => navigate('/book', { state: { selectedProgram: '1-on-1 Private Coaching' } })}
             />
+             <ProgramCard
+              title="Duo Session Coaching"
+              description="Accountability, and cooperation based strength training personalized to your team."
+              onSelect={() => navigate('/book', { state: { selectedProgram: 'Duo Session Coaching' } })}
+              />
             <ProgramCard
               title="Online Hybrid Fitness"
               description="Custom training plans, weekly video form audits, and direct message check-ins via our client portal."

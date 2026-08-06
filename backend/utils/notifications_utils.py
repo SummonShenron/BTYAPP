@@ -11,7 +11,7 @@ load_dotenv()
 logger = logging.getLogger("BTY Logger")
 
 RESEND_API_KEY = os.getenv("RESEND_API_KEY")
-COACH_EMAIL = "jackharper0517@outlook.com"
+COACH_EMAIL = "madspear9@gmail.com"
 RESEND_FROM_EMAIL = os.getenv("RESEND_FROM_EMAIL", "BTY Fitness <bty@sonicassistant.com>")
 
 async def notify_madison_of_lead(lead_data: dict):

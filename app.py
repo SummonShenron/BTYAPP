@@ -40,7 +40,7 @@ logger.info("--- Launching BTY Fitness API ---")
 app.add_middleware(
     CORSMiddleware,
     # This regex matches any port on localhost/127.0.0.1 and any Vercel deployment preview/production URL
-    allow_origin_regex=r"https://.*\.vercel\.app|http://(localhost|127\.0\.0\.1)(:\d+)?",
+    allow_origin_regex=r"^https://([a-z0-9-]+.)btyfitness.app$|^https://([a-z0-9-]+.)vercel.app$|^http://(localhost|127\.0\.0\.1)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
