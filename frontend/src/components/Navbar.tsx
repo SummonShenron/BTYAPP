@@ -29,7 +29,7 @@ export default function Navbar() {
       <div className="nav-container">
         
         {/* Brand Logo */}
-        <Link to="/" className="nav-brand">
+        <Link to="/home" className="nav-brand">
           <span className="brand-title">BTY FITNESS</span>
           <span className="brand-subtitle">by Madison Spear</span>
         </Link>
@@ -37,7 +37,7 @@ export default function Navbar() {
         {/* Links */}
         <ul className="nav-links">
           <li>
-            <Link to="/" className="nav-link">Home</Link>
+            <Link to="/home" className="nav-link">Home</Link>
           </li>
           <li>
             <Link to="/programs" className="nav-link">Programs</Link>
@@ -83,7 +83,7 @@ export default function Navbar() {
         </div>
 
         <div className={`nav-mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
-          <Link to="/" className="nav-mobile-link" onClick={closeMobileMenu}>Home</Link>
+          <Link to="/home" className="nav-mobile-link" onClick={closeMobileMenu}>Home</Link>
           <Link to="/programs" className="nav-mobile-link" onClick={closeMobileMenu}>Programs</Link>
           <Link to="/consultation" className="nav-mobile-link" onClick={closeMobileMenu}>Consultation</Link>
           <Link to="/merch" className="nav-mobile-link" onClick={closeMobileMenu}>Merch</Link>
