@@ -14,6 +14,7 @@ import AboutMe from './pages/AboutPage.tsx';
 import Qualifications from './pages/Qualifications.tsx';
 import Testimonials from './pages/Testimonials.tsx';
 import SonicWidget from './components/SonicWidget';
+import SeoManager from './components/SeoManager';
 
 export default function App() {
   const location = useLocation();
@@ -21,6 +22,7 @@ export default function App() {
 
   return (
     <div style={{ position: 'relative', minHeight: '100vh' }}>
+      <SeoManager pathname={location.pathname} />
       <Routes>
         <Route path="/" element={<Landing />} />
 
@@ -42,7 +44,7 @@ export default function App() {
                   <AdminDashboard />
                 </SignedIn>
                 <SignedOut>
-                  <RedirectToSignIn redirectUrl="/#/admin" />
+                  <RedirectToSignIn redirectUrl="/admin" />
                 </SignedOut>
               </>
             }
