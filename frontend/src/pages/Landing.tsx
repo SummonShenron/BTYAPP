@@ -1,13 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../assets/logo.png';
+import logoFallback from '../assets/logo.png';
 import './__styles__/Landing.css';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
+
 export default function Landing() {
+  const [landingLogoSrc, setLandingLogoSrc] = useState<string>(`${API_URL}/api/media/landing_logo?v=${Date.now()}`);
+
   return (
     <div className="landing-shell">
       <section className="landing-center">
-        <img src={logo} alt="BTY Fitness" className="landing-logo" />
+        <img
+          src={landingLogoSrc}
+          onError={() => {
+            if (landingLogoSrc !== logoFallback) {
+              setLandingLogoSrc(logoFallback);
+            }
+          }}
+          alt="BTY Fitness"
+          className="landing-logo"
+        />
 
         <Link to="/home" className="landing-enter-btn">
           Enter

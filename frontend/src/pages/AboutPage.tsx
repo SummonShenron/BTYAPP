@@ -1,40 +1,95 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './__styles__/BrandPages.css';
 import madi2 from '../assets/madi2.jpeg';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
+
+const defaults: Record<string, string> = {
+  about_page_kicker: 'About Madison',
+  about_page_title: 'Strength coaching built for real life and lasting change.',
+  about_page_subtitle: 'BTY is less about chasing a perfect body and more about learning how to train with intention. Every plan is built around biomechanics, recovery, and momentum you can keep.',
+  about_page_section_title: 'Why I coach this way',
+  about_page_paragraph_1: 'Most people do not fail because they lack effort. They fail because their plan is generic, exhausting, or disconnected from their actual lifestyle. My coaching system is designed to fix that.',
+  about_page_paragraph_2: 'We start by understanding your movement quality, injury history, schedule, and stress load. Then we build a structure that meets you where you are and grows with you.',
+  about_page_cta_qualifications: 'View Qualifications',
+  about_page_cta_testimonials: 'Read Testimonials',
+  about_page_pillar_1_title: 'Precision',
+  about_page_pillar_1_text: 'Technique-first coaching that protects joints and improves power output over time.',
+  about_page_pillar_2_title: 'Consistency',
+  about_page_pillar_2_text: 'Programming designed to survive busy weeks, travel, and the realities of daily life.',
+  about_page_pillar_3_title: 'Ownership',
+  about_page_pillar_3_text: 'Clients learn the why behind each decision so progress continues beyond each session.',
+};
+
 export default function AboutMe() {
+  const [content, setContent] = useState<Record<string, string>>(defaults);
+  const [photoSrc, setPhotoSrc] = useState<string>(`${API_URL}/api/media/about_photo?v=${Date.now()}`);
+  const [useUploadedPhoto, setUseUploadedPhoto] = useState(true);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setPhotoSrc(`${API_URL}/api/media/about_photo?v=${Date.now()}`);
+    setUseUploadedPhoto(true);
+
+    const loadContent = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/content`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          return;
+        }
+
+        const data = await response.json();
+        const items = (data?.items ?? {}) as Record<string, string>;
+        setContent({
+          ...defaults,
+          ...items,
+        });
+      } catch {
+        // Keep defaults if content endpoint is unavailable.
+      }
+    };
+
+    void loadContent();
+
+    return () => controller.abort();
+  }, []);
+
   return (
     <div className="brand-page about-page">
       <header>
-        <span className="brand-kicker">About Madison</span>
-        <h1 className="brand-title">Strength coaching built for real life and lasting change.</h1>
+        <span className="brand-kicker">{content.about_page_kicker}</span>
+        <h1 className="brand-title">{content.about_page_title}</h1>
         <p className="brand-subtitle">
-          BTY is less about chasing a perfect body and more about learning how to train with intention. Every plan is built around biomechanics,
-          recovery, and momentum you can keep.
+          {content.about_page_subtitle}
         </p>
       </header>
 
       <section className="page-grid">
         <article className="editorial-panel">
-          <h2>Why I coach this way</h2>
+          <h2>{content.about_page_section_title}</h2>
           <p>
-            Most people do not fail because they lack effort. They fail because their plan is generic, exhausting, or disconnected from their actual
-            lifestyle. My coaching system is designed to fix that.
+            {content.about_page_paragraph_1}
           </p>
           <p>
-            We start by understanding your movement quality, injury history, schedule, and stress load. Then we build a structure that meets you where
-            you are and grows with you.
+            {content.about_page_paragraph_2}
           </p>
           <div className="action-row">
-            <Link to="/qualifications" className="btn-neon-primary">View Qualifications</Link>
-            <Link to="/testimonials" className="btn-neon-outline">Read Testimonials</Link>
+            <Link to="/qualifications" className="btn-neon-primary">{content.about_page_cta_qualifications}</Link>
+            <Link to="/testimonials" className="btn-neon-outline">{content.about_page_cta_testimonials}</Link>
           </div>
         </article>
 
         <aside className="profile-frame">
           <div className="profile-media-zone">
-            <img src={madi2} alt="Madison Spear" className="profile-media-image" />
+            <img
+              src={useUploadedPhoto ? photoSrc : madi2}
+              onError={() => setUseUploadedPhoto(false)}
+              alt="Madison Spear"
+              className="profile-media-image"
+            />
             <div className="profile-photo-veil" aria-hidden="true" />
             <div className="profile-photo-ring" aria-hidden="true" />
           </div>
@@ -43,16 +98,16 @@ export default function AboutMe() {
 
       <section className="pillar-grid">
         <article className="pillar">
-          <h3>Precision</h3>
-          <p>Technique-first coaching that protects joints and improves power output over time.</p>
+          <h3>{content.about_page_pillar_1_title}</h3>
+          <p>{content.about_page_pillar_1_text}</p>
         </article>
         <article className="pillar">
-          <h3>Consistency</h3>
-          <p>Programming designed to survive busy weeks, travel, and the realities of daily life.</p>
+          <h3>{content.about_page_pillar_2_title}</h3>
+          <p>{content.about_page_pillar_2_text}</p>
         </article>
         <article className="pillar">
-          <h3>Ownership</h3>
-          <p>Clients learn the why behind each decision so progress continues beyond each session.</p>
+          <h3>{content.about_page_pillar_3_title}</h3>
+          <p>{content.about_page_pillar_3_text}</p>
         </article>
       </section>
     </div>

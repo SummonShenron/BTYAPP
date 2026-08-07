@@ -5,17 +5,53 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
 interface ConsultationFormProps {
   initialProgram?: string;
+  contentOverrides?: Record<string, string>;
 }
 
-export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialProgram }) => {
+const defaults: Record<string, string> = {
+  consultation_form_title: 'Start Your Journey',
+  consultation_form_subtitle: 'Book your free consultation today.',
+  consultation_form_label_name: 'Full Name',
+  consultation_form_placeholder_name: 'Alex Johnson',
+  consultation_form_label_email: 'Email Address',
+  consultation_form_placeholder_email: 'alex@example.com',
+  consultation_form_label_program: 'Selected Interest / Program',
+  consultation_form_option_1: '1-on-1 Private Coaching',
+  consultation_form_option_2: 'Online Hybrid Fitness',
+  consultation_form_option_3: 'General Consultation',
+  consultation_form_default_program: '1-on-1 Private Coaching',
+  consultation_form_label_goals: 'Primary Fitness Goals',
+  consultation_form_placeholder_goals: 'Tell us about your fitness goals or injury history...',
+  consultation_form_submit_label: 'Submit Request',
+  consultation_form_success_alert: 'Thank you! Madison will be in touch shortly.',
+  consultation_form_error_alert: 'Submission failed. Please try again.',
+  consultation_form_network_alert: 'Unable to reach the server. Please check your connection.',
+};
+
+export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialProgram, contentOverrides }) => {
   const location = useLocation();
+  const content = {
+    ...defaults,
+    ...(contentOverrides || {}),
+  };
 
   const navSelectedProgram = (location.state as { selectedProgram?: string })?.selectedProgram;
+
+  const fallbackProgram = content.consultation_form_default_program || defaults.consultation_form_default_program;
+
+  const programOptions = [
+    content.consultation_form_option_1,
+    content.consultation_form_option_2,
+    content.consultation_form_option_3,
+  ].filter(Boolean);
+
+  const normalizedInitialProgram =
+    initialProgram || navSelectedProgram || fallbackProgram;
 
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    program: initialProgram || navSelectedProgram || '1-on-1 Private Coaching',
+    program: normalizedInitialProgram,
     goals: ''
   });
 
@@ -38,35 +74,36 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialProgr
         });
 
         if (response.ok) {
-        alert('Thank you! Madison will be in touch shortly.');
+        alert(content.consultation_form_success_alert);
         setFormData({
             name: '',
             email: '',
-            program: '1-on-1 Private Coaching',
+          program: fallbackProgram,
             goals: ''
         });
         } else {
-        alert('Submission failed. Please try again.');
+        alert(content.consultation_form_error_alert);
         }
     } catch (error) {
         console.error('Error submitting consultation:', error);
+        alert(content.consultation_form_network_alert);
     }
     };
 
   return (
     <section id="consultation" className="form-section">
       <div className="form-container query-card">
-        <h2 className="section-title text-center">Start Your Journey</h2>
-        <p className="form-subtitle text-center">Book your free consultation today.</p>
+        <h2 className="section-title text-center">{content.consultation_form_title}</h2>
+        <p className="form-subtitle text-center">{content.consultation_form_subtitle}</p>
         
         <form onSubmit={handleSubmit} className="consultation-form space-y-4">
           <div className="form-group">
-            <label htmlFor="name">Full Name</label>
+            <label htmlFor="name">{content.consultation_form_label_name}</label>
             <input 
               type="text" 
               id="name" 
               className="styled-input"
-              placeholder="Alex Johnson"
+              placeholder={content.consultation_form_placeholder_name}
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
@@ -74,12 +111,12 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialProgr
           </div>
           
           <div className="form-group">
-            <label htmlFor="email">Email Address</label>
+            <label htmlFor="email">{content.consultation_form_label_email}</label>
             <input 
               type="email" 
               id="email" 
               className="styled-input"
-              placeholder="alex@example.com"
+              placeholder={content.consultation_form_placeholder_email}
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
@@ -87,26 +124,26 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialProgr
           </div>
 
           <div className="form-group">
-            <label htmlFor="program">Selected Interest / Program</label>
+            <label htmlFor="program">{content.consultation_form_label_program}</label>
             <select
               id="program"
               className="styled-input"
               value={formData.program}
               onChange={(e) => setFormData({ ...formData, program: e.target.value })}
             >
-              <option value="1-on-1 Private Coaching">1-on-1 Private Coaching</option>
-              <option value="Online Hybrid Fitness">Online Hybrid Fitness</option>
-              <option value="General Consultation">General Consultation</option>
+              {programOptions.map((option) => (
+                <option key={option} value={option}>{option}</option>
+              ))}
             </select>
           </div>
 
           <div className="form-group">
-            <label htmlFor="goals">Primary Fitness Goals</label>
+            <label htmlFor="goals">{content.consultation_form_label_goals}</label>
             <textarea 
               id="goals" 
               className="styled-input"
               rows={4}
-              placeholder="Tell us about your fitness goals or injury history..."
+              placeholder={content.consultation_form_placeholder_goals}
               value={formData.goals}
               onChange={(e) => setFormData({ ...formData, goals: e.target.value })}
               required
@@ -114,7 +151,7 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialProgr
           </div>
 
           <button type="submit" className="btn-neon-primary full-width-btn">
-            Submit Request
+            {content.consultation_form_submit_label}
           </button>
         </form>
       </div>

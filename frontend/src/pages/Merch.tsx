@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import logoImg from '../assets/logo.png';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
 interface Product {
   id: string;
@@ -8,6 +10,7 @@ interface Product {
   price: string;
   description: string;
   image: string;
+  mediaSlot: 'merch_product_1_photo' | 'merch_product_2_photo';
   sizes?: string[];
   inStock: boolean;
   venmoUsername: string;
@@ -21,6 +24,7 @@ const merchData: Product[] = [
     price: '$65.00',
     description: '380GSM ultra-soft fleece hoodie featuring custom high-density silicone BTY logo print on chest.',
     image: logoImg,
+    mediaSlot: 'merch_product_1_photo',
     sizes: ['S', 'M', 'L', 'XL', '2XL'],
     inStock: true,
     venmoUsername: '@Madison-Spear3',
@@ -32,14 +36,81 @@ const merchData: Product[] = [
     price: '$38.00',
     description: '100% combed ring-spun cotton drop-shoulder tee engineered for freedom of movement during heavy lifts.',
     image: logoImg,
+    mediaSlot: 'merch_product_2_photo',
     sizes: ['S', 'M', 'L', 'XL'],
     inStock: true,
     venmoUsername: '@Madison-Spear3',
   },
 ];
 
+const defaults: Record<string, string> = {
+  merch_coming_soon_text: 'COMING SOON',
+  merch_kicker: 'Official Equipment & Apparel',
+  merch_title: 'BTY ATHLETIC GEAR',
+  merch_subtitle: 'Wear the mindset. Premium training apparel and biomechanically tested gear designed to endure your toughest sessions.',
+  merch_size_label: 'Size',
+  merch_buy_button_label: 'Pay via Venmo',
+  merch_product_1_name: 'BTY Oversized Heavyweight Hoodie',
+  merch_product_1_category: 'Apparel',
+  merch_product_1_price: '$65.00',
+  merch_product_1_description: '380GSM ultra-soft fleece hoodie featuring custom high-density silicone BTY logo print on chest.',
+  merch_product_2_name: 'Better Than Yesterday Logo T-Shirt',
+  merch_product_2_category: 'Apparel',
+  merch_product_2_price: '$38.00',
+  merch_product_2_description: '100% combed ring-spun cotton drop-shoulder tee engineered for freedom of movement during heavy lifts.',
+};
+
 export default function Merch() {
+  const [content, setContent] = useState<Record<string, string>>(defaults);
   const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadContent = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/content`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          return;
+        }
+
+        const data = await response.json();
+        const items = (data?.items ?? {}) as Record<string, string>;
+        setContent({
+          ...defaults,
+          ...items,
+        });
+      } catch {
+        // Keep defaults if content endpoint is unavailable.
+      }
+    };
+
+    void loadContent();
+
+    return () => controller.abort();
+  }, []);
+
+  const products = useMemo<Product[]>(
+    () => [
+      {
+        ...merchData[0],
+        name: content.merch_product_1_name,
+        category: content.merch_product_1_category,
+        price: content.merch_product_1_price,
+        description: content.merch_product_1_description,
+      },
+      {
+        ...merchData[1],
+        name: content.merch_product_2_name,
+        category: content.merch_product_2_category,
+        price: content.merch_product_2_price,
+        description: content.merch_product_2_description,
+      },
+    ],
+    [content]
+  );
 
   const handleSizeSelect = (productId: string, size: string) => {
     setSelectedSizes((prev) => ({ ...prev, [productId]: size }));
@@ -103,7 +174,7 @@ export default function Merch() {
               whiteSpace: 'nowrap'
             }}
           >
-            🚧 COMING SOON 🚧
+            🚧 {content.merch_coming_soon_text} 🚧
           </span>
         </div>
       </div>
@@ -123,13 +194,13 @@ export default function Merch() {
           border: '1px solid rgba(56, 194, 222, 0.3)',
           marginBottom: '1rem'
         }}>
-          Official Equipment & Apparel
+          {content.merch_kicker}
         </span>
         <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFFFFF', margin: '0 0 1rem 0', letterSpacing: '-0.02em' }}>
-          BTY ATHLETIC GEAR
+          {content.merch_title}
         </h1>
         <p style={{ color: '#A0A5AA', fontSize: '1rem', maxWidth: '600px', margin: '0 auto', lineHeight: 1.6 }}>
-          Wear the mindset. Premium training apparel and biomechanically tested gear designed to endure your toughest sessions.
+          {content.merch_subtitle}
         </p>
       </div>
 
@@ -139,7 +210,7 @@ export default function Merch() {
         gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', 
         gap: '2rem' 
       }}>
-        {merchData.map((item) => {
+        {products.map((item) => {
           const currentSize = selectedSizes[item.id] || (item.sizes ? item.sizes[0] : '');
           return (
             <div 
@@ -185,7 +256,11 @@ export default function Merch() {
                   {item.category}
                 </span>
                 <img
-                  src={item.image}
+                  src={`${API_URL}/api/media/${item.mediaSlot}`}
+                  onError={(event) => {
+                    event.currentTarget.onerror = null;
+                    event.currentTarget.src = item.image;
+                  }}
                   alt={item.name}
                   style={{ 
                     maxHeight: '130px', 
@@ -217,7 +292,7 @@ export default function Merch() {
                   <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '1rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                       <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: '#A0A5AA', letterSpacing: '0.05em' }}>
-                        Size
+                        {content.merch_size_label}
                       </span>
                       <span style={{ fontSize: '0.75rem', color: '#38C2DE', background: 'rgba(56, 194, 222, 0.1)', padding: '0.1rem 0.5rem', borderRadius: '4px', border: '1px solid rgba(56, 194, 222, 0.2)' }}>
                         {currentSize}
@@ -270,7 +345,7 @@ export default function Merch() {
                     marginTop: 'auto'
                   }}
                 >
-                  Pay via Venmo
+                  {content.merch_buy_button_label}
                 </button>
               </div>
             </div>

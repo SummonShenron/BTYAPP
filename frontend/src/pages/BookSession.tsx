@@ -4,29 +4,45 @@ import './__styles__/BookSession.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
-const sessionTypes = [
-  {
-    id: 'consultation',
-    title: 'Free Fitness Consultation',
-    duration: '30 min',
-    duration_minutes: 30,
-    description: 'Goals review, movement overview, and next-step planning.',
-  },
-  {
-    id: '1on1',
-    title: '1-on-1 Personal Training',
-    duration: '60 min',
-    duration_minutes: 60,
-    description: 'Private in-person strength and biomechanics session.',
-  },
-  {
-    id: 'online',
-    title: 'Online Coaching Intake',
-    duration: '45 min',
-    duration_minutes: 45,
-    description: 'Virtual check-in to set up your coaching plan.',
-  },
-];
+const defaultBookContent: Record<string, string> = {
+  book_kicker: 'Free Scheduler',
+  book_title: 'BOOK YOUR SESSION',
+  book_subtitle: "Pick a service, choose an available time from Madison's weekly schedule, and send your request.",
+  book_step_1_kicker: 'Step 1',
+  book_step_1_title: 'Choose your session',
+  book_session_consultation_title: 'Free Fitness Consultation',
+  book_session_consultation_duration: '30 min',
+  book_session_consultation_description: 'Goals review, movement overview, and next-step planning.',
+  book_session_1on1_title: '1-on-1 Personal Training',
+  book_session_1on1_duration: '60 min',
+  book_session_1on1_description: 'Private in-person strength and biomechanics session.',
+  book_session_online_title: 'Online Coaching Intake',
+  book_session_online_duration: '45 min',
+  book_session_online_description: 'Virtual check-in to set up your coaching plan.',
+  book_step_2_kicker: 'Step 2',
+  book_step_2_title: 'Choose an available day',
+  book_loading_slots_text: "Loading Madison's recurring schedule...",
+  book_no_slots_text: 'No open slots found. Madison can open more recurring blocks in the admin schedule.',
+  book_open_slots_suffix: 'open slots',
+  book_step_3_kicker: 'Step 3',
+  book_step_3_title: 'Send booking request',
+  book_summary_prefix: 'Selected:',
+  book_summary_joiner: 'on',
+  book_summary_at: 'at',
+  book_summary_no_time: 'No time selected yet.',
+  book_label_name: 'Full Name *',
+  book_label_email: 'Email Address *',
+  book_label_phone: 'Phone Number',
+  book_label_notes: 'Goals / Notes',
+  book_notes_placeholder: 'Tell Madison briefly about your current routine, injuries, or goals...',
+  book_submit_loading: 'Sending Request...',
+  book_submit_label: 'Confirm Booking Request',
+  book_success_kicker: 'Request Sent',
+  book_success_title: 'We Got It',
+  book_success_intro: 'Thank you',
+  book_success_outro: 'has been sent.',
+  book_success_button_label: 'Book Another Session',
+};
 
 interface Slot {
   date: string;
@@ -59,10 +75,11 @@ function groupSlotsByDate(slots: Slot[]) {
 }
 
 export default function BookSession() {
+  const [bookContent, setBookContent] = useState<Record<string, string>>(defaultBookContent);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(true);
   const [slotError, setSlotError] = useState<string | null>(null);
-  const [selectedSessionType, setSelectedSessionType] = useState(sessionTypes[0].id);
+  const [selectedSessionType, setSelectedSessionType] = useState('consultation');
   const [selectedSlotKey, setSelectedSlotKey] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -74,7 +91,61 @@ export default function BookSession() {
     notes: '',
   });
 
+  const sessionTypes = useMemo(
+    () => [
+      {
+        id: 'consultation',
+        title: bookContent.book_session_consultation_title,
+        duration: bookContent.book_session_consultation_duration,
+        duration_minutes: 30,
+        description: bookContent.book_session_consultation_description,
+      },
+      {
+        id: '1on1',
+        title: bookContent.book_session_1on1_title,
+        duration: bookContent.book_session_1on1_duration,
+        duration_minutes: 60,
+        description: bookContent.book_session_1on1_description,
+      },
+      {
+        id: 'online',
+        title: bookContent.book_session_online_title,
+        duration: bookContent.book_session_online_duration,
+        duration_minutes: 45,
+        description: bookContent.book_session_online_description,
+      },
+    ],
+    [bookContent]
+  );
+
   const selectedSession = sessionTypes.find((session) => session.id === selectedSessionType) || sessionTypes[0];
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadContent = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/content`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          return;
+        }
+        const data = await response.json();
+        const items = (data?.items ?? {}) as Record<string, string>;
+        setBookContent({
+          ...defaultBookContent,
+          ...items,
+        });
+      } catch {
+        // Keep defaults if content endpoint is unavailable.
+      }
+    };
+
+    void loadContent();
+
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -174,14 +245,14 @@ export default function BookSession() {
     return (
       <div className="book-session-page book-session-page--success">
         <div className="book-session-panel book-session-panel--success">
-          <span className="book-session-kicker">Request Sent</span>
-          <h1 className="book-session-title">We Got It</h1>
+          <span className="book-session-kicker">{bookContent.book_success_kicker}</span>
+          <h1 className="book-session-title">{bookContent.book_success_title}</h1>
           <p className="book-session-copy">
-            Thank you, <strong>{formData.name}</strong>. Your <strong>{selectedSession.title.toLowerCase()}</strong>{' '}
-            request for <strong>{selectedSlot?.day_label}</strong> at <strong>{selectedSlot?.label}</strong> has been sent.
+            {bookContent.book_success_intro}, <strong>{formData.name}</strong>. Your <strong>{selectedSession.title.toLowerCase()}</strong>{' '}
+            request for <strong>{selectedSlot?.day_label}</strong> at <strong>{selectedSlot?.label}</strong> {bookContent.book_success_outro}
           </p>
           <button className="book-session-primary-button" onClick={() => setIsSubmitted(false)}>
-            Book Another Session
+            {bookContent.book_success_button_label}
           </button>
         </div>
       </div>
@@ -191,10 +262,10 @@ export default function BookSession() {
   return (
     <div className="book-session-page">
       <div className="book-session-intro">
-        <span className="book-session-kicker">Free Scheduler</span>
-        <h1 className="book-session-title">BOOK YOUR SESSION</h1>
+        <span className="book-session-kicker">{bookContent.book_kicker}</span>
+        <h1 className="book-session-title">{bookContent.book_title}</h1>
         <p className="book-session-copy">
-          Pick a service, choose an available time from Madison's weekly schedule, and send your request.
+          {bookContent.book_subtitle}
         </p>
       </div>
 
@@ -202,8 +273,8 @@ export default function BookSession() {
         <div className="book-session-main-column">
           <section className="book-session-panel">
             <div>
-              <span className="book-session-kicker">Step 1</span>
-              <h2 className="book-session-section-title">Choose your session</h2>
+              <span className="book-session-kicker">{bookContent.book_step_1_kicker}</span>
+              <h2 className="book-session-section-title">{bookContent.book_step_1_title}</h2>
             </div>
 
             <div className="session-type-grid">
@@ -227,17 +298,17 @@ export default function BookSession() {
 
           <section className="book-session-panel">
             <div>
-              <span className="book-session-kicker">Step 2</span>
-              <h2 className="book-session-section-title">Choose an available day</h2>
+              <span className="book-session-kicker">{bookContent.book_step_2_kicker}</span>
+              <h2 className="book-session-section-title">{bookContent.book_step_2_title}</h2>
             </div>
 
             {loadingSlots ? (
-              <div className="book-session-status">Loading Madison's recurring schedule...</div>
+              <div className="book-session-status">{bookContent.book_loading_slots_text}</div>
             ) : slotError ? (
               <div className="book-session-status book-session-status--error">{slotError}</div>
             ) : Object.keys(groupedSlots).length === 0 ? (
               <div className="book-session-status">
-                No open slots found. Madison can open more recurring blocks in the admin schedule.
+                {bookContent.book_no_slots_text}
               </div>
             ) : (
               <div className="slot-day-list">
@@ -250,7 +321,7 @@ export default function BookSession() {
                           <div className="book-session-kicker">{firstSlot.weekday_label}</div>
                           <div className="slot-day-card__title">{firstSlot.day_label}</div>
                         </div>
-                        <div className="slot-day-card__count">{daySlots.length} open slots</div>
+                        <div className="slot-day-card__count">{daySlots.length} {bookContent.book_open_slots_suffix}</div>
                       </div>
 
                       <div className="slot-grid">
@@ -279,20 +350,19 @@ export default function BookSession() {
 
         <div className="book-session-panel book-session-sidebar">
           <div>
-            <span className="book-session-kicker">Step 3</span>
-            <h2 className="book-session-section-title">Send booking request</h2>
+            <span className="book-session-kicker">{bookContent.book_step_3_kicker}</span>
+            <h2 className="book-session-section-title">{bookContent.book_step_3_title}</h2>
           </div>
 
           <div className="booking-summary">
-            Selected: <strong>{selectedSession.title}</strong>
+            {bookContent.book_summary_prefix} <strong>{selectedSession.title}</strong>
             {selectedSlot ? (
               <>
-                {' '}
-                on <strong>{selectedSlot.weekday_label}, {selectedSlot.day_label}</strong> at{' '}
+                {' '}{bookContent.book_summary_joiner} <strong>{selectedSlot.weekday_label}, {selectedSlot.day_label}</strong> {bookContent.book_summary_at}{' '}
                 <strong>{selectedSlot.label}</strong>
               </>
             ) : (
-              <span className="booking-summary__warning"> No time selected yet.</span>
+              <span className="booking-summary__warning"> {bookContent.book_summary_no_time}</span>
             )}
           </div>
 
@@ -301,7 +371,7 @@ export default function BookSession() {
           <form className="book-session-form" onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="name" className="book-session-label">
-                Full Name *
+                {bookContent.book_label_name}
               </label>
               <input
                 id="name"
@@ -315,7 +385,7 @@ export default function BookSession() {
 
             <div className="form-group">
               <label htmlFor="email" className="book-session-label">
-                Email Address *
+                {bookContent.book_label_email}
               </label>
               <input
                 id="email"
@@ -329,7 +399,7 @@ export default function BookSession() {
 
             <div className="form-group">
               <label htmlFor="phone" className="book-session-label">
-                Phone Number
+                {bookContent.book_label_phone}
               </label>
               <input
                 id="phone"
@@ -342,20 +412,20 @@ export default function BookSession() {
 
             <div className="form-group">
               <label htmlFor="notes" className="book-session-label">
-                Goals / Notes
+                {bookContent.book_label_notes}
               </label>
               <textarea
                 id="notes"
                 rows={4}
                 className="styled-input"
-                placeholder="Tell Madison briefly about your current routine, injuries, or goals..."
+                placeholder={bookContent.book_notes_placeholder}
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               />
             </div>
 
             <button type="submit" className="book-session-primary-button book-session-primary-button--full" disabled={isSubmitting || !selectedSlot}>
-              {isSubmitting ? 'Sending Request...' : 'Confirm Booking Request'}
+              {isSubmitting ? bookContent.book_submit_loading : bookContent.book_submit_label}
             </button>
           </form>
         </div>

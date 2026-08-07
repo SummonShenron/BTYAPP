@@ -29,7 +29,7 @@ export default function Navbar() {
       <div className="nav-container">
         
         {/* Brand Logo */}
-        <Link to="/home" className="nav-brand">
+        <Link to="/" className="nav-brand">
           <span className="brand-title">BTY FITNESS</span>
           <span className="brand-subtitle">by Madison Spear</span>
         </Link>

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import btyLogo from '../assets/logo.png';
+import logoFallback from '../assets/logo.png';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
 export const Book: React.FC = () => {
+  const [bookSuccessLogoSrc, setBookSuccessLogoSrc] = useState<string>(`${API_URL}/api/media/book_success_logo?v=${Date.now()}`);
   const [sessionType, setSessionType] = useState('consultation');
   const [submitted, setSubmitted] = useState(false);
   const [bookingData, setBookingData] = useState({
@@ -93,7 +94,16 @@ export const Book: React.FC = () => {
           {submitted ? (
             <div className="booking-success text-center">
               <div className="chat-input-wrapper success-logo-container">
-                <img src={btyLogo} alt="BTY Fitness" className="success-logo" />
+                <img
+                  src={bookSuccessLogoSrc}
+                  onError={() => {
+                    if (bookSuccessLogoSrc !== logoFallback) {
+                      setBookSuccessLogoSrc(logoFallback);
+                    }
+                  }}
+                  alt="BTY Fitness"
+                  className="success-logo"
+                />
               </div>
               <h2>Request Received!</h2>
               <p>Thank you, <strong>{bookingData.name}</strong>. Madison will review your request for a <strong>{sessionType}</strong> session and confirm via email shortly.</p>

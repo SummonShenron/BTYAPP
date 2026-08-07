@@ -1,14 +1,26 @@
 # app.py
 import logging
 import os
-from typing import List, Optional
+from typing import List, Optional, Dict
 from pydantic import BaseModel
-from fastapi import FastAPI, Depends, BackgroundTasks, HTTPException, status, Request
+from fastapi import FastAPI, Depends, BackgroundTasks, HTTPException, status, Request, UploadFile, File
+from fastapi.responses import Response
 from bson import ObjectId
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.utils.db_utils import test_connection
 from backend.logging.bty_logger import setup_logging
+from backend.utils.cms_utils import (
+    ALLOWED_CONTENT_KEYS,
+    get_content_map,
+    update_content_bulk,
+    update_content_key,
+)
+from backend.utils.media_utils import (
+    get_media_slot_bytes,
+    get_media_slot_metadata,
+    upload_media_slot,
+)
 from backend.utils.leads_utils import (
     ConsultationLead, 
     AppointmentBooking, 
@@ -49,6 +61,11 @@ app.add_middleware(
 class StatusUpdate(BaseModel):
     status: str
 
+class ContentValueUpdate(BaseModel):
+    value: str
+
+class BulkContentUpdate(BaseModel):
+    items: Dict[str, str]
 
 @app.middleware("http")
 async def request_logging_middleware(request: Request, call_next):
@@ -252,3 +269,115 @@ async def update_lead_status(lead_id: str, status_data: StatusUpdate, admin: dic
     except Exception as e:
         logger.error("Failed lead status update for lead_id=%s: %s", lead_id, str(e))
         raise HTTPException(status_code=400, detail=f"Invalid lead ID or update failed: {str(e)}")
+
+@app.get("/api/content")
+async def get_public_content():
+    logger.info("Public content requested")
+    return get_content_map()
+
+
+@app.get("/api/admin/content")
+async def get_admin_content(admin: dict = Depends(verify_admin)):
+    logger.info("Admin content requested")
+    return get_content_map()
+
+
+@app.put("/api/admin/content/{key}")
+async def put_admin_content_key(
+    key: str,
+    payload: ContentValueUpdate,
+    admin: dict = Depends(verify_admin),
+):
+    try:
+        if key not in ALLOWED_CONTENT_KEYS:
+            raise HTTPException(status_code=400, detail="Invalid content key.")
+        item = update_content_key(
+            key=key,
+            value=payload.value,
+            updated_by=admin.get("sub"),
+        )
+        return {"success": True, "item": item}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+
+@app.put("/api/admin/content")
+async def put_admin_content_bulk(
+    payload: BulkContentUpdate,
+    admin: dict = Depends(verify_admin),
+):
+    try:
+        updated_count, updated_at = update_content_bulk(
+            items=payload.items,
+            updated_by=admin.get("sub"),
+        )
+        return {
+            "success": True,
+            "updated_count": updated_count,
+            "updated_at": updated_at,
+        }
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+
+@app.get("/api/media/{slot}")
+async def get_public_media_slot(slot: str):
+    try:
+        payload, content_type, meta = get_media_slot_bytes(slot)
+        cache_tag = meta.get("updated_at", "")
+        return Response(
+            content=payload,
+            media_type=content_type,
+            headers={
+                "Cache-Control": "public, max-age=300",
+                "ETag": cache_tag,
+            },
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Media slot is empty.")
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+
+
+@app.get("/api/admin/media/{slot}")
+async def get_admin_media_slot(slot: str, admin: dict = Depends(verify_admin)):
+    try:
+        metadata = get_media_slot_metadata(slot)
+        if not metadata:
+            return {
+                "slot": slot,
+                "exists": False,
+                "filename": None,
+                "content_type": None,
+                "size": 0,
+                "updated_at": None,
+                "updated_by": None,
+                "public_url": None,
+            }
+        return metadata
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+
+@app.put("/api/admin/media/{slot}")
+async def put_admin_media_slot(
+    slot: str,
+    file: UploadFile = File(...),
+    admin: dict = Depends(verify_admin),
+):
+    try:
+        metadata = upload_media_slot(
+            slot=slot,
+            upload_file=file,
+            updated_by=admin.get("sub"),
+        )
+        return {
+            "success": True,
+            "media": metadata,
+        }
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))

@@ -78,7 +78,7 @@ function formatBlockLabel(block: WeeklyBlock) {
 }
 
 export default function ScheduleManager() {
-  const { getToken, isLoaded } = useAuth();
+  const { getToken, isLoaded, isSignedIn } = useAuth();
   const [settings, setSettings] = useState<ScheduleSettings>(DEFAULT_SETTINGS);
   const [selectedDay, setSelectedDay] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -87,25 +87,65 @@ export default function ScheduleManager() {
   const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isLoaded) {
-      void fetchSettings();
+    if (!isLoaded) {
+      return;
     }
-  }, [isLoaded]);
+
+    if (!isSignedIn) {
+      setLoading(false);
+      return;
+    }
+
+    void fetchSettings();
+  }, [isLoaded, isSignedIn]);
+
+  const getAuthTokenOrThrow = async () => {
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication token unavailable. Please refresh and sign in again.');
+    }
+    return token;
+  };
+
+  const authedFetch = async (path: string, init?: RequestInit) => {
+    const token = await getAuthTokenOrThrow();
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(init?.headers || {}),
+      Authorization: `Bearer ${token}`,
+    };
+
+    let response = await fetch(`${API_URL}${path}`, {
+      ...init,
+      headers,
+    });
+
+    if (response.status === 401) {
+      const refreshedToken = await getToken({ skipCache: true });
+      if (refreshedToken) {
+        response = await fetch(`${API_URL}${path}`, {
+          ...init,
+          headers: {
+            ...headers,
+            Authorization: `Bearer ${refreshedToken}`,
+          },
+        });
+      }
+    }
+
+    return response;
+  };
 
   const fetchSettings = async () => {
     try {
       setLoading(true);
       setError(null);
-      const token = await getToken();
-
-      const response = await fetch(`${API_URL}/api/admin/schedule/settings`, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      });
+      const response = await authedFetch('/api/admin/schedule/settings');
 
       if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          throw new Error('Unauthorized (401/403). Confirm admin access and Clerk API keys/JWKS alignment.');
+        }
         throw new Error(`Could not load schedule settings (${response.status})`);
       }
 
@@ -154,17 +194,15 @@ export default function ScheduleManager() {
       setError(null);
       setSuccess(null);
 
-      const token = await getToken();
-      const response = await fetch(`${API_URL}/api/admin/schedule/settings`, {
+      const response = await authedFetch('/api/admin/schedule/settings', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
         body: JSON.stringify(settings),
       });
 
       if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          throw new Error('Unauthorized (401/403). Confirm admin access and Clerk API keys/JWKS alignment.');
+        }
         const errorText = await response.text();
         throw new Error(errorText || `Failed to save schedule settings (${response.status})`);
       }
