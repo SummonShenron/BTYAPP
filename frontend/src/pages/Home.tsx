@@ -1,14 +1,64 @@
 // pages/Home.tsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Hero from '../components/Hero';
 import About from '../components/About';
 import ProgramCard from '../components/ProgramCard';
 import ConsultationForm from '../components/ConsultationForm';
 import { useNavigate } from 'react-router-dom';
-import logo from '../assets/logo.png'
+import logoFallback from '../assets/logo.png';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
+
+const defaultProgramContent: Record<string, string> = {
+  programs_kicker: 'Services',
+  programs_title: 'TRAINING PROGRAMS',
+  programs_subtitle: 'Select a program tailored to your fitness goals and lifestyle.',
+  program_card_1_title: '1-on-1 Private Coaching',
+  program_card_1_description: 'High-intensity strength & conditioning tailored directly to your biomechanics and personal targets.',
+  program_card_2_title: 'Duo Session Coaching',
+  program_card_2_description: 'Accountability, and cooperation based strength training personalized to your team.',
+  program_card_3_title: 'Online Hybrid Fitness',
+  program_card_3_description: 'Custom training plans, weekly video form audits, and direct message check-ins via our client portal.',
+  program_feature_badge: 'In Action',
+  program_feature_title_line_1: 'REAL RESULTS.',
+  program_feature_title_line_2: 'NO GUESSWORK.',
+  program_feature_description: 'Every program is backed by biomechanical form analysis and personalized feedback loops.',
+  program_feature_cta_label: 'Schedule Free Assessment',
+};
 
 export default function Home() {
   const navigate = useNavigate();
+  const [programContent, setProgramContent] = useState<Record<string, string>>(defaultProgramContent);
+  const [homeFeaturePhotoSrc, setHomeFeaturePhotoSrc] = useState<string>(`${API_URL}/api/media/home_feature_photo?v=${Date.now()}`);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadContent = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/content`, {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          return;
+        }
+
+        const data = await response.json();
+        const items = (data?.items ?? {}) as Record<string, string>;
+        setProgramContent({
+          ...defaultProgramContent,
+          ...items,
+        });
+      } catch {
+        // Keep defaults if content endpoint is unavailable.
+      }
+    };
+
+    void loadContent();
+
+    return () => controller.abort();
+  }, []);
 
   const handleProgramSelect = (programName: string) => {
     // Route to dedicated consultation page with state pre-selected
@@ -36,11 +86,11 @@ export default function Home() {
       <section id="programs" className="space-y-6">
         <div className="text-center space-y-2">
           <span className="text-[#38C2DE] text-xs font-bold tracking-widest uppercase">
-            Services
+            {programContent.programs_kicker}
           </span>
-          <h2 className="text-3xl font-extrabold tracking-tight">TRAINING PROGRAMS</h2>
+          <h2 className="text-3xl font-extrabold tracking-tight">{programContent.programs_title}</h2>
           <p className="text-[#A0A5AA] text-sm">
-            Select a program tailored to your fitness goals and lifestyle.
+            {programContent.programs_subtitle}
           </p>
         </div>
 
@@ -56,18 +106,18 @@ export default function Home() {
           {/* Left Column: 3 Program Cards */}
           <div style={{ flex: '1 1 480px' }} className="flex flex-col gap-4">
             <ProgramCard
-            title="1-on-1 Private Coaching"
-            description="High-intensity strength & conditioning tailored directly to your biomechanics and personal targets."
+            title={programContent.program_card_1_title}
+            description={programContent.program_card_1_description}
             onSelect={() => navigate('/book', { state: { selectedProgram: '1-on-1 Private Coaching' } })}
             />
              <ProgramCard
-              title="Duo Session Coaching"
-              description="Accountability, and cooperation based strength training personalized to your team."
+              title={programContent.program_card_2_title}
+              description={programContent.program_card_2_description}
               onSelect={() => navigate('/book', { state: { selectedProgram: 'Duo Session Coaching' } })}
               />
             <ProgramCard
-              title="Online Hybrid Fitness"
-              description="Custom training plans, weekly video form audits, and direct message check-ins via our client portal."
+              title={programContent.program_card_3_title}
+              description={programContent.program_card_3_description}
               onSelect={() => navigate('/programs')}
             />
           </div>
@@ -90,7 +140,12 @@ export default function Home() {
               }}
             >
               <img 
-                src={logo} 
+                src={homeFeaturePhotoSrc}
+                onError={() => {
+                  if (homeFeaturePhotoSrc !== logoFallback) {
+                    setHomeFeaturePhotoSrc(logoFallback);
+                  }
+                }}
                 alt="BTY Fitness Training Session" 
                 style={{
                   maxWidth: '78%',
@@ -107,15 +162,15 @@ export default function Home() {
             {/* Content Zone */}
             <div className="p-6 space-y-4">
               <span className="bg-[#38C2DE]/20 text-[#38C2DE] border border-[#38C2DE]/40 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full backdrop-blur-md">
-                In Action
+                {programContent.program_feature_badge}
               </span>
               <div>
                 <h3 className="text-2xl font-black text-white tracking-tight leading-tight">
-                  REAL RESULTS.<br />
-                  <span className="text-[#38C2DE]">NO GUESSWORK.</span>
+                  {programContent.program_feature_title_line_1}<br />
+                  <span className="text-[#38C2DE]">{programContent.program_feature_title_line_2}</span>
                 </h3>
                 <p className="text-[#A0A5AA] text-xs mt-2 leading-relaxed">
-                  Every program is backed by biomechanical form analysis and personalized feedback loops.
+                  {programContent.program_feature_description}
                 </p>
               </div>
 
@@ -123,7 +178,7 @@ export default function Home() {
             onClick={() => navigate('/book')}
             className="btn-neon-primary w-full text-sm py-3 mt-2 shadow-lg"
             >
-            Schedule Free Assessment
+            {programContent.program_feature_cta_label}
             </button>
             </div>
           </aside>

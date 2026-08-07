@@ -1,17 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import Navbar from "./components/Navbar";
 import { Outlet } from "react-router-dom";
-import logo from './assets/logo.png'
+import logoFallback from './assets/logo.png';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
 export default function Layout() {
+  const [brandLogoSrc, setBrandLogoSrc] = useState<string>(`${API_URL}/api/media/brand_logo?v=${Date.now()}`);
+
   return (
     <div className="bty-container">
       <Navbar />
 
       {/* Hero Banner (optional but recommended) */}
       <div className="bty-hero-banner">
-        <img src={logo} alt="BTY Fitness Logo" className="bty-hero-logo" />
+        <img
+          src={brandLogoSrc}
+          onError={() => {
+            if (brandLogoSrc !== logoFallback) {
+              setBrandLogoSrc(logoFallback);
+            }
+          }}
+          alt="BTY Fitness Logo"
+          className="bty-hero-logo"
+        />
       </div>
 
       {/* Page Content */}

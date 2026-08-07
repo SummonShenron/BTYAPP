@@ -14,9 +14,11 @@ logger = logging.getLogger("BTY Logger")
 # Clerk JWKS endpoint (replace with your Clerk frontend API domain)
 # Example: "https://your-app.clerk.accounts.dev/.well-known/jwks.json"
 CLERK_JWKS_URL = os.getenv("CLERK_JWKS_URL", "https://<your-clerk-domain>/.well-known/jwks.json")
+jwks_client = PyJWKClient(CLERK_JWKS_URL)
+JWT_LEEWAY_SECONDS = int(os.getenv("JWT_LEEWAY_SECONDS", "120"))
 
 DEFAULT_ADMIN_EMAILS = [
-    "madspear9@gmail.com",
+    "jackharper0517@outlook.com",
     "jackharper0517@gmail.com",
     "madspear9@gmail.com",
 ]
@@ -67,20 +69,27 @@ def _extract_user_email(user: dict) -> str | None:
 async def get_optional_user(credentials: HTTPAuthorizationCredentials = Security(security)):
     """Returns user payload if logged in, or None if browsing as guest."""
     if not credentials:
+        logger.info("Auth skipped: no Authorization credentials present")
         return None
     try:
-        # Securely verify token signature using Clerk's JWKS
-        jwks_client = PyJWKClient(CLERK_JWKS_URL)
+        # Reuse a shared JWKS client to avoid repeated key fetches under burst traffic.
         signing_key = jwks_client.get_signing_key_from_jwt(credentials.credentials)
-        
+
         payload = jwt.decode(
             credentials.credentials,
             signing_key.key,
             algorithms=["RS256"],
-            options={"verify_aud": False}
+            options={"verify_aud": False},
+            leeway=JWT_LEEWAY_SECONDS,
         )
         return payload
     except Exception as e:
+        logger.warning(
+            "Auth token verification failed (jwks=%s, leeway=%ss): %s",
+            CLERK_JWKS_URL,
+            JWT_LEEWAY_SECONDS,
+            str(e),
+        )
         return None
 
 async def get_current_client(credentials: HTTPAuthorizationCredentials = Security(security)):
