@@ -6,6 +6,7 @@ import './__styles__/Landing.css';
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 const SERVER_POLL_INTERVAL_MS = 1500;
 const REQUEST_TIMEOUT_MS = 8000;
+const FAST_CHECK_TIMEOUT_MS = 1200;
 const CONTINUE_ANYWAY_AFTER_SECONDS = 5;
 const AUTO_CONTINUE_AFTER_SECONDS = 22;
 
@@ -60,12 +61,12 @@ export default function Landing() {
     };
   }, [isStarting]);
 
-  const probeServer = async (): Promise<boolean> => {
+  const probeServer = async (timeoutMs = REQUEST_TIMEOUT_MS): Promise<boolean> => {
     const healthUrl = `${API_URL}/health?ts=${Date.now()}`;
 
     const runProbe = async (mode: RequestMode): Promise<boolean> => {
       const controller = new AbortController();
-      const timer = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+      const timer = window.setTimeout(() => controller.abort(), timeoutMs);
 
       try {
         const response = await fetch(healthUrl, {
@@ -103,6 +104,13 @@ export default function Landing() {
 
     // Prevent permanent blocking in deployed environments with missing/misconfigured API URL.
     if (!isBrowserLocalhost && isApiLocalhost) {
+      navigate('/home');
+      return;
+    }
+
+    // Fast preflight: if backend is already awake, skip overlay entirely.
+    const readyNow = await probeServer(FAST_CHECK_TIMEOUT_MS);
+    if (readyNow) {
       navigate('/home');
       return;
     }
