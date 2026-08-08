@@ -6,12 +6,24 @@ import './__styles__/Landing.css';
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 const SERVER_POLL_INTERVAL_MS = 1500;
 const REQUEST_TIMEOUT_MS = 8000;
-const CONTINUE_ANYWAY_AFTER_SECONDS = 35;
+const CONTINUE_ANYWAY_AFTER_SECONDS = 5;
+const AUTO_CONTINUE_AFTER_SECONDS = 22;
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const getHostFromUrl = (url: string): string => {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return '';
+  }
+};
+
 export default function Landing() {
   const navigate = useNavigate();
+  const apiHost = getHostFromUrl(API_URL);
+  const isApiLocalhost = apiHost === 'localhost' || apiHost === '127.0.0.1';
+  const isBrowserLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   const [landingLogoSrc, setLandingLogoSrc] = useState<string>(`${API_URL}/api/media/landing_logo?v=${Date.now()}`);
   const [isStarting, setIsStarting] = useState(false);
   const [showNotice, setShowNotice] = useState(true);
@@ -89,12 +101,25 @@ export default function Landing() {
       return;
     }
 
+    // Prevent permanent blocking in deployed environments with missing/misconfigured API URL.
+    if (!isBrowserLocalhost && isApiLocalhost) {
+      navigate('/home');
+      return;
+    }
+
     cancelRef.current = false;
     setIsStarting(true);
     setElapsedSeconds(0);
     setCanContinueAnyway(false);
+    const startedAt = Date.now();
 
     while (!cancelRef.current) {
+      const elapsed = (Date.now() - startedAt) / 1000;
+      if (elapsed >= AUTO_CONTINUE_AFTER_SECONDS) {
+        navigate('/home');
+        return;
+      }
+
       const isReady = await probeServer();
       if (isReady) {
         navigate('/home');
