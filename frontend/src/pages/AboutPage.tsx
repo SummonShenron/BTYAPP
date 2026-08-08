@@ -24,13 +24,9 @@ const defaults: Record<string, string> = {
 
 export default function AboutMe() {
   const [content, setContent] = useState<Record<string, string>>(defaults);
-  const [photoSrc, setPhotoSrc] = useState<string>(`${API_URL}/api/media/about_photo?v=${Date.now()}`);
-  const [useUploadedPhoto, setUseUploadedPhoto] = useState(true);
 
   useEffect(() => {
     const controller = new AbortController();
-    setPhotoSrc(`${API_URL}/api/media/about_photo?v=${Date.now()}`);
-    setUseUploadedPhoto(true);
 
     const loadContent = async () => {
       try {
@@ -85,8 +81,7 @@ export default function AboutMe() {
         <aside className="profile-frame">
           <div className="profile-media-zone">
             <img
-              src={useUploadedPhoto ? photoSrc : madi2}
-              onError={() => setUseUploadedPhoto(false)}
+              src={madi2}
               alt="Madison Spear"
               className="profile-media-image"
             />

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import logoFallback from '../assets/logo.png';
+import logoImg from '../assets/logo.png';
 import './__styles__/hero.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
@@ -23,7 +23,6 @@ const defaults: Record<string, string> = {
 export default function Hero() {
   const navigate = useNavigate();
   const [content, setContent] = useState<Record<string, string>>(defaults);
-  const [heroLogoSrc, setHeroLogoSrc] = useState<string>(`${API_URL}/api/media/hero_sidebar_logo?v=${Date.now()}`);
 
   useEffect(() => {
     let active = true;
@@ -77,12 +76,7 @@ export default function Hero() {
           <div className="hero-sidebar-card">
             <div className="sidebar-image-slot">
               <img
-                src={heroLogoSrc}
-                onError={() => {
-                  if (heroLogoSrc !== logoFallback) {
-                    setHeroLogoSrc(logoFallback);
-                  }
-                }}
+                src={logoImg}
                 alt="BTY Fitness Logo"
                 className="sidebar-logo"
               />

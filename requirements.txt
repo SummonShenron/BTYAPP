@@ -2,7 +2,6 @@ fastapi
 uvicorn
 pymongo
 motor
-python-multipart
 python-dotenv
 PyJWT
 cryptography

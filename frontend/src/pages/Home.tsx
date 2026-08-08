@@ -5,7 +5,8 @@ import About from '../components/About';
 import ProgramCard from '../components/ProgramCard';
 import ConsultationForm from '../components/ConsultationForm';
 import { useNavigate } from 'react-router-dom';
-import logoFallback from '../assets/logo.png';
+import homeFeaturePhoto from '../assets/madi1.jpg';
+import logoImg from '../assets/logo.png';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
@@ -29,7 +30,6 @@ const defaultProgramContent: Record<string, string> = {
 export default function Home() {
   const navigate = useNavigate();
   const [programContent, setProgramContent] = useState<Record<string, string>>(defaultProgramContent);
-  const [homeFeaturePhotoSrc, setHomeFeaturePhotoSrc] = useState<string>(`${API_URL}/api/media/home_feature_photo?v=${Date.now()}`);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -140,12 +140,7 @@ export default function Home() {
               }}
             >
               <img 
-                src={homeFeaturePhotoSrc}
-                onError={() => {
-                  if (homeFeaturePhotoSrc !== logoFallback) {
-                    setHomeFeaturePhotoSrc(logoFallback);
-                  }
-                }}
+                src={logoImg}
                 alt="BTY Fitness Training Session" 
                 style={{
                   maxWidth: '78%',

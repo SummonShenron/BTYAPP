@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import logoFallback from '../assets/logo.png';
+import logoImg from '../assets/logo.png';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
 export const Book: React.FC = () => {
-  const [bookSuccessLogoSrc, setBookSuccessLogoSrc] = useState<string>(`${API_URL}/api/media/book_success_logo?v=${Date.now()}`);
   const [sessionType, setSessionType] = useState('consultation');
   const [submitted, setSubmitted] = useState(false);
   const [bookingData, setBookingData] = useState({
@@ -95,12 +94,7 @@ export const Book: React.FC = () => {
             <div className="booking-success text-center">
               <div className="chat-input-wrapper success-logo-container">
                 <img
-                  src={bookSuccessLogoSrc}
-                  onError={() => {
-                    if (bookSuccessLogoSrc !== logoFallback) {
-                      setBookSuccessLogoSrc(logoFallback);
-                    }
-                  }}
+                  src={logoImg}
                   alt="BTY Fitness"
                   className="success-logo"
                 />

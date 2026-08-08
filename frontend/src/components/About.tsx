@@ -18,7 +18,6 @@ const defaults: Record<string, string> = {
 
 export const About: React.FC = () => {
   const [content, setContent] = useState<Record<string, string>>(defaults);
-  const [aboutPhotoSrc, setAboutPhotoSrc] = useState<string>(`${API_URL}/api/media/about_section_photo?v=${Date.now()}`);
 
   useEffect(() => {
     let active = true;
@@ -47,12 +46,7 @@ export const About: React.FC = () => {
       <div className="about-container">
         <div className="about-photo-shell about-image-wrapper chat-input-wrapper">
           <img
-            src={aboutPhotoSrc}
-            onError={() => {
-              if (aboutPhotoSrc !== aboutSectionFallbackPhoto) {
-                setAboutPhotoSrc(aboutSectionFallbackPhoto);
-              }
-            }}
+            src={aboutSectionFallbackPhoto}
             alt="Madison Spear - BTY Fitness"
             className="about-img about-img-sleek"
           />

@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth, UserButton } from '@clerk/clerk-react';
 import ScheduleManager from '../components/ScheduleManager';
-import aboutPageFallbackPhoto from '../assets/madi2.jpeg';
-import aboutSectionFallbackPhoto from '../assets/madi1.jpg';
-import logoFallback from '../assets/logo.png';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
@@ -28,28 +25,6 @@ interface ContentResponse {
   defaults?: Record<string, string>;
   updated_at?: string;
 }
-
-interface MediaSlotMetadata {
-  slot: string;
-  exists?: boolean;
-  filename?: string | null;
-  content_type?: string | null;
-  size: number;
-  updated_at?: string | null;
-  updated_by?: string | null;
-  public_url?: string | null;
-}
-
-type MediaSlotId =
-  | 'about_photo'
-  | 'about_section_photo'
-  | 'hero_sidebar_logo'
-  | 'home_feature_photo'
-  | 'brand_logo'
-  | 'book_success_logo'
-  | 'landing_logo'
-  | 'merch_product_1_photo'
-  | 'merch_product_2_photo';
 
 type ContentSectionId =
   | 'hero'
@@ -276,63 +251,6 @@ const contentSections: Array<{ id: ContentSectionId; label: string; matches: (ke
   { id: 'merch', label: 'Merch', matches: (key) => key.startsWith('merch_') },
 ];
 
-const MEDIA_SLOT_CONFIGS: Array<{ id: MediaSlotId; label: string; description: string; fallbackSrc: string }> = [
-  {
-    id: 'about_photo',
-    label: 'About Page Photo',
-    description: 'Used on the full About page portrait.',
-    fallbackSrc: aboutPageFallbackPhoto,
-  },
-  {
-    id: 'about_section_photo',
-    label: 'Home About Section Photo',
-    description: 'Used on the homepage Meet Madison section.',
-    fallbackSrc: aboutSectionFallbackPhoto,
-  },
-  {
-    id: 'hero_sidebar_logo',
-    label: 'Hero Sidebar Logo',
-    description: 'Used in the Hero sidebar card.',
-    fallbackSrc: logoFallback,
-  },
-  {
-    id: 'home_feature_photo',
-    label: 'Home Feature Card Photo',
-    description: 'Used on the home Programs feature card.',
-    fallbackSrc: logoFallback,
-  },
-  {
-    id: 'brand_logo',
-    label: 'Global Brand Logo',
-    description: 'Used in layout header and shared brand placements.',
-    fallbackSrc: logoFallback,
-  },
-  {
-    id: 'book_success_logo',
-    label: 'Book Success Logo',
-    description: 'Used on the legacy Book success state.',
-    fallbackSrc: logoFallback,
-  },
-  {
-    id: 'landing_logo',
-    label: 'Landing Page Logo',
-    description: 'Used on the splash landing page.',
-    fallbackSrc: logoFallback,
-  },
-  {
-    id: 'merch_product_1_photo',
-    label: 'Merch Product 1 Photo',
-    description: 'Used for the first merch product image.',
-    fallbackSrc: logoFallback,
-  },
-  {
-    id: 'merch_product_2_photo',
-    label: 'Merch Product 2 Photo',
-    description: 'Used for the second merch product image.',
-    fallbackSrc: logoFallback,
-  },
-];
-
 export default function AdminDashboard() {
   const { getToken, isLoaded, isSignedIn } = useAuth();
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -340,7 +258,6 @@ export default function AdminDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending' | 'contacted' | 'confirmed'>('all');
   const [isContentEditorOpen, setIsContentEditorOpen] = useState(false);
-  const [isMediaEditorOpen, setIsMediaEditorOpen] = useState(false);
   const [activeContentSection, setActiveContentSection] = useState<ContentSectionId>('hero');
   const [contentItems, setContentItems] = useState<Record<string, string>>({});
   const [contentDefaults, setContentDefaults] = useState<Record<string, string>>({});
@@ -348,18 +265,6 @@ export default function AdminDashboard() {
   const [contentSaving, setContentSaving] = useState(false);
   const [contentError, setContentError] = useState<string | null>(null);
   const [contentSuccess, setContentSuccess] = useState<string | null>(null);
-  const [mediaMetaBySlot, setMediaMetaBySlot] = useState<Partial<Record<MediaSlotId, MediaSlotMetadata>>>({});
-  const [mediaPreviewBySlot, setMediaPreviewBySlot] = useState<Partial<Record<MediaSlotId, string>>>(() => {
-    return MEDIA_SLOT_CONFIGS.reduce((acc, slotConfig) => {
-      acc[slotConfig.id] = slotConfig.fallbackSrc;
-      return acc;
-    }, {} as Partial<Record<MediaSlotId, string>>);
-  });
-  const [mediaFileBySlot, setMediaFileBySlot] = useState<Partial<Record<MediaSlotId, File | null>>>({});
-  const [mediaLoading, setMediaLoading] = useState(true);
-  const [mediaUploadingSlot, setMediaUploadingSlot] = useState<MediaSlotId | null>(null);
-  const [mediaError, setMediaError] = useState<string | null>(null);
-  const [mediaSuccess, setMediaSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isLoaded) {
@@ -374,10 +279,7 @@ export default function AdminDashboard() {
 
     fetchLeads();
     fetchContent();
-    fetchAllMediaMetadata();
   }, [isLoaded, isSignedIn]);
-
-  const buildMediaUrl = (path: string) => `${API_URL}${path}?v=${Date.now()}`;
 
   const getAuthTokenOrThrow = async () => {
     const token = await getToken();
@@ -469,42 +371,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const getMediaFallbackSrc = (slot: MediaSlotId) => {
-    return MEDIA_SLOT_CONFIGS.find((entry) => entry.id === slot)?.fallbackSrc || logoFallback;
-  };
-
-  const fetchMediaSlotMetadata = async (slot: MediaSlotId) => {
-    const res = await authedFetch(`/api/admin/media/${slot}`);
-
-    if (!res.ok) {
-      if (res.status === 401 || res.status === 403) {
-        throw new Error('Unauthorized access. Ensure you are signed in with an admin account.');
-      }
-      throw new Error(`Server returned status ${res.status}`);
-    }
-
-    const data: MediaSlotMetadata = await res.json();
-    setMediaMetaBySlot((prev) => ({
-      ...prev,
-      [slot]: data,
-    }));
-    setMediaPreviewBySlot((prev) => ({
-      ...prev,
-      [slot]: data.public_url && data.exists !== false ? buildMediaUrl(data.public_url) : getMediaFallbackSrc(slot),
-    }));
-  };
-
-  const fetchAllMediaMetadata = async () => {
-    try {
-      setMediaLoading(true);
-      setMediaError(null);
-      await Promise.all(MEDIA_SLOT_CONFIGS.map((slotConfig) => fetchMediaSlotMetadata(slotConfig.id)));
-    } catch (err: any) {
-      setMediaError(err.message || 'Failed to load media settings.');
-    } finally {
-      setMediaLoading(false);
-    }
-  };
 
   const handleContentChange = (key: string, value: string) => {
     setContentItems((prev) => ({
@@ -562,58 +428,6 @@ export default function AdminDashboard() {
     setContentError(null);
   };
 
-  const handleMediaUpload = async (slot: MediaSlotId) => {
-    const selectedFile = mediaFileBySlot[slot];
-    if (!selectedFile) {
-      setMediaError('Select an image before uploading.');
-      return;
-    }
-
-    try {
-      setMediaUploadingSlot(slot);
-      setMediaError(null);
-      setMediaSuccess(null);
-
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-
-      const res = await authedFetch(`/api/admin/media/${slot}`, {
-        method: 'PUT',
-        body: formData,
-      });
-
-      if (!res.ok) {
-        if (res.status === 401 || res.status === 403) {
-          throw new Error('Unauthorized access. Ensure you are signed in with an admin account.');
-        }
-        const errorData = await res.json().catch(() => null);
-        throw new Error(errorData?.detail || `Server returned status ${res.status}`);
-      }
-
-      const data = await res.json();
-      const media = data?.media as MediaSlotMetadata;
-      setMediaMetaBySlot((prev) => ({
-        ...prev,
-        [slot]: media,
-      }));
-      const uploadedPublicUrl = media?.public_url;
-      if (typeof uploadedPublicUrl === 'string' && uploadedPublicUrl) {
-        setMediaPreviewBySlot((prev) => ({
-          ...prev,
-          [slot]: buildMediaUrl(uploadedPublicUrl),
-        }));
-      }
-      setMediaFileBySlot((prev) => ({
-        ...prev,
-        [slot]: null,
-      }));
-      setMediaSuccess(`${MEDIA_SLOT_CONFIGS.find((entry) => entry.id === slot)?.label || 'Image'} uploaded successfully.`);
-    } catch (err: any) {
-      setMediaError(err.message || 'Failed to upload image.');
-    } finally {
-      setMediaUploadingSlot(null);
-    }
-  };
 
   const handleStatusUpdate = async (leadId: string, newStatus: string) => {
     setLeads((prev) =>
@@ -803,196 +617,6 @@ export default function AdminDashboard() {
             >
               {contentSaving ? 'Saving...' : 'Save All'}
             </button>
-          </div>
-
-          <div
-            style={{
-              background: '#0d0e11',
-              border: '1px solid #262830',
-              borderRadius: '12px',
-              padding: '1rem',
-              marginBottom: '1rem',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                gap: '0.8rem',
-                marginBottom: isMediaEditorOpen ? '0.95rem' : 0,
-              }}
-            >
-              <h3 style={{ margin: 0, fontSize: '0.92rem', fontWeight: 800, color: '#fff' }}>
-                Site Photos
-              </h3>
-              <button
-                type="button"
-                onClick={() => setIsMediaEditorOpen((prev) => !prev)}
-                aria-expanded={isMediaEditorOpen}
-                style={{
-                  padding: '0.4rem 0.75rem',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  borderRadius: '8px',
-                  border: '1px solid #262830',
-                  background: '#141519',
-                  color: '#8b8f9a',
-                  cursor: 'pointer',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.04em',
-                }}
-              >
-                {isMediaEditorOpen ? 'Hide Photos' : 'Edit Photos'}
-              </button>
-            </div>
-
-            {isMediaEditorOpen && (
-              <>
-                <p style={{ margin: '0 0 0.95rem 0', color: '#8b8f9a', fontSize: '0.78rem' }}>
-                  Upload JPG, PNG, or WEBP up to 5MB. If a slot has no upload yet, the page uses its bundled fallback image.
-                </p>
-
-                <div style={{ display: 'grid', gap: '0.9rem' }}>
-                  {MEDIA_SLOT_CONFIGS.map((slotConfig) => {
-                    const slot = slotConfig.id;
-                    const slotMeta = mediaMetaBySlot[slot];
-                    const selectedFile = mediaFileBySlot[slot];
-                    const isUploadingThisSlot = mediaUploadingSlot === slot;
-                    const previewSrc = mediaPreviewBySlot[slot] || slotConfig.fallbackSrc;
-
-                    return (
-                      <div
-                        key={slot}
-                        style={{
-                          border: '1px solid #262830',
-                          borderRadius: '10px',
-                          padding: '0.8rem',
-                          background: '#111216',
-                        }}
-                      >
-                        <h4 style={{ margin: '0 0 0.3rem 0', fontSize: '0.82rem', fontWeight: 800, color: '#fff' }}>
-                          {slotConfig.label}
-                        </h4>
-
-                        <p style={{ margin: '0 0 0.65rem 0', color: '#8b8f9a', fontSize: '0.74rem' }}>
-                          {slotConfig.description}
-                        </p>
-
-                        <img
-                          src={previewSrc}
-                          alt={`${slotConfig.label} preview`}
-                          style={{
-                            width: '100%',
-                            maxWidth: '220px',
-                            aspectRatio: '4 / 5',
-                            objectFit: 'cover',
-                            borderRadius: '8px',
-                            border: '1px solid #262830',
-                            display: 'block',
-                            marginBottom: '0.65rem',
-                          }}
-                        />
-
-                        {slotMeta?.exists === false && (
-                          <p style={{ margin: '0 0 0.65rem 0', color: '#6e7380', fontSize: '0.72rem' }}>
-                            Using bundled fallback image.
-                          </p>
-                        )}
-
-                        {slotMeta?.filename && (
-                          <p style={{ margin: '0 0 0.65rem 0', color: '#8b8f9a', fontSize: '0.72rem' }}>
-                            Current file: {slotMeta.filename} ({Math.round((slotMeta.size || 0) / 1024)} KB)
-                          </p>
-                        )}
-
-                        <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp"
-                            onChange={(event) =>
-                              setMediaFileBySlot((prev) => ({
-                                ...prev,
-                                [slot]: event.target.files?.[0] || null,
-                              }))
-                            }
-                            style={{ color: '#8b8f9a', fontSize: '0.74rem' }}
-                          />
-
-                          <button
-                            type="button"
-                            onClick={() => handleMediaUpload(slot)}
-                            disabled={!selectedFile || isUploadingThisSlot}
-                            style={{
-                              padding: '0.44rem 0.82rem',
-                              fontSize: '0.74rem',
-                              fontWeight: 800,
-                              borderRadius: '8px',
-                              border: '1px solid #38C2DE',
-                              background: !selectedFile || isUploadingThisSlot ? '#1d2027' : '#38C2DE',
-                              color: !selectedFile || isUploadingThisSlot ? '#6e7380' : '#000',
-                              cursor: !selectedFile || isUploadingThisSlot ? 'not-allowed' : 'pointer',
-                            }}
-                          >
-                            {isUploadingThisSlot ? 'Uploading...' : 'Upload'}
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => fetchMediaSlotMetadata(slot)}
-                            disabled={mediaLoading || isUploadingThisSlot}
-                            style={{
-                              padding: '0.44rem 0.82rem',
-                              fontSize: '0.74rem',
-                              fontWeight: 800,
-                              borderRadius: '8px',
-                              border: '1px solid #262830',
-                              background: '#141519',
-                              color: '#8b8f9a',
-                              cursor: 'pointer',
-                            }}
-                          >
-                            Refresh
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
-            )}
-
-            {mediaError && (
-              <div
-                style={{
-                  padding: '0.65rem 0.8rem',
-                  background: 'rgba(255, 77, 77, 0.1)',
-                  border: '1px solid #ff4d4d',
-                  color: '#ff4d4d',
-                  borderRadius: '10px',
-                  fontSize: '0.78rem',
-                  marginTop: '0.8rem',
-                }}
-              >
-                {mediaError}
-              </div>
-            )}
-
-            {mediaSuccess && (
-              <div
-                style={{
-                  padding: '0.65rem 0.8rem',
-                  background: 'rgba(0, 255, 204, 0.08)',
-                  border: '1px solid #00ffcc',
-                  color: '#00ffcc',
-                  borderRadius: '10px',
-                  fontSize: '0.78rem',
-                  marginTop: '0.8rem',
-                }}
-              >
-                {mediaSuccess}
-              </div>
-            )}
           </div>
 
           {contentError && (

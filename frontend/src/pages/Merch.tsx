@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import logoImg from '../assets/logo.png';
+import merchPhoto2 from '../assets/madi2.jpeg';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
@@ -10,7 +11,6 @@ interface Product {
   price: string;
   description: string;
   image: string;
-  mediaSlot: 'merch_product_1_photo' | 'merch_product_2_photo';
   sizes?: string[];
   inStock: boolean;
   venmoUsername: string;
@@ -24,7 +24,6 @@ const merchData: Product[] = [
     price: '$65.00',
     description: '380GSM ultra-soft fleece hoodie featuring custom high-density silicone BTY logo print on chest.',
     image: logoImg,
-    mediaSlot: 'merch_product_1_photo',
     sizes: ['S', 'M', 'L', 'XL', '2XL'],
     inStock: true,
     venmoUsername: '@Madison-Spear3',
@@ -36,7 +35,6 @@ const merchData: Product[] = [
     price: '$38.00',
     description: '100% combed ring-spun cotton drop-shoulder tee engineered for freedom of movement during heavy lifts.',
     image: logoImg,
-    mediaSlot: 'merch_product_2_photo',
     sizes: ['S', 'M', 'L', 'XL'],
     inStock: true,
     venmoUsername: '@Madison-Spear3',
@@ -256,11 +254,7 @@ export default function Merch() {
                   {item.category}
                 </span>
                 <img
-                  src={`${API_URL}/api/media/${item.mediaSlot}`}
-                  onError={(event) => {
-                    event.currentTarget.onerror = null;
-                    event.currentTarget.src = item.image;
-                  }}
+                  src={item.image}
                   alt={item.name}
                   style={{ 
                     maxHeight: '130px', 

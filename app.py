@@ -3,8 +3,7 @@ import logging
 import os
 from typing import List, Optional, Dict
 from pydantic import BaseModel
-from fastapi import FastAPI, Depends, BackgroundTasks, HTTPException, status, Request, UploadFile, File
-from fastapi.responses import Response
+from fastapi import FastAPI, Depends, BackgroundTasks, HTTPException, status, Request
 from bson import ObjectId
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -15,11 +14,6 @@ from backend.utils.cms_utils import (
     get_content_map,
     update_content_bulk,
     update_content_key,
-)
-from backend.utils.media_utils import (
-    get_media_slot_bytes,
-    get_media_slot_metadata,
-    upload_media_slot,
 )
 from backend.utils.leads_utils import (
     ConsultationLead, 
@@ -318,66 +312,3 @@ async def put_admin_content_bulk(
         }
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
-
-
-@app.get("/api/media/{slot}")
-async def get_public_media_slot(slot: str):
-    try:
-        payload, content_type, meta = get_media_slot_bytes(slot)
-        cache_tag = meta.get("updated_at", "")
-        return Response(
-            content=payload,
-            media_type=content_type,
-            headers={
-                "Cache-Control": "public, max-age=300",
-                "ETag": cache_tag,
-            },
-        )
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Media slot is empty.")
-    except RuntimeError as exc:
-        raise HTTPException(status_code=503, detail=str(exc))
-
-
-@app.get("/api/admin/media/{slot}")
-async def get_admin_media_slot(slot: str, admin: dict = Depends(verify_admin)):
-    try:
-        metadata = get_media_slot_metadata(slot)
-        if not metadata:
-            return {
-                "slot": slot,
-                "exists": False,
-                "filename": None,
-                "content_type": None,
-                "size": 0,
-                "updated_at": None,
-                "updated_by": None,
-                "public_url": None,
-            }
-        return metadata
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
-
-
-@app.put("/api/admin/media/{slot}")
-async def put_admin_media_slot(
-    slot: str,
-    file: UploadFile = File(...),
-    admin: dict = Depends(verify_admin),
-):
-    try:
-        metadata = upload_media_slot(
-            slot=slot,
-            upload_file=file,
-            updated_by=admin.get("sub"),
-        )
-        return {
-            "success": True,
-            "media": metadata,
-        }
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
-    except RuntimeError as exc:
-        raise HTTPException(status_code=503, detail=str(exc))
