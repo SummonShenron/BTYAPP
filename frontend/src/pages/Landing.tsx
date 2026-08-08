@@ -4,6 +4,7 @@ import logoFallback from '../assets/logo.png';
 import './__styles__/Landing.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
+const WAKE_PROBE_PATH = '/api/content';
 const SERVER_POLL_INTERVAL_MS = 1500;
 const REQUEST_TIMEOUT_MS = 8000;
 const FAST_CHECK_TIMEOUT_MS = 1200;
@@ -62,26 +63,22 @@ export default function Landing() {
   }, [isStarting]);
 
   const probeServer = async (timeoutMs = REQUEST_TIMEOUT_MS): Promise<boolean> => {
-    const healthUrl = `${API_URL}/health?ts=${Date.now()}`;
+    const probeUrl = `${API_URL}${WAKE_PROBE_PATH}?ts=${Date.now()}`;
 
     const runProbe = async (mode: RequestMode): Promise<boolean> => {
       const controller = new AbortController();
       const timer = window.setTimeout(() => controller.abort(), timeoutMs);
 
       try {
-        const response = await fetch(healthUrl, {
+        await fetch(probeUrl, {
           method: 'GET',
           cache: 'no-store',
           mode,
           signal: controller.signal,
         });
 
-        // In no-cors mode, an opaque response still means the server responded.
-        if (mode === 'no-cors') {
-          return true;
-        }
-
-        return response.ok;
+        // If fetch resolves at all (including opaque/no-cors), backend is reachable.
+        return true;
       } catch {
         return false;
       } finally {
