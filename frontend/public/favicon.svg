@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- Cyan Rounded Background -->
+  <rect width="512" height="512" rx="110" fill="#38C2DE"/>
+
+  <!-- Heavy Dark BTY Lettering -->
+  <text 
+    x="256" 
+    y="310" 
+    font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+    font-weight="900" 
+    font-size="170" 
+    fill="#121316" 
+    text-anchor="middle" 
+    letter-spacing="-3"
+  >
+    BTY
+  </text>
+</svg>
