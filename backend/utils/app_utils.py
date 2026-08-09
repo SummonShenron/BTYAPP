@@ -12,6 +12,25 @@ import urllib.error as urllib_error
 DEFAULT_TARGET_REPO_FALLBACK = "summonshenron/SAAPP"
 DEFAULT_ERRAGENT_INGEST_URL = "https://erragent.onrender.com/api/v1/webhooks/ingest"
 
+
+def build_erragent_ingest_payload(payload: Dict[str, Any]) -> Dict[str, Any]:
+    normalized_payload = dict(payload)
+    repository = normalized_payload.get("repository")
+    if isinstance(repository, str) and repository.strip():
+        normalized_payload["repository"] = repository.strip()
+        return normalized_payload
+
+    configured_repository = os.getenv("ERRAGENT_TARGET_REPO", "").strip()
+    if configured_repository:
+        normalized_payload["repository"] = configured_repository
+        return normalized_payload
+
+    service_name = normalized_payload.get("service_name")
+    if isinstance(service_name, str) and service_name.strip():
+        normalized_payload["repository"] = service_name.strip()
+
+    return normalized_payload
+
 def pick_repo_from_metadata(metadata: Optional[Dict[str, Any]]) -> Optional[str]:
     if not isinstance(metadata, dict):
         return None
@@ -66,7 +85,8 @@ def post_erragent_ingest(payload: Dict[str, Any]) -> Dict[str, Any]:
     if not ingest_secret:
         raise RuntimeError("ERRAGENT_INGEST_SECRET is not configured")
 
-    body = json.dumps(payload).encode("utf-8")
+    normalized_payload = build_erragent_ingest_payload(payload)
+    body = json.dumps(normalized_payload).encode("utf-8")
     req = urllib_request.Request(
         ingest_url,
         data=body,
