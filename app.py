@@ -1,14 +1,17 @@
 # app.py
 import logging
 import os
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 from pydantic import BaseModel
-from fastapi import FastAPI, Depends, BackgroundTasks, HTTPException, status, Request
+from fastapi import FastAPI, Depends, BackgroundTasks, HTTPException, status, Request, Header
 from bson import ObjectId
 from fastapi.middleware.cors import CORSMiddleware
-
-from backend.utils.db_utils import test_connection
 from backend.logging.bty_logger import setup_logging
+from backend.utils.db_utils import (
+    test_connection,
+    resolve_service_registry_repo,
+    save_error_event,
+)
 from backend.utils.cms_utils import (
     ALLOWED_CONTENT_KEYS,
     get_content_map,
@@ -28,6 +31,7 @@ from backend.utils.schedule_utils import (
     save_schedule_settings,
     find_slot,
 )
+from backend.utils.app_utils import resolve_target_repo, pick_repo_from_metadata
 from backend.utils.notifications_utils import notify_madison_of_lead
 from backend.utils.auth_utils import get_optional_user, get_current_client, verify_admin
 from dotenv import load_dotenv
@@ -51,6 +55,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+DEFAULT_TARGET_REPO_FALLBACK = "summonshenron/SAAPP"
+
+class IngestPayload(BaseModel):
+    service_name: str
+    error_message: str
+    stack_trace: str
+    environment: Optional[str] = None
+    repository: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = None
 
 class StatusUpdate(BaseModel):
     status: str
@@ -312,3 +326,68 @@ async def put_admin_content_bulk(
         }
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
+
+# -------------------------------------------------------------
+# 4. WEBHOOK ROUTES
+# -------------------------------------------------------------
+@app.post("/api/v1/webhooks/ingest", status_code=status.HTTP_200_OK)
+async def ingest_error_webhook(
+    payload: IngestPayload,
+    x_ingest_secret: Optional[str] = Header(default=None, alias="X-Ingest-Secret"),
+):
+    configured_secret = os.getenv("INGEST_WEBHOOK_SECRET")
+    if not configured_secret:
+        logger.error("INGEST_WEBHOOK_SECRET is not configured")
+        raise HTTPException(status_code=503, detail="Ingest is not configured")
+
+    if x_ingest_secret != configured_secret:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"accepted": False, "error": "invalid_ingest_secret"},
+        )
+
+    resolved_repo, resolved_via = resolve_target_repo(
+        service_name=payload.service_name,
+        payload_repo=payload.repository,
+        metadata=payload.metadata,
+    )
+
+    event_doc = {
+        "service_name": payload.service_name.strip(),
+        "error_message": payload.error_message,
+        "stack_trace": payload.stack_trace,
+        "environment": payload.environment or "unknown",
+        "repository": resolved_repo,
+        "resolved_via": resolved_via,
+        "metadata": payload.metadata or {},
+        "source": "direct_ingest",
+    }
+
+    try:
+        event_id = save_error_event(event_doc)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.error("Failed to persist ingest event: %s", str(exc))
+        raise HTTPException(status_code=500, detail="Failed to store ingest event") from exc
+
+    return {
+        "accepted": True,
+        "status": "stored",
+        "event_id": event_id,
+        "service_name": payload.service_name,
+        "resolved_repository": resolved_repo,
+        "resolved_via": resolved_via,
+    }
+
+# -------------------------------------------------------------
+# 5. TEST ROUTES
+# -------------------------------------------------------------
+@app.get("/api/erragent-debug")
+async def trigger_error():
+    logger.info("--> /errAgent-debug endpoint was successfully hit!")
+    try:
+        division_by_zero = 1 / 0
+    except Exception as e:
+        logger.info("--> Manually sent exception to ErrAgent")
+        raise e
