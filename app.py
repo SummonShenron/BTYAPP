@@ -1,6 +1,11 @@
 # app.py
 import logging
 import os
+import asyncio
+import json
+import traceback
+from urllib import error as urllib_error
+from urllib import request as urllib_request
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel
 from fastapi import FastAPI, Depends, BackgroundTasks, HTTPException, status, Request, Header
@@ -31,7 +36,12 @@ from backend.utils.schedule_utils import (
     save_schedule_settings,
     find_slot,
 )
-from backend.utils.app_utils import resolve_target_repo, pick_repo_from_metadata
+from backend.utils.app_utils import (
+    resolve_target_repo, 
+    pick_repo_from_metadata,
+    post_erragent_ingest,
+    send_erragent_ingest
+)
 from backend.utils.notifications_utils import notify_madison_of_lead
 from backend.utils.auth_utils import get_optional_user, get_current_client, verify_admin
 from dotenv import load_dotenv
@@ -57,6 +67,7 @@ app.add_middleware(
 )
 
 DEFAULT_TARGET_REPO_FALLBACK = "summonshenron/SAAPP"
+DEFAULT_ERRAGENT_INGEST_URL = "https://erragent.onrender.com/api/v1/webhooks/ingest"
 
 class IngestPayload(BaseModel):
     service_name: str
@@ -389,5 +400,26 @@ async def trigger_error():
     try:
         division_by_zero = 1 / 0
     except Exception as e:
-        logger.info("--> Manually sent exception to ErrAgent")
+        stack_trace = traceback.format_exc()
+        ingest_payload = {
+            "service_name": os.getenv("ERRAGENT_SERVICE_NAME", "btyapp"),
+            "error_message": str(e),
+            "stack_trace": stack_trace,
+            "environment": os.getenv("APP_ENV", os.getenv("ENVIRONMENT", "production")),
+            "metadata": {
+                "source": "api/erragent-debug",
+                "exception_type": e.__class__.__name__,
+            },
+        }
+
+        try:
+            ingest_result = await send_erragent_ingest(ingest_payload)
+            logger.info(
+                "--> ErrAgent ingest response status=%s body=%s",
+                ingest_result.get("status_code"),
+                ingest_result.get("body"),
+            )
+        except Exception as ingest_exc:
+            logger.error("--> Failed posting debug exception to ErrAgent: %s", str(ingest_exc))
+
         raise e
