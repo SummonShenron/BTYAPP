@@ -9,7 +9,7 @@ import urllib.request as urllib_request
 import urllib.error as urllib_error
 
 
-DEFAULT_TARGET_REPO_FALLBACK = "summonshenron/SAAPP"
+DEFAULT_TARGET_REPO_FALLBACK = "summonshenron/BTYAPP"
 DEFAULT_ERRAGENT_INGEST_URL = "https://erragent.onrender.com/api/v1/webhooks/ingest"
 
 
@@ -25,9 +25,9 @@ def build_erragent_ingest_payload(payload: Dict[str, Any]) -> Dict[str, Any]:
         normalized_payload["repository"] = configured_repository
         return normalized_payload
 
-    service_name = normalized_payload.get("service_name")
-    if isinstance(service_name, str) and service_name.strip():
-        normalized_payload["repository"] = service_name.strip()
+    default_repository = os.getenv("DEFAULT_TARGET_REPO", DEFAULT_TARGET_REPO_FALLBACK).strip()
+    if default_repository:
+        normalized_payload["repository"] = default_repository
 
     return normalized_payload
 
