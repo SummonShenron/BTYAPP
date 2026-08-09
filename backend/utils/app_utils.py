@@ -2,7 +2,7 @@
 from typing import Any, Optional, Dict
 from fastapi import Header
 import os
-from db_utils import resolve_service_registry_repo
+from backend.utils.db_utils import resolve_service_registry_repo
 
 DEFAULT_TARGET_REPO_FALLBACK = "summonshenron/SAAPP"
 
