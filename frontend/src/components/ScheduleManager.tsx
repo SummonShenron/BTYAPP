@@ -18,7 +18,7 @@ interface ScheduleSettings {
   slot_minutes: number;
   weekly_blocks: WeeklyBlock[];
 }
-
+console.log('todo: fix this')
 const WEEKDAY_OPTIONS = [
   { value: 0, label: 'Monday' },
   { value: 1, label: 'Tuesday' },
