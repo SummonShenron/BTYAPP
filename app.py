@@ -7,6 +7,7 @@ import traceback
 from urllib import error as urllib_error
 from urllib import request as urllib_request
 from typing import List, Optional, Dict, Any
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from fastapi import FastAPI, Depends, BackgroundTasks, HTTPException, status, Request, Header
 from bson import ObjectId
@@ -40,10 +41,16 @@ from backend.utils.app_utils import (
     resolve_target_repo, 
     pick_repo_from_metadata,
     post_erragent_ingest,
-    send_erragent_ingest
+    send_erragent_ingest,
+    dispatch_erragent_ingest,
+    build_error_payload,
+)
+from backend.utils.auth_utils import ( 
+    get_optional_user, 
+    get_current_client, 
+    verify_admin
 )
 from backend.utils.notifications_utils import notify_madison_of_lead
-from backend.utils.auth_utils import get_optional_user, get_current_client, verify_admin
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -85,6 +92,34 @@ class ContentValueUpdate(BaseModel):
 
 class BulkContentUpdate(BaseModel):
     items: Dict[str, str]
+
+# -------------------------------------------------------------
+# 0. GLOBAL EXCEPTION HANDLER and middleware
+# -------------------------------------------------------------
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    # Re-raise standard FastAPI HTTP exceptions so they return their intended status code (e.g. 401, 404)
+    if isinstance(exc, HTTPException):
+        raise exc
+
+    logger.error("--> Caught unhandled exception on %s [%s]: %s", request.url.path, request.method, str(exc))
+
+    # 1. Build standardized error payload
+    payload = build_error_payload(
+        exc=exc,
+        service_default="btyapp",
+        source=request.url.path,
+        method=request.method,
+    )
+
+    # 2. Fire-and-forget in background
+    dispatch_erragent_ingest(payload)
+
+    # 3. Return clean 500
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal Server Error"},
+    )
 
 @app.middleware("http")
 async def request_logging_middleware(request: Request, call_next):
@@ -396,30 +431,6 @@ async def ingest_error_webhook(
 # -------------------------------------------------------------
 @app.get("/api/erragent-debug")
 async def trigger_error():
-    logger.info("--> /errAgent-debug endpoint was successfully hit!")
-    try:
-        division_by_zero = 1 / 0
-    except Exception as e:
-        stack_trace = traceback.format_exc()
-        ingest_payload = {
-            "service_name": os.getenv("ERRAGENT_SERVICE_NAME", "btyapp"),
-            "error_message": str(e),
-            "stack_trace": stack_trace,
-            "environment": os.getenv("APP_ENV", os.getenv("ENVIRONMENT", "production")),
-            "metadata": {
-                "source": "api/erragent-debug",
-                "exception_type": e.__class__.__name__,
-            },
-        }
-
-        try:
-            ingest_result = await send_erragent_ingest(ingest_payload)
-            logger.info(
-                "--> ErrAgent ingest response status=%s body=%s",
-                ingest_result.get("status_code"),
-                ingest_result.get("body"),
-            )
-        except Exception as ingest_exc:
-            logger.error("--> Failed posting debug exception to ErrAgent: %s", str(ingest_exc))
-
-        raise e
+    logger.info("--> /api/erragent-debug endpoint hit!")
+    # Intentionally trigger zero division; caught automatically by global_exception_handler!
+    return 1 / 0
