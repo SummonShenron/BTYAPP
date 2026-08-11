@@ -44,7 +44,7 @@ def default_schedule_settings() -> Dict[str, Any]:
     return {
         "_id": SCHEDULE_DOC_ID,
         "timezone": "America/Chicago",
-        "booking_window_days": 14,
+        "booking_window_days": 30,
         "slot_minutes": 30,
         "weekly_blocks": default_weekly_blocks(),
         "updated_at": datetime.utcnow(),
@@ -71,16 +71,23 @@ def get_schedule_settings() -> Dict[str, Any]:
         collection.replace_one({"_id": SCHEDULE_DOC_ID}, doc, upsert=True)
         logger.info("Created default schedule settings document")
 
-    return _serialize_settings(doc)
+    normalized = dict(doc)
+    normalized["booking_window_days"] = max(int(normalized.get("booking_window_days", 30)), 30)
+    if normalized["booking_window_days"] != doc.get("booking_window_days"):
+        collection.replace_one({"_id": SCHEDULE_DOC_ID}, normalized, upsert=True)
+        logger.info("Adjusted stale booking_window_days to minimum 30-day visibility")
+
+    return _serialize_settings(normalized)
 
 
 def save_schedule_settings(settings: Dict[str, Any]) -> Dict[str, Any]:
     db = get_db()
     normalized_blocks = _normalize_weekly_blocks(settings.get("weekly_blocks", default_weekly_blocks()))
+    booking_window_days = max(int(settings.get("booking_window_days", 30)), 30)
     payload = {
         "_id": SCHEDULE_DOC_ID,
         "timezone": settings.get("timezone", "America/Chicago"),
-        "booking_window_days": int(settings.get("booking_window_days", 14)),
+        "booking_window_days": booking_window_days,
         "slot_minutes": int(settings.get("slot_minutes", 30)),
         "weekly_blocks": normalized_blocks,
         "updated_at": datetime.utcnow(),

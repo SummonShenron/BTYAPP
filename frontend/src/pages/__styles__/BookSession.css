@@ -147,6 +147,120 @@
   color: #ffd6d6;
 }
 
+.calendar-shell {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.calendar-month-label {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.calendar-nav-button,
+.calendar-back-button {
+  appearance: none;
+  border: 1px solid rgba(160, 165, 170, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-main);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.calendar-nav-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.2rem;
+}
+
+.calendar-back-button {
+  padding: 0.55rem 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.calendar-nav-button:hover,
+.calendar-back-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(130, 230, 247, 0.45);
+}
+
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.calendar-weekdays {
+  margin-top: 0.2rem;
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-bottom: 0.1rem;
+}
+
+.calendar-day {
+  appearance: none;
+  border: 1px solid rgba(160, 165, 170, 0.12);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-main);
+  min-height: 3.15rem;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.calendar-day--available {
+  border-color: rgba(130, 230, 247, 0.35);
+  background: rgba(56, 194, 222, 0.08);
+  color: var(--text-main);
+}
+
+.calendar-day--available:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(130, 230, 247, 0.45);
+  background: rgba(56, 194, 222, 0.12);
+}
+
+.calendar-day--selected {
+  border-color: rgba(56, 194, 222, 0.95);
+  background: rgba(56, 194, 222, 0.14);
+  box-shadow: 0 0 18px rgba(56, 194, 222, 0.12);
+}
+
+.calendar-day--disabled {
+  cursor: not-allowed;
+  color: rgba(149, 156, 162, 0.45);
+  background: rgba(255, 255, 255, 0.01);
+  border-color: rgba(160, 165, 170, 0.08);
+}
+
+.calendar-day--empty {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+
 .slot-day-list {
   margin-top: 1rem;
   display: grid;

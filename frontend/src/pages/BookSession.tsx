@@ -64,6 +64,21 @@ interface BookingFormState {
   notes: string;
 }
 
+function formatDateKey(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function getMonthStart(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+function addMonths(date: Date, offset: number) {
+  return new Date(date.getFullYear(), date.getMonth() + offset, 1);
+}
+
 function groupSlotsByDate(slots: Slot[]) {
   return slots.reduce<Record<string, Slot[]>>((accumulator, slot) => {
     if (!accumulator[slot.date]) {
@@ -80,7 +95,9 @@ export default function BookSession() {
   const [loadingSlots, setLoadingSlots] = useState(true);
   const [slotError, setSlotError] = useState<string | null>(null);
   const [selectedSessionType, setSelectedSessionType] = useState('consultation');
+  const [selectedDate, setSelectedDate] = useState('');
   const [selectedSlotKey, setSelectedSlotKey] = useState('');
+  const [calendarMonth, setCalendarMonth] = useState(() => getMonthStart(new Date()));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -170,10 +187,8 @@ export default function BookSession() {
         }
 
         setSlots(incomingSlots);
-        setSelectedSlotKey((current) => {
-          const existing = incomingSlots.find((slot) => slot.slot_key === current);
-          return existing ? current : incomingSlots[0]?.slot_key || '';
-        });
+        setSelectedDate('');
+        setSelectedSlotKey('');
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Unable to load schedule slots.';
         if (active) {
@@ -194,6 +209,106 @@ export default function BookSession() {
 
   const selectedSlot = slots.find((slot) => slot.slot_key === selectedSlotKey) || null;
   const groupedSlots = useMemo(() => groupSlotsByDate(slots), [slots]);
+  const availableDates = useMemo(() => Array.from(new Set(slots.map((slot) => slot.date))).sort(), [slots]);
+  const selectedDateSlots = useMemo(
+    () => (selectedDate ? slots.filter((slot) => slot.date === selectedDate) : []),
+    [selectedDate, slots]
+  );
+
+  useEffect(() => {
+    if (!selectedDate || !availableDates.includes(selectedDate)) {
+      setSelectedDate('');
+      setSelectedSlotKey('');
+    }
+  }, [availableDates, selectedDate]);
+
+  useEffect(() => {
+    if (!selectedDate) {
+      setSelectedSlotKey('');
+      return;
+    }
+
+    const isCurrentSlotValid = slots.some(
+      (slot) => slot.date === selectedDate && slot.slot_key === selectedSlotKey
+    );
+    if (!isCurrentSlotValid) {
+      setSelectedSlotKey('');
+    }
+  }, [selectedDate, selectedSlotKey, slots]);
+
+  const calendarDays = useMemo(() => {
+    const monthStart = getMonthStart(calendarMonth);
+    const firstDayIndex = (monthStart.getDay() + 6) % 7;
+    const daysInMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 0).getDate();
+
+    const dayNumbers = Array.from({ length: daysInMonth }, (_, index) => index + 1);
+
+    const cells: Array<{
+      key: string;
+      dateKey: string;
+      day: number | null;
+      isCurrentMonth: boolean;
+      isAvailable: boolean;
+      isSelected: boolean;
+      isDisabled: boolean;
+    }> = [];
+
+    for (let i = 0; i < firstDayIndex; i += 1) {
+      cells.push({
+        key: `empty-${i}`,
+        dateKey: '',
+        day: null,
+        isCurrentMonth: false,
+        isAvailable: false,
+        isSelected: false,
+        isDisabled: true,
+      });
+    }
+
+    for (let day = 1; day <= daysInMonth; day += 1) {
+      const date = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), day);
+      const dateKey = formatDateKey(date);
+      const isAvailable = availableDates.includes(dateKey);
+      cells.push({
+        key: dateKey,
+        dateKey,
+        day,
+        isCurrentMonth: true,
+        isAvailable,
+        isSelected: selectedDate === dateKey,
+        isDisabled: !isAvailable,
+      });
+    }
+
+    while (cells.length % 7 !== 0) {
+      cells.push({
+        key: `tail-${cells.length}`,
+        dateKey: '',
+        day: null,
+        isCurrentMonth: false,
+        isAvailable: false,
+        isSelected: false,
+        isDisabled: true,
+      });
+    }
+
+    return cells;
+  }, [availableDates, calendarMonth, selectedDate]);
+
+  const weekdayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+  const handleDateSelection = (dateKey: string) => {
+    if (!availableDates.includes(dateKey)) {
+      return;
+    }
+    setSelectedDate(dateKey);
+    setSelectedSlotKey('');
+  };
+
+  const handleResetToCalendar = () => {
+    setSelectedDate('');
+    setSelectedSlotKey('');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -306,43 +421,107 @@ export default function BookSession() {
               <div className="book-session-status">{bookContent.book_loading_slots_text}</div>
             ) : slotError ? (
               <div className="book-session-status book-session-status--error">{slotError}</div>
+            ) : selectedDate ? (
+              <div className="slot-day-list">
+                <div className="slot-day-card">
+                  <div className="slot-day-card__header">
+                    <div>
+                      <div className="book-session-kicker">
+                        {new Date(`${selectedDate}T12:00:00`).toLocaleDateString('en-US', { weekday: 'short' })}
+                      </div>
+                      <div className="slot-day-card__title">
+                        {new Date(`${selectedDate}T12:00:00`).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </div>
+                    </div>
+
+                    <button type="button" className="calendar-back-button" onClick={handleResetToCalendar}>
+                      Back to calendar
+                    </button>
+                  </div>
+
+                  <div className="slot-grid">
+                    {selectedDateSlots.map((slot) => {
+                      const isActive = slot.slot_key === selectedSlotKey;
+                      return (
+                        <button
+                          key={slot.slot_key}
+                          type="button"
+                          onClick={() => setSelectedSlotKey(slot.slot_key)}
+                          className={`slot-chip ${isActive ? 'slot-chip--active' : ''}`}
+                        >
+                          <div className="slot-chip__label">{slot.label}</div>
+                          <div className="slot-chip__timezone">{slot.timezone}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
             ) : Object.keys(groupedSlots).length === 0 ? (
               <div className="book-session-status">
                 {bookContent.book_no_slots_text}
               </div>
             ) : (
-              <div className="slot-day-list">
-                {Object.entries(groupedSlots).map(([date, daySlots]) => {
-                  const firstSlot = daySlots[0];
-                  return (
-                    <div key={date} className="slot-day-card">
-                      <div className="slot-day-card__header">
-                        <div>
-                          <div className="book-session-kicker">{firstSlot.weekday_label}</div>
-                          <div className="slot-day-card__title">{firstSlot.day_label}</div>
-                        </div>
-                        <div className="slot-day-card__count">{daySlots.length} {bookContent.book_open_slots_suffix}</div>
-                      </div>
+              <div className="calendar-shell">
+                <div className="calendar-header">
+                  <button
+                    type="button"
+                    className="calendar-nav-button"
+                    onClick={() => setCalendarMonth((current) => addMonths(current, -1))}
+                  >
+                    ←
+                  </button>
+                  <div className="calendar-month-label">
+                    {calendarMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                  </div>
+                  <button
+                    type="button"
+                    className="calendar-nav-button"
+                    onClick={() => setCalendarMonth((current) => addMonths(current, 1))}
+                  >
+                    →
+                  </button>
+                </div>
 
-                      <div className="slot-grid">
-                        {daySlots.map((slot) => {
-                          const isActive = slot.slot_key === selectedSlotKey;
-                          return (
-                            <button
-                              key={slot.slot_key}
-                              type="button"
-                              onClick={() => setSelectedSlotKey(slot.slot_key)}
-                              className={`slot-chip ${isActive ? 'slot-chip--active' : ''}`}
-                            >
-                              <div className="slot-chip__label">{slot.label}</div>
-                              <div className="slot-chip__timezone">{slot.timezone}</div>
-                            </button>
-                          );
-                        })}
-                      </div>
+                <div className="calendar-weekdays">
+                  {weekdayLabels.map((weekday) => (
+                    <div key={weekday} className="calendar-weekday">
+                      {weekday}
                     </div>
-                  );
-                })}
+                  ))}
+                </div>
+
+                <div className="calendar-grid">
+                  {calendarDays.map((cell) => {
+                    if (!cell.dateKey) {
+                      return <div key={cell.key} className="calendar-day calendar-day--empty" />;
+                    }
+
+                    const cellDate = new Date(`${cell.dateKey}T12:00:00`);
+                    const isPast = cellDate < new Date(new Date().setHours(0, 0, 0, 0));
+
+                    return (
+                      <button
+                        key={cell.key}
+                        type="button"
+                        className={[
+                          'calendar-day',
+                          cell.isAvailable ? 'calendar-day--available' : 'calendar-day--disabled',
+                          cell.isSelected ? 'calendar-day--selected' : '',
+                        ]
+                          .filter(Boolean)
+                          .join(' ')}
+                        onClick={() => handleDateSelection(cell.dateKey)}
+                        disabled={cell.isDisabled || isPast}
+                      >
+                        <span>{cell.day}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </section>

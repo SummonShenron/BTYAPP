@@ -32,7 +32,7 @@ const WEEKDAY_OPTIONS = [
 
 const DEFAULT_SETTINGS: ScheduleSettings = {
   timezone: 'America/Chicago',
-  booking_window_days: 14,
+  booking_window_days: 30,
   slot_minutes: 30,
   weekly_blocks: [
     { day_of_week: 0, start_time: '09:00', end_time: '12:00', enabled: true, client_name: '' },
