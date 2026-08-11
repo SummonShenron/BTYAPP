@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://btyfitness.app/</loc>
+    <loc>https://www.btyfitness.app/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://btyfitness.app/home</loc>
+    <loc>https://www.btyfitness.app/home</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://btyfitness.app/programs</loc>
+    <loc>https://www.btyfitness.app/programs</loc>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://btyfitness.app/consultation</loc>
+    <loc>https://www.btyfitness.app/consultation</loc>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://btyfitness.app/book</loc>
+    <loc>https://www.btyfitness.app/book</loc>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://btyfitness.app/about</loc>
+    <loc>https://www.btyfitness.app/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://btyfitness.app/qualifications</loc>
+    <loc>https://www.btyfitness.app/qualifications</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://btyfitness.app/testimonials</loc>
+    <loc>https://www.btyfitness.app/testimonials</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://btyfitness.app/merch</loc>
+    <loc>https://www.btyfitness.app/merch</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

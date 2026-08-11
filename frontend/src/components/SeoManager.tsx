@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 const SITE_NAME = 'BTY Fitness';
-const SITE_URL = (import.meta.env.VITE_SITE_URL || 'https://btyfitness.app').replace(/\/$/, '');
+const SITE_URL = (import.meta.env.VITE_SITE_URL || 'https://www.btyfitness.app').replace(/\/$/, '');
 const DEFAULT_DESCRIPTION =
   'BTY Fitness by Madison Spear offers personalized strength coaching, biomechanics-focused training, and consultation sessions to help you build sustainable results.';
 

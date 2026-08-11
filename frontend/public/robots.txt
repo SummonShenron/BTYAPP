@@ -4,4 +4,4 @@ Allow: /
 # Keep private routes out of search results
 Disallow: /admin
 
-Sitemap: https://btyfitness.app/sitemap.xml
+Sitemap: https://www.btyfitness.app/sitemap.xml

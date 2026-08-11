@@ -10,6 +10,8 @@ from backend.utils.db_utils import get_db
 logger = logging.getLogger("BTY Logger")
 
 SCHEDULE_DOC_ID = "main_schedule"
+LATEST_PUBLIC_SLOT_START_MINUTES = 17 * 60
+LATEST_PUBLIC_SLOT_END_MINUTES = 17 * 60
 
 
 class WeeklyAvailabilityBlock(BaseModel):
@@ -74,12 +76,13 @@ def get_schedule_settings() -> Dict[str, Any]:
 
 def save_schedule_settings(settings: Dict[str, Any]) -> Dict[str, Any]:
     db = get_db()
+    normalized_blocks = _normalize_weekly_blocks(settings.get("weekly_blocks", default_weekly_blocks()))
     payload = {
         "_id": SCHEDULE_DOC_ID,
         "timezone": settings.get("timezone", "America/Chicago"),
         "booking_window_days": int(settings.get("booking_window_days", 14)),
         "slot_minutes": int(settings.get("slot_minutes", 30)),
-        "weekly_blocks": settings.get("weekly_blocks", default_weekly_blocks()),
+        "weekly_blocks": normalized_blocks,
         "updated_at": datetime.utcnow(),
     }
 
@@ -104,6 +107,43 @@ def _time_to_minutes(value: str) -> int:
 
 def _minutes_to_time(value: int) -> str:
     return f"{value // 60:02d}:{value % 60:02d}"
+
+
+def _normalize_weekly_blocks(blocks: Any) -> List[Dict[str, Any]]:
+    """Normalize recurring blocks before persistence and slot generation."""
+    if not isinstance(blocks, list):
+        return default_weekly_blocks()
+
+    normalized_blocks: List[Dict[str, Any]] = []
+    for block in blocks:
+        if not isinstance(block, dict):
+            continue
+
+        try:
+            day_of_week = int(block.get("day_of_week", -1))
+            start_time = str(block.get("start_time", ""))
+            end_time = str(block.get("end_time", ""))
+            enabled = bool(block.get("enabled", True))
+            client_name = (block.get("client_name") or "").strip()
+
+            start_minutes = _time_to_minutes(start_time)
+            end_minutes = _time_to_minutes(end_time)
+            if day_of_week < 0 or day_of_week > 6 or end_minutes <= start_minutes:
+                continue
+
+            normalized_blocks.append(
+                {
+                    "day_of_week": day_of_week,
+                    "start_time": _minutes_to_time(start_minutes),
+                    "end_time": _minutes_to_time(end_minutes),
+                    "enabled": enabled,
+                    "client_name": client_name,
+                }
+            )
+        except (TypeError, ValueError):
+            continue
+
+    return normalized_blocks
 
 
 def _format_slot_label(start: time, end: time) -> str:
@@ -180,7 +220,7 @@ def generate_upcoming_slots(
     effective_timezone_name = getattr(timezone, "key", "UTC")
     now_local = datetime.now(timezone)
     today = now_local.date()
-    weekly_blocks = settings.get("weekly_blocks") or default_weekly_blocks()
+    weekly_blocks = _normalize_weekly_blocks(settings.get("weekly_blocks") or default_weekly_blocks())
 
     slots: List[Dict[str, Any]] = []
 
@@ -193,9 +233,15 @@ def generate_upcoming_slots(
 
             start_minutes = _time_to_minutes(block["start_time"])
             end_minutes = _time_to_minutes(block["end_time"])
+            if end_minutes <= start_minutes:
+                continue
             for minute in range(start_minutes, end_minutes, base_slot_minutes):
                 next_minute = minute + duration_minutes
                 if next_minute > end_minutes:
+                    break
+                if minute > LATEST_PUBLIC_SLOT_START_MINUTES:
+                    break
+                if next_minute > LATEST_PUBLIC_SLOT_END_MINUTES:
                     break
 
                 slot_start = _minutes_to_time(minute)

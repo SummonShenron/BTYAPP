@@ -156,7 +156,7 @@ export default function BookSession() {
         setSlotError(null);
 
         const response = await fetch(
-          `${API_URL}/api/schedule/slots?days=21&duration_minutes=${selectedSession.duration_minutes}`
+          `${API_URL}/api/schedule/slots?duration_minutes=${selectedSession.duration_minutes}`
         );
         if (!response.ok) {
           throw new Error(`Unable to load schedule slots (${response.status})`);

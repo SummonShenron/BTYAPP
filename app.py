@@ -242,13 +242,13 @@ async def get_public_schedule_settings():
 
 
 @app.get("/api/schedule/slots")
-async def get_public_schedule_slots(days: int = 14, duration_minutes: Optional[int] = None):
+async def get_public_schedule_slots(days: Optional[int] = None, duration_minutes: Optional[int] = None):
     logger.info("Public schedule slots requested for days=%s duration_minutes=%s", days, duration_minutes)
     settings = get_schedule_settings()
     slots = generate_upcoming_slots(settings, days_ahead=days, appointment_minutes=duration_minutes)
     return {
         "timezone": settings.get("timezone", "America/Chicago"),
-        "booking_window_days": settings.get("booking_window_days", days),
+        "booking_window_days": settings.get("booking_window_days", 14),
         "slot_minutes": settings.get("slot_minutes", 30),
         "slots": slots,
     }

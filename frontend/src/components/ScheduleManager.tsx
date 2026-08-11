@@ -18,7 +18,8 @@ interface ScheduleSettings {
   slot_minutes: number;
   weekly_blocks: WeeklyBlock[];
 }
-console.log('todo: fix this')
+
+const LATEST_SLOT_START_TIME = '17:00';
 const WEEKDAY_OPTIONS = [
   { value: 0, label: 'Monday' },
   { value: 1, label: 'Tuesday' },
@@ -387,6 +388,7 @@ export default function ScheduleManager() {
                           type="time"
                           className="styled-input"
                           value={block.start_time}
+                          max={LATEST_SLOT_START_TIME}
                           onChange={(e) => updateBlock(index, { start_time: e.target.value })}
                         />
                       </div>
@@ -397,6 +399,7 @@ export default function ScheduleManager() {
                           type="time"
                           className="styled-input"
                           value={block.end_time}
+                          max={LATEST_SLOT_START_TIME}
                           onChange={(e) => updateBlock(index, { end_time: e.target.value })}
                         />
                       </div>
