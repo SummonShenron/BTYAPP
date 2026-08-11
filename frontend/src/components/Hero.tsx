@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoImg from '../assets/logo.png';
+// You can import additional images here for the carousel slots:
+// import heroImg2 from '../assets/hero-2.png';
+// import heroImg3 from '../assets/hero-3.png';
 import './__styles__/hero.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
@@ -20,9 +23,13 @@ const defaults: Record<string, string> = {
   hero_sidebar_text: 'Direct biomechanics assessment & custom fitness planning.',
 };
 
+// Define your 3 carousel images here (swap these variables with your actual image imports)
+const carouselImages = [logoImg, logoImg, logoImg];
+
 export default function Hero() {
   const navigate = useNavigate();
   const [content, setContent] = useState<Record<string, string>>(defaults);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -44,6 +51,14 @@ export default function Hero() {
     return () => {
       active = false;
     };
+  }, []);
+
+  // Auto-advance carousel every 4 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % carouselImages.length);
+    }, 4000);
+    return () => clearInterval(timer);
   }, []);
 
   return (
@@ -74,12 +89,25 @@ export default function Hero() {
 
         <aside className="hero-sidebar">
           <div className="hero-sidebar-card">
-            <div className="sidebar-image-slot">
-              <img
-                src={logoImg}
-                alt="BTY Fitness Logo"
-                className="sidebar-logo"
-              />
+            <div className="sidebar-image-slot carousel-slot">
+              {carouselImages.map((img, index) => (
+                <img
+                  key={index}
+                  src={img}
+                  alt={`BTY Fitness Slide ${index + 1}`}
+                  className={`sidebar-logo carousel-img ${index === currentIndex ? 'active' : ''}`}
+                />
+              ))}
+              <div className="carousel-indicators">
+                {carouselImages.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`indicator-dot ${index === currentIndex ? 'active' : ''}`}
+                    onClick={() => setCurrentIndex(index)}
+                    aria-label={`Slide ${index + 1}`}
+                  />
+                ))}
+              </div>
             </div>
 
             <div className="sidebar-card-content">

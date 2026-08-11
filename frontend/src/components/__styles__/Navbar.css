@@ -12,6 +12,13 @@
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
 
   padding: 0.65rem 1.25rem; /* tighter Sonic spacing */
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.navbar:hover {
+  background: rgba(12, 16, 24, 0.88);
+  box-shadow: var(--shadow-hover);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 
@@ -98,6 +105,11 @@
 .nav-cta-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 0 25px var(--accent-cyan-glow);
+}
+
+.nav-cta-btn:active {
+  transform: translateY(+2px);
+  box-shadow: 0 0 15px var(--accent-cyan-glow);
 }
 
 .nav-mobile-toggle {

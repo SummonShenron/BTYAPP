@@ -6,6 +6,10 @@
   font-family: inherit;
 }
 
+.sonic-widget-root:active {
+  transform: scale(0.98);
+}
+
 .sonic-widget-drawer {
   position: absolute;
   bottom: 75px;
@@ -19,7 +23,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  animation: fadeInUp 0.3s ease-out;
+  animation: fadeInUp 1s ease-out;
 }
 
 .sonic-widget-header {

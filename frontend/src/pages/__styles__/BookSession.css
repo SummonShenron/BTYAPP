@@ -269,7 +269,13 @@
 
 .book-session-primary-button:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 0 30px rgba(56, 194, 222, 0.28);
+  box-shadow: 0 0 30px var(--accent-cyan-glow, rgba(56, 194, 222, 0.28));
+}
+
+.book-session-primary-button:active:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 0 30px var(--accent-cyan-glow, rgba(56, 194, 222, 0.28));
+  transform: translateY(1px);
 }
 
 .book-session-primary-button:disabled {
