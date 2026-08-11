@@ -259,6 +259,9 @@ export default function ScheduleManager() {
           <p className="schedule-manager-copy">
             Click a weekday on the calendar below, then set the recurring time blocks for that day. Every change applies to all future Mondays, Tuesdays, and so on.
           </p>
+          <p className="schedule-manager-copy">
+            Active recurring blocks represent occupied client time. Public booking shows the open gaps between those blocks.
+          </p>
         </div>
         <div className="schedule-manager-summary">
           <strong>{weeklySummary}</strong>

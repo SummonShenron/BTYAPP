@@ -222,55 +222,77 @@ def generate_upcoming_slots(
     today = now_local.date()
     weekly_blocks = _normalize_weekly_blocks(settings.get("weekly_blocks") or default_weekly_blocks())
 
-    slots: List[Dict[str, Any]] = []
+    slots_by_key: Dict[str, Dict[str, Any]] = {}
 
     for offset in range(horizon_days):
         current_date = today + timedelta(days=offset)
         weekday = current_date.weekday()
-        for block in weekly_blocks:
-            if not block.get("enabled", True) or int(block.get("day_of_week", -1)) != weekday:
+        day_blocks = [
+            block
+            for block in weekly_blocks
+            if block.get("enabled", True) and int(block.get("day_of_week", -1)) == weekday
+        ]
+        if not day_blocks:
+            continue
+
+        occupied_blocks = sorted(
+            day_blocks,
+            key=lambda block: _time_to_minutes(block["start_time"]),
+        )
+
+        day_start_minutes = min(_time_to_minutes(block["start_time"]) for block in occupied_blocks)
+        day_end_minutes = min(
+            max(_time_to_minutes(block["end_time"]) for block in occupied_blocks),
+            LATEST_PUBLIC_SLOT_END_MINUTES,
+        )
+        if day_end_minutes <= day_start_minutes:
+            continue
+
+        day_bookings = booked_slots.get(current_date.isoformat(), [])
+
+        for minute in range(day_start_minutes, day_end_minutes, base_slot_minutes):
+            next_minute = minute + duration_minutes
+            if next_minute > day_end_minutes:
+                break
+            if minute > LATEST_PUBLIC_SLOT_START_MINUTES:
+                break
+            if next_minute > LATEST_PUBLIC_SLOT_END_MINUTES:
+                break
+
+            slot_start = _minutes_to_time(minute)
+            slot_end = _minutes_to_time(next_minute)
+            slot_dt = _to_local_datetime(current_date.isoformat(), slot_start, timezone)
+            if slot_dt < now_local:
                 continue
 
-            start_minutes = _time_to_minutes(block["start_time"])
-            end_minutes = _time_to_minutes(block["end_time"])
-            if end_minutes <= start_minutes:
+            blocked_by_client = any(
+                _overlaps(slot_start, slot_end, occupied_block["start_time"], occupied_block["end_time"])
+                for occupied_block in occupied_blocks
+            )
+            if blocked_by_client:
                 continue
-            for minute in range(start_minutes, end_minutes, base_slot_minutes):
-                next_minute = minute + duration_minutes
-                if next_minute > end_minutes:
-                    break
-                if minute > LATEST_PUBLIC_SLOT_START_MINUTES:
-                    break
-                if next_minute > LATEST_PUBLIC_SLOT_END_MINUTES:
-                    break
 
-                slot_start = _minutes_to_time(minute)
-                slot_end = _minutes_to_time(next_minute)
-                slot_dt = _to_local_datetime(current_date.isoformat(), slot_start, timezone)
-                if slot_dt < now_local:
-                    continue
+            is_booked = any(
+                _overlaps(slot_start, slot_end, booked_slot["start_time"], booked_slot["end_time"])
+                for booked_slot in day_bookings
+            )
 
-                slot_key = f"{current_date.isoformat()}|{slot_start}"
-                day_bookings = booked_slots.get(current_date.isoformat(), [])
-                is_booked = any(
-                    _overlaps(slot_start, slot_end, booked_slot["start_time"], booked_slot["end_time"])
-                    for booked_slot in day_bookings
-                )
-                slots.append(
-                    {
-                        "date": current_date.isoformat(),
-                        "weekday": weekday,
-                        "weekday_label": current_date.strftime("%a"),
-                        "day_label": current_date.strftime("%b %d"),
-                        "start_time": slot_start,
-                        "end_time": slot_end,
-                        "label": _format_slot_label(time.fromisoformat(slot_start), time.fromisoformat(slot_end)),
-                        "timezone": effective_timezone_name,
-                        "slot_key": slot_key,
-                        "is_booked": is_booked,
-                        "client_name": (block.get("client_name") or "").strip(),
-                    }
-                )
+            slot_key = f"{current_date.isoformat()}|{slot_start}"
+            slots_by_key[slot_key] = {
+                "date": current_date.isoformat(),
+                "weekday": weekday,
+                "weekday_label": current_date.strftime("%a"),
+                "day_label": current_date.strftime("%b %d"),
+                "start_time": slot_start,
+                "end_time": slot_end,
+                "label": _format_slot_label(time.fromisoformat(slot_start), time.fromisoformat(slot_end)),
+                "timezone": effective_timezone_name,
+                "slot_key": slot_key,
+                "is_booked": is_booked,
+                "client_name": "",
+            }
+
+    slots = sorted(slots_by_key.values(), key=lambda item: (item["date"], item["start_time"]))
 
     logger.info("Generated %s slots from recurring schedule over %s days", len(slots), horizon_days)
     return slots
