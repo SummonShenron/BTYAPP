@@ -10,14 +10,13 @@ interface PlateInfo {
 
 const PLATE_CONFIG: Record<number, PlateInfo> = {
   45: { color: '#38C2DE', textColor: '#000000', heightPx: 110, widthPx: 15 }, // BTY Cyan
-  35: { color: '#eab308', textColor: '#000000', heightPx: 96,  widthPx: 13 }, // Yellow
   25: { color: '#22c55e', textColor: '#000000', heightPx: 82,  widthPx: 11 }, // Green
   10: { color: '#f8fafc', textColor: '#000000', heightPx: 60,  widthPx: 9  }, // White
   5:  { color: '#ef4444', textColor: '#ffffff', heightPx: 48,  widthPx: 7  }, // Red
   2.5:{ color: '#a1a1aa', textColor: '#000000', heightPx: 34,  widthPx: 5  }, // Grey
 };
 
-const PLATE_WEIGHTS = [45, 35, 25, 10, 5, 2.5];
+const PLATE_WEIGHTS = [45, 25, 10, 5, 2.5];
 
 export default function Calculator() {
   // Start with empty / 0 values
@@ -189,7 +188,7 @@ export default function Calculator() {
                       borderColor: barWeight === bWeight ? '#38C2DE' : '#1e293b',
                     }}
                   >
-                    {bWeight} lbs {bWeight === 45 ? '(Std)' : bWeight === 35 ? '(Women)' : '(Hex)'}
+                    {bWeight} lbs {bWeight === 45 ? '(Std)' : bWeight === 35 ? '(light)' : '(Hex)'}
                   </button>
                 ))}
               </div>
