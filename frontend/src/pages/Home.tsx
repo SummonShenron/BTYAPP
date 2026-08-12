@@ -88,7 +88,7 @@ export default function Home() {
           <span className="text-[#38C2DE] text-xs font-bold tracking-widest uppercase">
             {programContent.programs_kicker}
           </span>
-          <h2 className="text-3xl font-extrabold tracking-tight">{programContent.programs_title}</h2>
+          <h1 className="text-3xl font-extrabold tracking-tight">{programContent.programs_title}</h1>
           <p className="text-[#A0A5AA] text-sm">
             {programContent.programs_subtitle}
           </p>

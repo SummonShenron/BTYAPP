@@ -9,15 +9,13 @@ export default function Landing() {
       <section className="landing-center">
         <h1
           style={{
-            position: 'absolute',
-            width: '1px',
-            height: '1px',
-            margin: '-1px',
-            padding: 0,
-            overflow: 'hidden',
-            clip: 'rect(0, 0, 0, 0)',
-            whiteSpace: 'nowrap',
-            border: 0,
+            margin: '0 0 1rem',
+            fontSize: '0.95rem',
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            color: '#f5f7f8',
+            textAlign: 'center',
+            lineHeight: 1.4,
           }}
         >
           BTY Fitness Personal Training by Madison Spear
