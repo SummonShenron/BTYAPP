@@ -93,6 +93,7 @@ export default function Navbar() {
           <Link to="/about" className="nav-mobile-link" onClick={closeMobileMenu}>About</Link>
           <Link to="/qualifications" className="nav-mobile-link" onClick={closeMobileMenu}>Qualifications</Link>
           <Link to="/testimonials" className="nav-mobile-link" onClick={closeMobileMenu}>Testimonials</Link>
+          <Link to="/calculator" className="nav-mobile-link" onClick={closeMobileMenu}>Calculator</Link>
           <button type="button" onClick={handleBookSession} className="nav-mobile-cta">
             Book Session
           </button>
