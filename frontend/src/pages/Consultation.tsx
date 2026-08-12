@@ -17,6 +17,13 @@ const defaults: Record<string, string> = {
   consultation_step_3_description: 'Get recommended program structures and training cadence tailored for you.',
   consultation_quote_text: "Training isn't about pushing past bad biomechanics - it's about teaching your body how to produce power efficiently without injury.",
   consultation_quote_author: '- Madison Spear, Head Coach',
+  consultation_local_kicker: 'Personal Training in Des Moines, IA',
+  consultation_local_intro: "BTY Fitness provides personalized strength coaching and fitness consultations for clients throughout Des Moines, Urbandale, West Des Moines, and the greater Iowa metro area. Based at Trainer's Edge Gym, Madison helps clients improve movement quality, build strength, and train with sustainable structure.",
+  consultation_local_location_title: 'Location',
+  consultation_local_location_name: "Trainer's Edge Gym",
+  consultation_local_location_address: '3845 100th St, Urbandale, IA 50322',
+  consultation_local_service_title: 'Service Area',
+  consultation_local_service_areas: 'Des Moines • Urbandale • West Des Moines • Ankeny',
 };
 
 export default function Consultation() {
@@ -36,9 +43,12 @@ export default function Consultation() {
 
         const data = await response.json();
         const items = (data?.items ?? {}) as Record<string, string>;
+        const filteredItems = Object.fromEntries(
+          Object.entries(items).filter(([, value]) => typeof value === 'string' && value.trim().length > 0)
+        );
         setContent({
           ...defaults,
-          ...items,
+          ...filteredItems,
         });
       } catch {
         // Keep defaults if content endpoint is unavailable.
@@ -124,8 +134,34 @@ export default function Consultation() {
           </div>
         </div>
 
-        {/* Right Side: Embedded Consultation Form (3 cols) */}
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-3 space-y-6">
+          <div className="glass-card-interactive p-6 sm:p-8">
+            <div className="mb-6 pb-5 border-b border-[#2a2a32]">
+              <p className="text-[#38C2DE] text-[11px] font-bold tracking-[0.16em] uppercase mb-2">
+                {content.consultation_local_kicker}
+              </p>
+              <p className="text-sm leading-relaxed text-[#A0A5AA]">
+                {content.consultation_local_intro}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-[#DCEAF3]">
+              <div className="rounded-xl border border-[#2a2a32] bg-[#0c1016] p-4">
+                <p className="text-[11px] uppercase tracking-[0.12em] text-[#38C2DE] mb-2">
+                  {content.consultation_local_location_title}
+                </p>
+                <p>{content.consultation_local_location_name}</p>
+                <p className="text-[#A0A5AA]">{content.consultation_local_location_address}</p>
+              </div>
+              <div className="rounded-xl border border-[#2a2a32] bg-[#0c1016] p-4">
+                <p className="text-[11px] uppercase tracking-[0.12em] text-[#38C2DE] mb-2">
+                  {content.consultation_local_service_title}
+                </p>
+                <p className="text-[#A0A5AA]">{content.consultation_local_service_areas}</p>
+              </div>
+            </div>
+          </div>
+
           <div className="glass-card-interactive p-6 sm:p-8">
             <ConsultationForm contentOverrides={content} />
           </div>
