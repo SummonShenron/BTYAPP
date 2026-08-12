@@ -352,10 +352,7 @@
 .testimonial-stage::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: -30%;
-  width: 160%;
-  height: 100%;
+  inset: -15% -25% -15% -25%;
   background: linear-gradient(
     118deg,
     transparent 0%,
@@ -371,6 +368,8 @@
   pointer-events: none;
   transition: opacity 0.4s ease, transform 0.8s ease;
 }
+
+
 
 .testimonial-stage::after {
   content: "";
@@ -492,10 +491,7 @@
 .echo-note::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: -26%;
-  width: 150%;
-  height: 100%;
+  inset: -15% -25% -15% -25%;
   background: linear-gradient(
     118deg,
     transparent 0%,
@@ -511,6 +507,8 @@
   pointer-events: none;
   transition: opacity 0.4s ease, transform 0.8s ease;
 }
+
+
 
 .echo-note::after {
   content: "";

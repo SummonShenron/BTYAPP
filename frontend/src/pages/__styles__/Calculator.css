@@ -1,0 +1,25 @@
+/* Custom sleek scrollbar for the barbell sleeve when loaded with heavy plates */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #0d1117;
+  border-radius: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #38C2DE;
+  border-radius: 4px;
+}
+
+/* Subtle glow and lift on individual plate hover */
+.plate-hover {
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease;
+}
+
+.plate-hover:hover {
+  transform: translateY(-2px) scaleY(1.04);
+  box-shadow: 0 0 8px rgba(56, 194, 222, 0.6);
+  z-index: 10;
+}

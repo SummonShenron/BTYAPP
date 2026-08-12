@@ -57,6 +57,9 @@ export default function Navbar() {
           <li>
             <Link to="/testimonials" className="nav-link">Testimonials</Link>
           </li>
+          <li>
+            <Link to="/calculator" className="nav-link">Calculator</Link>
+          </li>
         </ul>
 
         <div className="nav-actions">

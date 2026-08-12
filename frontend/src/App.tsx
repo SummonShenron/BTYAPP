@@ -15,6 +15,7 @@ import Qualifications from './pages/Qualifications.tsx';
 import Testimonials from './pages/Testimonials.tsx';
 import SonicWidget from './components/SonicWidget';
 import SeoManager from './components/SeoManager';
+import Calculator from './pages/Calculator.tsx';
 
 export default function App() {
   const location = useLocation();
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/about" element={<AboutMe />} />
           <Route path="/qualifications" element={<Qualifications />} />
           <Route path="/testimonials" element={<Testimonials />} />
+          <Route path="/calculator" element={<Calculator />} />
 
           <Route
             path="/admin"
