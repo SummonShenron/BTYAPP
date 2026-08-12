@@ -109,13 +109,22 @@ function buildCanonical(path: string): string {
 function buildLocalBusinessSchema() {
   return {
     '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    name: 'Better Than Yesterday Fitness',
+    '@type': 'HealthClub',
+    name: 'BTY Fitness at Trainer\'s Edge Gym',
     alternateName: 'BTY Fitness',
     url: `${SITE_URL}/`,
     image: `${SITE_URL}/logo192.png`,
-    description: DEFAULT_DESCRIPTION,
-    areaServed: 'United States',
+    description:
+      'BTY Fitness provides personal training and strength coaching in Des Moines, Iowa, based at Trainer\'s Edge Gym in Urbandale, IA.',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '3845 100th St',
+      addressLocality: 'Urbandale',
+      addressRegion: 'IA',
+      postalCode: '50322',
+      addressCountry: 'US',
+    },
+    areaServed: ['Des Moines, IA', 'Urbandale, IA', 'West Des Moines, IA', 'Ankeny, IA'],
     founder: {
       '@type': 'Person',
       name: 'Madison Spear',
@@ -125,7 +134,9 @@ function buildLocalBusinessSchema() {
       'Biomechanics',
       'Personal Training',
       'Online Coaching',
+      'Des Moines Personal Training',
     ],
+    sameAs: ['https://www.btyfitness.app/'],
   };
 }
 
