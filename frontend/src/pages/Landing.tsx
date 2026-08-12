@@ -30,6 +30,10 @@ export default function Landing() {
         <Link to="/home" className="landing-enter-btn">
           Enter
         </Link>
+
+        <div className="landing-location-bar">
+          Personal Training in Des Moines, IA • Trainer&apos;s Edge Gym • 3845 100th St, Urbandale, IA 50322 • (515) 509-3623
+        </div>
       </section>
     </div>
   );

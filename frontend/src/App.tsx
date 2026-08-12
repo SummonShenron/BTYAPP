@@ -16,6 +16,7 @@ import Testimonials from './pages/Testimonials.tsx';
 import SonicWidget from './components/SonicWidget';
 import SeoManager from './components/SeoManager';
 import Calculator from './pages/Calculator.tsx';
+import DesMoinesPersonalTraining from './pages/DesMoinesPersonalTraining.tsx';
 
 export default function App() {
   const location = useLocation();
@@ -37,6 +38,7 @@ export default function App() {
           <Route path="/qualifications" element={<Qualifications />} />
           <Route path="/testimonials" element={<Testimonials />} />
           <Route path="/calculator" element={<Calculator />} />
+          <Route path="/des-moines-personal-training" element={<DesMoinesPersonalTraining />} />
 
           <Route
             path="/admin"

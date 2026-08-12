@@ -58,6 +58,11 @@ const SEO_BY_PATH: Record<string, SeoEntry> = {
     description: 'Browse BTY apparel and gear designed for training comfort and everyday performance.',
     path: '/merch',
   },
+  '/des-moines-personal-training': {
+    title: 'Personal Trainer in Des Moines, IA | BTY Fitness',
+    description: 'Personal training in Des Moines, Iowa at Trainer\'s Edge Gym. Strength coaching, performance programming, and individualized fitness support in the greater Des Moines area.',
+    path: '/des-moines-personal-training',
+  },
   '/admin': {
     title: 'Coach Portal | BTY Fitness',
     description: 'Admin dashboard for BTY Fitness operations.',

@@ -103,6 +103,16 @@
   cursor: wait;
 }
 
+.landing-location-bar {
+  margin-top: -0.4rem;
+  text-align: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(214, 245, 255, 0.76);
+  opacity: 0.9;
+}
+
 .landing-notice {
   position: absolute;
   top: 1rem;

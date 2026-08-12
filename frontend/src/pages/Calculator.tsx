@@ -421,7 +421,6 @@ export default function Calculator() {
             </Link>
           </div>
         </div>
-
       </div>
     </div>
   );
