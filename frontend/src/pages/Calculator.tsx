@@ -10,14 +10,14 @@ interface PlateInfo {
 
 const PLATE_CONFIG: Record<number, PlateInfo> = {
   45: { color: '#38C2DE', textColor: '#000000', heightPx: 110, widthPx: 15 }, // BTY Cyan
-//   35: { color: '#eab308', textColor: '#000000', heightPx: 96,  widthPx: 13 }, // Yellow
+  35: { color: '#eab308', textColor: '#000000', heightPx: 96,  widthPx: 13 }, // Yellow
   25: { color: '#22c55e', textColor: '#000000', heightPx: 82,  widthPx: 11 }, // Green
   10: { color: '#f8fafc', textColor: '#000000', heightPx: 60,  widthPx: 9  }, // White
   5:  { color: '#ef4444', textColor: '#ffffff', heightPx: 48,  widthPx: 7  }, // Red
   2.5:{ color: '#a1a1aa', textColor: '#000000', heightPx: 34,  widthPx: 5  }, // Grey
 };
 
-const PLATE_WEIGHTS = [45, 25, 10, 5, 2.5];
+const PLATE_WEIGHTS = [45, 35, 25, 10, 5, 2.5];
 
 export default function Calculator() {
   // Start with empty / 0 values
@@ -105,26 +105,26 @@ export default function Calculator() {
   };
 
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '2rem 1rem', color: '#f8fafc', fontFamily: 'sans-serif' }}>
+    <div style={{ maxWidth: '1100px', width: '100%', margin: '0 auto', padding: '1.25rem 0.5rem', color: '#f8fafc', fontFamily: 'sans-serif', boxSizing: 'border-box' }}>
       
       {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-        <h1 style={{ fontSize: '2.25rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.5rem', letterSpacing: '-0.025em' }}>
+      <div style={{ textAlign: 'center', marginBottom: '1.75rem', padding: '0 0.5rem' }}>
+        <h1 style={{ fontSize: '1.85rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.5rem', letterSpacing: '-0.025em' }}>
           1-Rep Max & <span style={{ color: '#38C2DE' }}>Plate Calculator</span>
         </h1>
-        <p style={{ color: '#94a3b8', fontSize: '0.95rem', maxWidth: '600px', margin: '0 auto' }}>
+        <p style={{ color: '#94a3b8', fontSize: '0.875rem', maxWidth: '600px', margin: '0 auto' }}>
           Estimate your max lifting potential, manually rack plates, and calculate exact barbell weights instantly.
         </p>
       </div>
 
       {/* Main Grid Layout */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginBottom: '2rem', width: '100%', boxSizing: 'border-box' }}>
         
         {/* Left Card: Inputs */}
-        <div style={{ backgroundColor: '#121820', border: '1px solid #1e293b', borderRadius: '16px', padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div style={{ backgroundColor: '#121820', border: '1px solid #1e293b', borderRadius: '16px', padding: '1rem 0.85rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box' }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #1e293b', paddingBottom: '0.75rem', marginBottom: '1.25rem' }}>
-              <h2 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#fff', margin: 0 }}>Input Lift Stats</h2>
+              <h2 style={{ fontSize: '1.05rem', fontWeight: 'bold', color: '#fff', margin: 0 }}>Input Lift Stats</h2>
               <span style={{ fontSize: '0.7rem', color: '#38C2DE', background: 'rgba(56, 194, 222, 0.1)', padding: '0.25rem 0.6rem', borderRadius: '20px', border: '1px solid rgba(56, 194, 222, 0.2)' }}>
                 Epley Formula
               </span>
@@ -171,13 +171,13 @@ export default function Calculator() {
               <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>
                 Barbell Weight
               </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.4rem' }}>
                 {[45, 35, 70].map((bWeight) => (
                   <button
                     key={bWeight}
                     onClick={() => setBarWeight(bWeight)}
                     style={{
-                      padding: '0.5rem',
+                      padding: '0.5rem 0.2rem',
                       fontSize: '0.75rem',
                       fontWeight: 'bold',
                       borderRadius: '8px',
@@ -189,7 +189,7 @@ export default function Calculator() {
                       borderColor: barWeight === bWeight ? '#38C2DE' : '#1e293b',
                     }}
                   >
-                    {bWeight} lbs {bWeight === 45 ? '(Std)' : bWeight === 35 ? '(Women)' : '(Hex Bar)'}
+                    {bWeight} lbs {bWeight === 45 ? '(Std)' : bWeight === 35 ? '(Women)' : '(Hex)'}
                   </button>
                 ))}
               </div>
@@ -208,23 +208,23 @@ export default function Calculator() {
         </div>
 
         {/* Right Card: Full Barbell Visualizer & Manual Rack */}
-        <div style={{ backgroundColor: '#121820', border: '1px solid #1e293b', borderRadius: '16px', padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div style={{ backgroundColor: '#121820', border: '1px solid #1e293b', borderRadius: '16px', padding: '1rem 0.85rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box' }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #1e293b', paddingBottom: '0.75rem', marginBottom: '1.25rem' }}>
-              <h2 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#fff', margin: 0 }}>Barbell Visualizer</h2>
+              <h2 style={{ fontSize: '1.05rem', fontWeight: 'bold', color: '#fff', margin: 0 }}>Barbell Visualizer</h2>
               <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
                 Loaded Weight: <span style={{ color: '#38C2DE', fontWeight: 'bold', fontSize: '1.1rem' }}>{currentTotalWeight} lbs</span>
               </div>
             </div>
 
             {/* Full Barbell Display Container */}
-            <div style={{ backgroundColor: '#0b0f17', border: '1px solid #1e293b', borderRadius: '12px', padding: '1.5rem 0.5rem', marginBottom: '1.25rem', minHeight: '180px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', overflowX: 'auto' }}>
+            <div style={{ backgroundColor: '#0b0f17', border: '1px solid #1e293b', borderRadius: '12px', padding: '1.25rem 0.25rem', marginBottom: '1.25rem', minHeight: '180px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', overflowX: 'auto', width: '100%', boxSizing: 'border-box' }}>
               
               {/* Symmetrical Full Barbell Graphic */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', minWidth: '450px', height: '130px', position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', minWidth: '400px', height: '130px', position: 'relative' }}>
                 
                 {/* 1. LEFT SLEEVE */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', minWidth: '110px', backgroundColor: '#334155', height: '16px', borderTop: '1px solid #475569', borderBottom: '1px solid #1e293b', borderRadius: '4px 0 0 4px', position: 'relative' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', minWidth: '100px', backgroundColor: '#334155', height: '16px', borderTop: '1px solid #475569', borderBottom: '1px solid #1e293b', borderRadius: '4px 0 0 4px', position: 'relative' }}>
                   {/* Left End Collar Nut */}
                   {platesOneSide.length > 0 && (
                     <div style={{ height: '20px', width: '6px', backgroundColor: '#94a3b8', borderRadius: '2px', marginRight: '2px', flexShrink: 0 }} />
@@ -268,13 +268,13 @@ export default function Calculator() {
                 <div style={{ height: '38px', width: '10px', backgroundColor: '#64748b', borderRadius: '2px', borderLeft: '2px solid #1e293b', boxShadow: '-2px 0 4px rgba(0,0,0,0.5)', flexShrink: 0, zIndex: 2 }} />
 
                 {/* 3. CENTER SHAFT (Knurled Barbell Grip) */}
-                <div style={{ height: '12px', width: '110px', backgroundColor: '#475569', borderTop: '1px solid #64748b', borderBottom: '1px solid #334155', flexShrink: 0, position: 'relative', backgroundImage: 'linear-gradient(90deg, rgba(255,255,255,0.06) 50%, transparent 50%)', backgroundSize: '4px 100%' }} />
+                <div style={{ height: '12px', width: '100px', backgroundColor: '#475569', borderTop: '1px solid #64748b', borderBottom: '1px solid #334155', flexShrink: 0, position: 'relative', backgroundImage: 'linear-gradient(90deg, rgba(255,255,255,0.06) 50%, transparent 50%)', backgroundSize: '4px 100%' }} />
 
                 {/* 4. RIGHT COLLAR STOP */}
                 <div style={{ height: '38px', width: '10px', backgroundColor: '#64748b', borderRadius: '2px', borderRight: '2px solid #1e293b', boxShadow: '2px 0 4px rgba(0,0,0,0.5)', flexShrink: 0, zIndex: 2 }} />
 
                 {/* 5. RIGHT SLEEVE */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', minWidth: '110px', backgroundColor: '#334155', height: '16px', borderTop: '1px solid #475569', borderBottom: '1px solid #1e293b', borderRadius: '0 4px 4px 0', position: 'relative' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', minWidth: '100px', backgroundColor: '#334155', height: '16px', borderTop: '1px solid #475569', borderBottom: '1px solid #1e293b', borderRadius: '0 4px 4px 0', position: 'relative' }}>
                   {/* Right Plates (Inner -> Outer order) */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
                     {platesOneSide.map((pWeight, idx) => {
@@ -323,9 +323,9 @@ export default function Calculator() {
 
             {/* Manual Plate Rack (Add / Clear Plates) */}
             <div style={{ marginBottom: '1.25rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.25rem' }}>
                 <h3 style={{ fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>
-                  Manual Plate Rack (Click to Add / Click Sleeve to Remove)
+                  Manual Plate Rack (Click to Add / Remove)
                 </h3>
                 <button
                   onClick={handleClearBar}
@@ -335,7 +335,7 @@ export default function Calculator() {
                 </button>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '0.4rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(48px, 1fr))', gap: '0.35rem' }}>
                 {PLATE_WEIGHTS.map((pWeight) => {
                   const cfg = PLATE_CONFIG[pWeight];
                   return (
@@ -346,7 +346,7 @@ export default function Calculator() {
                         backgroundColor: '#0b0f17',
                         border: `1px solid ${cfg.color}`,
                         borderRadius: '8px',
-                        padding: '0.5rem 0.25rem',
+                        padding: '0.5rem 0.2rem',
                         textAlign: 'center',
                         cursor: 'pointer',
                         color: '#ffffff',
@@ -365,7 +365,7 @@ export default function Calculator() {
             <h3 style={{ fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>
               1RM Training Percentages (Click to Auto-Load)
             </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: '0.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '0.4rem' }}>
               {percentages.map((item) => {
                 const targetW = Math.round((estimatedOneRepMax * item.pct) / 100);
                 const isSelected = currentTotalWeight > barWeight && currentTotalWeight === targetW;
@@ -375,7 +375,7 @@ export default function Calculator() {
                     key={item.pct}
                     onClick={() => handleLoadTargetWeight(targetW)}
                     style={{
-                      padding: '0.5rem',
+                      padding: '0.5rem 0.4rem',
                       borderRadius: '10px',
                       border: '1px solid',
                       textAlign: 'left',
