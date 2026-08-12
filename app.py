@@ -29,7 +29,13 @@ from backend.utils.leads_utils import (
     AppointmentBooking, 
     save_lead, 
     save_booking, 
-    fetch_all_leads
+    fetch_all_leads,
+)
+from backend.utils.pr_utils import (
+    PRRecordPayload,
+    save_pr_record,
+    fetch_all_pr_records,
+    delete_pr_record,
 )
 from backend.utils.schedule_utils import (
     generate_upcoming_slots,
@@ -323,6 +329,33 @@ async def update_lead_status(lead_id: str, status_data: StatusUpdate, admin: dic
     except Exception as e:
         logger.error("Failed lead status update for lead_id=%s: %s", lead_id, str(e))
         raise HTTPException(status_code=400, detail=f"Invalid lead ID or update failed: {str(e)}")
+
+@app.get("/api/prs")
+async def get_public_prs():
+    logger.info("Public PR records requested")
+    return await fetch_all_pr_records()
+
+
+@app.post("/api/prs", status_code=status.HTTP_201_CREATED)
+async def create_public_pr(payload: PRRecordPayload):
+    logger.info("New PR record submitted for %s / %s", payload.name, payload.liftName)
+    saved = await save_pr_record(payload)
+    return {"success": True, "record": saved}
+
+
+@app.delete("/api/prs/{pr_id}")
+async def delete_public_pr(pr_id: str):
+    logger.info("Delete PR request for id=%s", pr_id)
+    try:
+        deleted = await delete_pr_record(pr_id)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+    if not deleted:
+        raise HTTPException(status_code=404, detail="PR not found")
+
+    return {"success": True, "deleted_id": pr_id}
+
 
 @app.get("/api/content")
 async def get_public_content():

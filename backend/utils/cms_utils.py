@@ -112,6 +112,13 @@ DEFAULT_CONTENT: Dict[str, str] = {
     "consultation_step_3_description": "Get recommended program structures and training cadence tailored for you.",
     "consultation_quote_text": "Training isn't about pushing past bad biomechanics - it's about teaching your body how to produce power efficiently without injury.",
     "consultation_quote_author": "- Madison Spear, Head Coach",
+    "consultation_local_kicker": "Personal Training in Des Moines, IA",
+    "consultation_local_intro": "BTY Fitness provides personalized strength coaching and fitness consultations for clients throughout Des Moines, Urbandale, West Des Moines, and the greater Iowa metro area. Based at Trainer's Edge Gym, Madison helps clients improve movement quality, build strength, and train with sustainable structure.",
+    "consultation_local_location_title": "Location",
+    "consultation_local_location_name": "Trainer's Edge Gym",
+    "consultation_local_location_address": "3845 100th St, Urbandale, IA 50322",
+    "consultation_local_service_title": "Service Area",
+    "consultation_local_service_areas": "Des Moines • Urbandale • West Des Moines • Ankeny",
     "consultation_form_title": "Start Your Journey",
     "consultation_form_subtitle": "Book your free consultation today.",
     "consultation_form_label_name": "Full Name",
@@ -227,7 +234,9 @@ def _merge_with_defaults(items: Dict[str, Any] | None) -> Dict[str, str]:
     if isinstance(items, dict):
         for key, value in items.items():
             if key in ALLOWED_CONTENT_KEYS and isinstance(value, str):
-                merged[key] = value
+                cleaned = value.strip()
+                if cleaned:
+                    merged[key] = cleaned
     return merged
 
 def get_content_map() -> Dict[str, Any]:
