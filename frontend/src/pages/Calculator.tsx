@@ -20,14 +20,13 @@ interface PRRecord {
 
 const PLATE_CONFIG: Record<number, PlateInfo> = {
   45: { color: '#38C2DE', textColor: '#000000', heightPx: 110, widthPx: 15 }, // BTY Cyan
-  35: { color: '#eab308', textColor: '#000000', heightPx: 96,  widthPx: 13 }, // Yellow
   25: { color: '#22c55e', textColor: '#000000', heightPx: 82,  widthPx: 11 }, // Green
   10: { color: '#f8fafc', textColor: '#000000', heightPx: 60,  widthPx: 9  }, // White
   5:  { color: '#ef4444', textColor: '#ffffff', heightPx: 48,  widthPx: 7  }, // Red
   2.5:{ color: '#a1a1aa', textColor: '#000000', heightPx: 34,  widthPx: 5  }, // Grey
 };
 
-const PLATE_WEIGHTS = [45, 35, 25, 10, 5, 2.5];
+const PLATE_WEIGHTS = [45, 25, 10, 5, 2.5];
 
 // Reusable Barbell Graphic Component
 const BarbellGraphic = ({
@@ -584,138 +583,6 @@ export default function Calculator() {
         >
           Book Coaching Session
         </Link>
-      </div>
-
-      {/* --- PR BADGE SECTION (COMPACT & ROW LAYOUT) --- */}
-      <div style={{ backgroundColor: '#121820', border: '1px solid #1e293b', borderRadius: '16px', padding: '1rem', marginBottom: '1.5rem' }}>
-        
-        {/* Header & Tight Inline Controls */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem', borderBottom: '1px solid #1e293b', paddingBottom: '0.75rem' }}>
-          <div>
-            <h2 style={{ fontSize: '1.05rem', fontWeight: 'bold', color: '#ffffff', margin: 0 }}>
-              Log & Generate <span style={{ color: '#38C2DE' }}>PR Badge</span>
-            </h2>
-          </div>
-
-          {/* Ultra-Tight PR Form Inputs */}
-          <form onSubmit={handleCreatePR} style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', alignItems: 'end' }}>
-            <div style={{ width: '90px' }}>
-              <label style={{ display: 'block', fontSize: '0.6rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.15rem' }}>
-                PR Weight
-              </label>
-              <input
-                type="number"
-                value={prWeightInput === 0 ? '' : prWeightInput}
-                onChange={(e) => setPrWeightInput(Number(e.target.value))}
-                placeholder="315 lbs"
-                style={{ width: '100%', backgroundColor: '#0b0f17', border: '1px solid #334155', borderRadius: '6px', padding: '0.35rem 0.45rem', color: '#fff', fontSize: '0.8rem', boxSizing: 'border-box' }}
-              />
-            </div>
-
-            <div style={{ width: '115px' }}>
-              <label style={{ display: 'block', fontSize: '0.6rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.15rem' }}>
-                Lift Type
-              </label>
-              <select
-                value={prLiftName}
-                onChange={(e) => setPrLiftName(e.target.value)}
-                style={{ width: '100%', backgroundColor: '#0b0f17', border: '1px solid #334155', borderRadius: '6px', padding: '0.35rem 0.45rem', color: '#fff', fontSize: '0.8rem', boxSizing: 'border-box' }}
-              >
-                <option value="Squat">Squat</option>
-                <option value="Bench Press">Bench Press</option>
-                <option value="Deadlift">Deadlift</option>
-                <option value="Overhead Press">Overhead Press</option>
-                <option value="Hip Thrust">Hip Thrust</option>
-              </select>
-            </div>
-
-            <div style={{ width: '120px' }}>
-              <label style={{ display: 'block', fontSize: '0.6rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.15rem' }}>
-                Name
-              </label>
-              <input
-                type="text"
-                value={prName}
-                onChange={(e) => setPrName(e.target.value)}
-                placeholder="Alex M."
-                style={{ width: '100%', backgroundColor: '#0b0f17', border: '1px solid #334155', borderRadius: '6px', padding: '0.35rem 0.45rem', color: '#fff', fontSize: '0.8rem', boxSizing: 'border-box' }}
-              />
-            </div>
-
-            <button
-              type="submit"
-              style={{
-                backgroundColor: '#38C2DE',
-                color: '#000000',
-                fontWeight: 'bold',
-                padding: '0.4rem 0.75rem',
-                borderRadius: '6px',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '0.78rem',
-              }}
-            >
-              + Create Card
-            </button>
-          </form>
-        </div>
-
-        {/* PR Cards Displayed cleanly in Rows (Grid Layout) */}
-        {savedPRs.length > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))', gap: '0.85rem', width: '100%' }}>
-            {savedPRs.map((pr) => (
-              <div
-                key={pr.id}
-                style={{
-                  backgroundColor: '#0b0f17',
-                  border: '1px solid #38C2DE',
-                  borderRadius: '10px',
-                  padding: '0.75rem 0.85rem',
-                  position: 'relative',
-                  boxShadow: '0 4px 16px rgba(56, 194, 222, 0.08)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  boxSizing: 'border-box',
-                }}
-              >
-                {/* Delete Badge Button */}
-                <button
-                  onClick={() => handleDeletePR(pr.id)}
-                  style={{ position: 'absolute', top: '6px', right: '8px', background: 'none', border: 'none', color: '#64748b', fontSize: '1.1rem', cursor: 'pointer', lineHeight: 1 }}
-                  title="Remove Badge"
-                >
-                  ×
-                </button>
-
-                {/* Card Header Details */}
-                <div>
-                  <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#ffffff', marginBottom: '0.1rem' }}>
-                    {pr.name}
-                  </div>
-                  <div style={{ fontSize: '0.6rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    {pr.liftName} Personal Record
-                  </div>
-
-                  {/* Weight Callout */}
-                  <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#38C2DE', margin: '0.1rem 0' }}>
-                    {pr.weight} <span style={{ fontSize: '0.75rem', fontWeight: 'normal', color: '#94a3b8' }}>lbs</span>
-                  </div>
-                </div>
-
-                {/* Scaled & Compact Barbell Visualizer */}
-                <div style={{ backgroundColor: '#121820', border: '1px solid #1e293b', borderRadius: '6px', padding: '0.2rem', margin: '0.35rem 0', display: 'flex', justifyContent: 'center', alignItems: 'center', overflowX: 'auto' }}>
-                  <BarbellGraphic plates={pr.platesOneSide} compact={true} />
-                </div>
-
-                {/* Message Right Under Barbell */}
-                <div style={{ backgroundColor: 'rgba(56, 194, 222, 0.08)', borderLeft: '3px solid #38C2DE', padding: '0.35rem 0.5rem', borderRadius: '0 5px 5px 0', fontSize: '0.7rem', fontStyle: 'italic', color: '#e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.2rem' }}>
-                  <span>"Madison helped me achieve this!"</span>
-                  <span style={{ fontSize: '0.58rem', color: '#64748b', fontStyle: 'normal' }}>{pr.date}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
     </div>

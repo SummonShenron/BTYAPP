@@ -31,6 +31,188 @@ interface TestimonialItem {
   role: string;
 }
 
+interface PlateInfo {
+  color: string;
+  textColor: string;
+  heightPx: number;
+  widthPx: number;
+}
+
+interface PRRecord {
+  id: string;
+  weight: number;
+  liftName: string;
+  name: string;
+  barWeight: number;
+  platesOneSide: number[];
+  date: string;
+}
+
+const PLATE_CONFIG: Record<number, PlateInfo> = {
+  45: { color: '#38C2DE', textColor: '#000000', heightPx: 110, widthPx: 15 },
+  25: { color: '#22c55e', textColor: '#000000', heightPx: 110, widthPx: 11 },
+  10: { color: '#f8fafc', textColor: '#000000', heightPx: 110, widthPx: 9 },
+  5: { color: '#ef4444', textColor: '#ffffff', heightPx: 48, widthPx: 7 },
+  2.5: { color: '#a1a1aa', textColor: '#000000', heightPx: 34, widthPx: 5 },
+};
+
+const PLATE_WEIGHTS = [45, 25, 10, 5, 2.5];
+
+const autoCalculatePlatesForTarget = (targetWeight: number, barWeight: number) => {
+  let remaining = (targetWeight - barWeight) / 2;
+  if (remaining <= 0) return [];
+
+  const plates: number[] = [];
+  for (const plateWeight of PLATE_WEIGHTS) {
+    const count = Math.floor(remaining / plateWeight);
+    for (let i = 0; i < count; i++) {
+      plates.push(plateWeight);
+    }
+    remaining %= plateWeight;
+  }
+
+  return plates;
+};
+
+const BarbellGraphic = ({
+  plates,
+  compact = false,
+}: {
+  plates: number[];
+  compact?: boolean;
+}) => {
+  const hMult = compact ? 0.55 : 0.85;
+  const containerHeight = compact ? '70px' : '120px';
+  const sleeveHeight = compact ? '10px' : '14px';
+  const collarHeight = compact ? '24px' : '34px';
+  const collarWidth = compact ? '6px' : '8px';
+  const barHeight = compact ? '7px' : '10px';
+  const minSleeveWidth = compact ? '55px' : '90px';
+  const fontSize = compact ? '7px' : '8px';
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        minWidth: compact ? '240px' : '380px',
+        height: containerHeight,
+        position: 'relative',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          minWidth: minSleeveWidth,
+          backgroundColor: '#334155',
+          height: sleeveHeight,
+          borderRadius: '3px 0 0 3px',
+          position: 'relative',
+        }}
+      >
+        {plates.length > 0 && (
+          <div
+            style={{
+              height: compact ? '13px' : '18px',
+              width: compact ? '3px' : '5px',
+              backgroundColor: '#94a3b8',
+              borderRadius: '2px',
+              marginRight: '2px',
+              flexShrink: 0,
+            }}
+          />
+        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: compact ? '1px' : '2px' }}>
+          {[...plates].reverse().map((pWeight, idx) => {
+            const cfg = PLATE_CONFIG[pWeight] || PLATE_CONFIG[45];
+            return (
+              <div
+                key={`L-${pWeight}-${idx}`}
+                style={{
+                  backgroundColor: cfg.color,
+                  height: `${cfg.heightPx * hMult}px`,
+                  width: `${Math.max(compact ? 4 : 5, cfg.widthPx * (compact ? 0.75 : 1))}px`,
+                  borderRadius: '2px',
+                  borderLeft: '1px solid rgba(0,0,0,0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: fontSize,
+                  fontWeight: 'bold',
+                  color: cfg.textColor,
+                  flexShrink: 0,
+                }}
+              >
+                {cfg.heightPx >= (compact ? 40 : 60) ? pWeight : ''}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div style={{ height: collarHeight, width: collarWidth, backgroundColor: '#64748b', borderRadius: '2px', flexShrink: 0, zIndex: 2 }} />
+      <div style={{ height: barHeight, width: compact ? '50px' : '90px', backgroundColor: '#475569', flexShrink: 0, backgroundImage: 'linear-gradient(90deg, rgba(255,255,255,0.06) 50%, transparent 50%)', backgroundSize: '4px 100%' }} />
+      <div style={{ height: collarHeight, width: collarWidth, backgroundColor: '#64748b', borderRadius: '2px', flexShrink: 0, zIndex: 2 }} />
+
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          minWidth: minSleeveWidth,
+          backgroundColor: '#334155',
+          height: sleeveHeight,
+          borderRadius: '0 3px 3px 0',
+          position: 'relative',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: compact ? '1px' : '2px' }}>
+          {plates.map((pWeight, idx) => {
+            const cfg = PLATE_CONFIG[pWeight] || PLATE_CONFIG[45];
+            return (
+              <div
+                key={`R-${pWeight}-${idx}`}
+                style={{
+                  backgroundColor: cfg.color,
+                  height: `${cfg.heightPx * hMult}px`,
+                  width: `${Math.max(compact ? 4 : 5, cfg.widthPx * (compact ? 0.75 : 1))}px`,
+                  borderRadius: '2px',
+                  borderRight: '1px solid rgba(0,0,0,0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: fontSize,
+                  fontWeight: 'bold',
+                  color: cfg.textColor,
+                  flexShrink: 0,
+                }}
+              >
+                {cfg.heightPx >= (compact ? 40 : 60) ? pWeight : ''}
+              </div>
+            );
+          })}
+        </div>
+        {plates.length > 0 && (
+          <div
+            style={{
+              height: compact ? '13px' : '18px',
+              width: compact ? '3px' : '5px',
+              backgroundColor: '#94a3b8',
+              borderRadius: '2px',
+              marginLeft: '2px',
+              flexShrink: 0,
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
 function TestimonialsCarousel({ items }: { items: TestimonialItem[] }) {
   const [index, setIndex] = useState(0);
 
@@ -74,6 +256,24 @@ function TestimonialsCarousel({ items }: { items: TestimonialItem[] }) {
 
 export default function Testimonials() {
   const [content, setContent] = useState<Record<string, string>>(defaults);
+  const [prWeightInput, setPrWeightInput] = useState<number>(0);
+  const [prLiftName, setPrLiftName] = useState<string>('Squat');
+  const [prName, setPrName] = useState<string>('');
+  const [savedPRs, setSavedPRs] = useState<PRRecord[]>([]);
+
+  const normalizePrRecord = (record: any): PRRecord => ({
+    id: record.id ?? record._id ?? `${record.liftName}-${record.weight}-${Date.now()}`,
+    weight: Number(record.weight ?? 0),
+    liftName: record.liftName ?? 'Squat',
+    name: record.name ?? 'Anonymous Lifter',
+    barWeight: Number(record.barWeight ?? 45),
+    platesOneSide: Array.isArray(record.platesOneSide) ? record.platesOneSide.map(Number) : [],
+    date: record.date ?? new Date(record.created_at ?? Date.now()).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    }),
+  });
 
   useEffect(() => {
     const controller = new AbortController();
@@ -98,10 +298,82 @@ export default function Testimonials() {
       }
     };
 
+    const loadPublicPRs = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/prs`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          return;
+        }
+
+        const data = await response.json();
+        const normalized = Array.isArray(data)
+          ? data.map(normalizePrRecord).sort((a, b) => b.weight - a.weight)
+          : [];
+        setSavedPRs(normalized);
+      } catch {
+        setSavedPRs([]);
+      }
+    };
+
     void loadContent();
+    void loadPublicPRs();
 
     return () => controller.abort();
   }, []);
+
+  const handleCreatePR = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const finalWeight = prWeightInput || 135;
+    const barWeight = 45;
+    const platesOneSide = autoCalculatePlatesForTarget(finalWeight, barWeight);
+    const payload = {
+      weight: finalWeight,
+      liftName: prLiftName,
+      name: prName.trim() || 'Anonymous Lifter',
+      barWeight,
+      platesOneSide,
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    };
+
+    try {
+      const response = await fetch(`${API_URL}/api/prs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error('Unable to save PR');
+      }
+
+      const data = await response.json();
+      const savedRecord = normalizePrRecord(data.record ?? payload);
+      setSavedPRs((prev) => [savedRecord, ...prev].sort((a, b) => b.weight - a.weight));
+      setPrWeightInput(0);
+      setPrName('');
+      setPrLiftName('Squat');
+    } catch {
+      // Keep quiet for now; we can add a toast later.
+    }
+  };
+
+  const handleDeletePR = async (id: string) => {
+    try {
+      const response = await fetch(`${API_URL}/api/prs/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Delete failed');
+      }
+
+      setSavedPRs((prev) => prev.filter((pr) => pr.id !== id));
+    } catch {
+      // Keep quiet for now.
+    }
+  };
 
   const testimonials: TestimonialItem[] = [
     {
@@ -150,6 +422,147 @@ export default function Testimonials() {
             <div className="role">{item.role}</div>
           </article>
         ))}
+      </section>
+
+      <section
+        style={{
+          marginTop: '2rem',
+          backgroundColor: '#121820',
+          border: '1px solid #1e293b',
+          borderRadius: '16px',
+          padding: '1rem',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '0.75rem',
+            marginBottom: '1rem',
+            borderBottom: '1px solid #1e293b',
+            paddingBottom: '0.75rem',
+          }}
+        >
+          <div>
+            <h2 style={{ fontSize: '1.05rem', fontWeight: 'bold', color: '#ffffff', margin: 0 }}>
+              Log & Generate <span style={{ color: '#38C2DE' }}>PR Badge</span>
+            </h2>
+          </div>
+
+          <form onSubmit={handleCreatePR} style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', alignItems: 'end' }}>
+            <div style={{ width: '90px' }}>
+              <label style={{ display: 'block', fontSize: '0.6rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.15rem' }}>
+                PR Weight
+              </label>
+              <input
+                type="number"
+                value={prWeightInput === 0 ? '' : prWeightInput}
+                onChange={(e) => setPrWeightInput(Number(e.target.value))}
+                placeholder="315 lbs"
+                style={{ width: '100%', backgroundColor: '#0b0f17', border: '1px solid #334155', borderRadius: '6px', padding: '0.35rem 0.45rem', color: '#fff', fontSize: '0.8rem', boxSizing: 'border-box' }}
+              />
+            </div>
+
+            <div style={{ width: '115px' }}>
+              <label style={{ display: 'block', fontSize: '0.6rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.15rem' }}>
+                Lift Type
+              </label>
+              <select
+                value={prLiftName}
+                onChange={(e) => setPrLiftName(e.target.value)}
+                style={{ width: '100%', backgroundColor: '#0b0f17', border: '1px solid #334155', borderRadius: '6px', padding: '0.35rem 0.45rem', color: '#fff', fontSize: '0.8rem', boxSizing: 'border-box' }}
+              >
+                <option value="Squat">Squat</option>
+                <option value="Bench Press">Bench Press</option>
+                <option value="Deadlift">Deadlift</option>
+                <option value="Overhead Press">Overhead Press</option>
+                <option value="Hip Thrust">Hip Thrust</option>
+              </select>
+            </div>
+
+            <div style={{ width: '120px' }}>
+              <label style={{ display: 'block', fontSize: '0.6rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.15rem' }}>
+                Name
+              </label>
+              <input
+                type="text"
+                value={prName}
+                onChange={(e) => setPrName(e.target.value)}
+                placeholder="Alex M."
+                style={{ width: '100%', backgroundColor: '#0b0f17', border: '1px solid #334155', borderRadius: '6px', padding: '0.35rem 0.45rem', color: '#fff', fontSize: '0.8rem', boxSizing: 'border-box' }}
+              />
+            </div>
+
+            <button
+              type="submit"
+              style={{
+                backgroundColor: '#38C2DE',
+                color: '#000000',
+                fontWeight: 'bold',
+                padding: '0.4rem 0.75rem',
+                borderRadius: '6px',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '0.78rem',
+              }}
+            >
+              + Create Card
+            </button>
+          </form>
+        </div>
+
+        {savedPRs.length > 0 && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))', gap: '0.85rem', width: '100%' }}>
+            {savedPRs.map((pr) => (
+              <div
+                key={pr.id}
+                style={{
+                  backgroundColor: '#0b0f17',
+                  border: '1px solid #38C2DE',
+                  borderRadius: '10px',
+                  padding: '0.75rem 0.85rem',
+                  position: 'relative',
+                  boxShadow: '0 4px 16px rgba(56, 194, 222, 0.08)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  boxSizing: 'border-box',
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => handleDeletePR(pr.id)}
+                  style={{ position: 'absolute', top: '6px', right: '8px', background: 'none', border: 'none', color: '#64748b', fontSize: '1.1rem', cursor: 'pointer', lineHeight: 1 }}
+                  title="Remove Badge"
+                >
+                  ×
+                </button>
+
+                <div>
+                  <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#ffffff', marginBottom: '0.1rem' }}>
+                    {pr.name}
+                  </div>
+                  <div style={{ fontSize: '0.6rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    {pr.liftName} Personal Record
+                  </div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#38C2DE', margin: '0.1rem 0' }}>
+                    {pr.weight} <span style={{ fontSize: '0.75rem', fontWeight: 'normal', color: '#94a3b8' }}>lbs</span>
+                  </div>
+                </div>
+
+                <div style={{ backgroundColor: '#121820', border: '1px solid #1e293b', borderRadius: '6px', padding: '0.2rem', margin: '0.35rem 0', display: 'flex', justifyContent: 'center', alignItems: 'center', overflowX: 'auto' }}>
+                  <BarbellGraphic plates={pr.platesOneSide} compact={true} />
+                </div>
+
+                <div style={{ backgroundColor: 'rgba(56, 194, 222, 0.08)', borderLeft: '3px solid #38C2DE', padding: '0.35rem 0.5rem', borderRadius: '0 5px 5px 0', fontSize: '0.7rem', fontStyle: 'italic', color: '#e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.2rem' }}>
+                  <span>"Madison helped me achieve this!"</span>
+                  <span style={{ fontSize: '0.58rem', color: '#64748b', fontStyle: 'normal' }}>{pr.date}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="cta-ribbon">
