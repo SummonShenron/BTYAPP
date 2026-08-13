@@ -97,9 +97,11 @@ const BarbellGraphic = ({
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        minWidth: compact ? '240px' : '380px',
+        maxWidth: '100%',
+        minWidth: compact ? '0' : '380px',
         height: containerHeight,
         position: 'relative',
+        overflow: 'hidden',
       }}
     >
       <div
@@ -431,6 +433,11 @@ export default function Testimonials() {
           border: '1px solid #1e293b',
           borderRadius: '16px',
           padding: '1rem',
+          width: '100%',
+          maxWidth: '620px',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          boxSizing: 'border-box',
         }}
       >
         <div
@@ -514,7 +521,7 @@ export default function Testimonials() {
         </div>
 
         {savedPRs.length > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))', gap: '0.85rem', width: '100%' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '0.85rem', width: '100%', justifyItems: 'center' }}>
             {savedPRs.map((pr) => (
               <div
                 key={pr.id}
@@ -528,6 +535,9 @@ export default function Testimonials() {
                   display: 'flex',
                   flexDirection: 'column',
                   boxSizing: 'border-box',
+                  width: '100%',
+                  maxWidth: '100%',
+                  minWidth: 0,
                 }}
               >
                 <button
@@ -551,7 +561,7 @@ export default function Testimonials() {
                   </div>
                 </div>
 
-                <div style={{ backgroundColor: '#121820', border: '1px solid #1e293b', borderRadius: '6px', padding: '0.2rem', margin: '0.35rem 0', display: 'flex', justifyContent: 'center', alignItems: 'center', overflowX: 'auto' }}>
+                <div style={{ backgroundColor: '#121820', border: '1px solid #1e293b', borderRadius: '6px', padding: '0.2rem', margin: '0.35rem 0', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', overflow: 'hidden' }}>
                   <BarbellGraphic plates={pr.platesOneSide} compact={true} />
                 </div>
 
