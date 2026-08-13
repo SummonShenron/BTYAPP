@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoImg from '../assets/logo.png';
-// You can import additional images here for the carousel slots:
 // import heroImg2 from '../assets/hero-2.png';
 // import heroImg3 from '../assets/hero-3.png';
 import './__styles__/hero.css';

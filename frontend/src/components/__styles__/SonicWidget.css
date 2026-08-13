@@ -6,10 +6,6 @@
   font-family: inherit;
 }
 
-.sonic-widget-root:active {
-  transform: scale(0.98);
-}
-
 .sonic-widget-drawer {
   position: absolute;
   bottom: 75px;
