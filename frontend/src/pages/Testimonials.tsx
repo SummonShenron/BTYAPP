@@ -434,7 +434,7 @@ export default function Testimonials() {
           borderRadius: '16px',
           padding: '1rem',
           width: '100%',
-          maxWidth: '620px',
+          maxWidth: '980px',
           marginLeft: 'auto',
           marginRight: 'auto',
           boxSizing: 'border-box',
@@ -521,7 +521,7 @@ export default function Testimonials() {
         </div>
 
         {savedPRs.length > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '0.85rem', width: '100%', justifyItems: 'center' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.85rem', width: '100%', justifyItems: 'stretch' }}>
             {savedPRs.map((pr) => (
               <div
                 key={pr.id}

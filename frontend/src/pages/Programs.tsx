@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import clientsVideo from '../assets/clients.mp4';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
@@ -171,6 +172,49 @@ export default function Programs() {
         <p className="text-[#A0A5AA] text-sm leading-relaxed">
           {content.programs_page_subtitle}
         </p>
+      </div>
+
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '1100px',
+          margin: '0 auto',
+          borderRadius: '18px',
+          overflow: 'hidden',
+          border: '1px solid rgba(56, 194, 222, 0.3)',
+          background: '#000000',
+          boxShadow: '0 8px 28px rgba(0,0,0,0.18)',
+          aspectRatio: '4 / 7',
+          minHeight: '620px',
+          maxHeight: '980px',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(180deg, rgba(2,6,23,0.12), rgba(2,6,23,0.54))',
+            pointerEvents: 'none',
+            zIndex: 1,
+          }}
+        />
+        <video
+          src={clientsVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            display: 'block',
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            objectPosition: 'center center',
+            background: '#000000',
+            filter: 'brightness(0.7) saturate(0.9)',
+          }}
+        />
       </div>
 
       {/* Programs Grid */}

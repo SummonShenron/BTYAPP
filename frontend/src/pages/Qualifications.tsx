@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './__styles__/BrandPages.css';
-
+import switchUpImg from '../assets/switch_up_your_routine-removebg-preview.png';
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
 const defaults: Record<string, string> = {
@@ -135,6 +135,7 @@ export default function Qualifications() {
           <Link to="/consultation" className="btn-neon-primary">{content.qualifications_cta_book}</Link>
         </div>
       </section>
+      <img className="qualifications-img" src={switchUpImg} alt="qualifications" />
     </div>
   );
 }
