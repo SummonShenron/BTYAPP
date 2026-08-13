@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './__styles__/BrandPages.css';
-import madi2 from '../assets/madi2.jpeg';
+import fitnessVideo from '../assets/fitness.mp4';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
@@ -80,10 +80,21 @@ export default function AboutMe() {
 
         <aside className="profile-frame">
           <div className="profile-media-zone">
-            <img
-              src={madi2}
-              alt="Madison Spear"
+            <video
+              src={fitnessVideo}
+              autoPlay
+              muted
+              loop
+              playsInline
               className="profile-media-image"
+              style={{
+                objectFit: 'cover',
+                objectPosition: 'center',
+                display: 'block',
+                width: '100%',
+                height: '100%',
+                filter: 'brightness(0.82) saturate(0.9)',
+              }}
             />
             <div className="profile-photo-veil" aria-hidden="true" />
             <div className="profile-photo-ring" aria-hidden="true" />

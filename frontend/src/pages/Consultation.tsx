@@ -1,7 +1,7 @@
 // pages/Consultation.tsx
 import React, { useEffect, useState } from 'react';
 import ConsultationForm from '../components/ConsultationForm';
-
+import switchUpImg from '../assets/switch_up_your_routine-removebg-preview.png'
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
 const defaults: Record<string, string> = {

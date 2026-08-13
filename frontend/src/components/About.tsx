@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import aboutSectionFallbackPhoto from '../assets/madi1.jpg';
+import madisonVideo from '../assets/madison.mp4';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
@@ -45,10 +46,22 @@ export const About: React.FC = () => {
     <section id="about" className="about-section">
       <div className="about-container">
         <div className="about-photo-shell about-image-wrapper chat-input-wrapper">
-          <img
-            src={aboutSectionFallbackPhoto}
-            alt="Madison Spear - BTY Fitness"
+          <video
+            src={madisonVideo}
+            poster={aboutSectionFallbackPhoto}
+            autoPlay
+            muted
+            loop
+            playsInline
             className="about-img about-img-sleek"
+            style={{
+              objectFit: 'cover',
+              objectPosition: '50% 18%',
+              display: 'block',
+              width: '100%',
+              height: '100%',
+              filter: 'brightness(0.72) saturate(0.9)',
+            }}
           />
           <div className="about-photo-veil" aria-hidden="true" />
           <div className="about-photo-ring" aria-hidden="true" />
