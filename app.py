@@ -1,10 +1,9 @@
 # app.py
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 import os
 import asyncio
 import json
-from time import timezone
 import traceback
 from urllib import error as urllib_error
 from urllib import request as urllib_request
