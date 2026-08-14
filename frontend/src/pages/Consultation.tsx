@@ -144,7 +144,6 @@ export default function Consultation() {
                 {content.consultation_local_intro}
               </p>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-[#DCEAF3]">
               <div className="rounded-xl border border-[#2a2a32] bg-[#0c1016] p-4">
                 <p className="text-[11px] uppercase tracking-[0.12em] text-[#38C2DE] mb-2">
@@ -153,6 +152,7 @@ export default function Consultation() {
                 <p>{content.consultation_local_location_name}</p>
                 <p className="text-[#A0A5AA]">{content.consultation_local_location_address}</p>
               </div>
+              
               <div className="rounded-xl border border-[#2a2a32] bg-[#0c1016] p-4">
                 <p className="text-[11px] uppercase tracking-[0.12em] text-[#38C2DE] mb-2">
                   {content.consultation_local_service_title}
@@ -160,8 +160,12 @@ export default function Consultation() {
                 <p className="text-[#A0A5AA]">{content.consultation_local_service_areas}</p>
               </div>
             </div>
+          </div>    
+          {/* MIDDLE SECTION: Fixed Window Reveal Hero Banner */}
+          <div className="consultation-reveal-banner">
+            <span className="banner-kicker">Won't Happen In One Day</span>
+            <h2 className="banner-title">DON'T GIVE UP WITHOUT TRYING</h2>
           </div>
-
           <div className="glass-card-interactive p-6 sm:p-8">
             <ConsultationForm contentOverrides={content} />
           </div>
