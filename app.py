@@ -1,8 +1,10 @@
 # app.py
+from datetime import datetime
 import logging
 import os
 import asyncio
 import json
+from time import timezone
 import traceback
 from urllib import error as urllib_error
 from urllib import request as urllib_request
@@ -467,3 +469,25 @@ async def trigger_error():
     logger.info("--> /api/erragent-debug endpoint hit!")
     # Intentionally trigger zero division; caught automatically by global_exception_handler!
     return 1 / 0
+
+# -------------------------------------------------------------
+# 6. HEALTH ROUTES
+# -------------------------------------------------------------
+@app.get("/api/health", tags=["Health"])
+def bty_health_check():
+    """
+    Lightweight health endpoint for BTY.
+    Used by errAgent to monitor uptime and latency.
+    """
+    db_status = "connected" if test_connection() else "disabled_or_failed"
+
+    return {
+        "status": "ok" if db_status == "connected" else "degraded",
+        "db": db_status,
+        "service": "BTY Fitness API",
+        "version": "1.0.0",
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
+
+
