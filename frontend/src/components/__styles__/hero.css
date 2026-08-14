@@ -96,14 +96,11 @@
 
 .sidebar-image-slot {
   width: 100%;
-  height: 200px;
+  height: 220px;
   background: linear-gradient(135deg, rgba(56, 194, 222, 0.2), rgba(28, 28, 30, 0.9));
   border-bottom: 1px solid var(--glass-border, rgba(160, 165, 170, 0.2));
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
 }
 
 .photo-icon {
@@ -117,11 +114,13 @@
 }
 
 .sidebar-logo {
-  width: min(78%, 260px);
-  max-height: 140px;
-  object-fit: contain;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
-  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.32));
+  filter: saturate(1.05) contrast(1.02);
 }
 
 .sidebar-card-content {
@@ -207,25 +206,19 @@
 .carousel-slot {
   position: relative;
   width: 100%;
-  height: 200px; /* Gives the carousel a strict, controlled height */
+  height: 220px;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0,.2);
-  border-radius: 12px 12px 0 0; /* Matches card rounding if needed */
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px 12px 0 0;
 }
 
 .carousel-img {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: min(78%, 260px);
-  height: auto;
-  max-height: 140px;
-  object-fit: contain;
-  padding: 0;
-  transform: translate(-50%, -50%);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
   opacity: 0;
   transition: opacity 0.6s ease-in-out;
 }

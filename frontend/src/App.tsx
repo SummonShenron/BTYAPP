@@ -22,6 +22,10 @@ export default function App() {
   const location = useLocation();
   const isLandingRoute = location.pathname === '/';
 
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [location.pathname]);
+
   return (
     <div style={{ position: 'relative', minHeight: '100vh' }}>
       <SeoManager pathname={location.pathname} />

@@ -222,7 +222,7 @@ function TestimonialsCarousel({ items }: { items: TestimonialItem[] }) {
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % items.length);
-    }, 6000);
+    }, 15000);
     return () => clearInterval(timer);
   }, [items.length]);
 
@@ -231,7 +231,7 @@ function TestimonialsCarousel({ items }: { items: TestimonialItem[] }) {
   const next = () => setIndex((i) => (i + 1) % items.length);
 
   return (
-    <div>
+    <div className="testimonial-carousel">
       <p className="carousel-quote">{current.quote}</p>
       <div className="carousel-meta">
         <p className="carousel-meta-name">{current.name}</p>

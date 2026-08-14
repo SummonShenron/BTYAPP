@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoImg from '../assets/logo.png';
-// import heroImg2 from '../assets/hero-2.png';
-// import heroImg3 from '../assets/hero-3.png';
+import heroImg2 from '../assets/cover_photo.jpg';
+import heroImg3 from '../assets/cover_photo2.jpg';
+import twinsImg from '../assets/twins.jpg';
 import './__styles__/hero.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
@@ -23,7 +24,7 @@ const defaults: Record<string, string> = {
 };
 
 // Define your 3 carousel images here (swap these variables with your actual image imports)
-const carouselImages = [logoImg, logoImg, logoImg];
+const carouselImages = [heroImg3, heroImg2, twinsImg];
 
 export default function Hero() {
   const navigate = useNavigate();
