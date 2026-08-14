@@ -489,3 +489,72 @@ html, body {
     justify-content: center;
   }
 }
+
+/* ==========================================================================
+   9. CONSULTATION PAGE
+   ========================================================================== */
+
+  /* ==========================================================================
+   MID-PAGE FIXED REVEAL BANNER (CONSULTATION DIVIDER)
+   ========================================================================== */
+
+.consultation-reveal-banner {
+  position: relative;
+  /* Stretch edge-to-edge across the entire viewport */
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  
+  min-height: 260px;
+  /* margin-top: 3.5rem;
+  margin-bottom: 3.5rem; */
+  
+  /* --- FIXED PARALLAX REVEAL EFFECT --- */
+  background-image: linear-gradient(
+      rgba(18, 19, 22, 0.65), 
+      rgba(18, 19, 22, 0.85)
+    ), 
+    url('/src/assets/logo.png'); /* Ensure path matches your image */
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  /* clip-path: polygon(0 3vw, 100% 0, 100% calc(100% - 3vw), 0 100%); */
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 1.5rem;
+}
+
+.consultation-reveal-banner .banner-kicker {
+  color: var(--accent-cyan);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.consultation-reveal-banner .banner-title {
+  font-size: clamp(1.6rem, 4vw, 2.8rem);
+  font-weight: 900;
+  font-style: italic;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  max-width: 850px;
+  line-height: 1.15;
+}
+
+/* Safari / iOS Scroll Fallback */
+@supports (-webkit-touch-callout: none) {
+  .consultation-reveal-banner {
+    background-attachment: scroll;
+  }
+}
