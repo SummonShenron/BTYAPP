@@ -101,12 +101,20 @@ export default function Qualifications() {
 
   return (
     <div className="brand-page qualifications-page">
-      <header>
-        <span className="brand-kicker">{content.qualifications_kicker}</span>
-        <h1 className="brand-title">{content.qualifications_title}</h1>
-        <p className="brand-subtitle">
-          {content.qualifications_subtitle}
-        </p>
+      <header className="qualifications-header">
+        <div className="qualifications-header-grid">
+          <div className="qualifications-header-copy">
+            <span className="brand-kicker">{content.qualifications_kicker}</span>
+            <h1 className="brand-title">{content.qualifications_title}</h1>
+            <p className="brand-subtitle">
+              {content.qualifications_subtitle}
+            </p>
+          </div>
+
+          <div className="qualifications-header-media">
+            <img className="qualifications-img" src={switchUpImg} alt="qualifications" />
+          </div>
+        </div>
       </header>
 
       <section className="qual-track">
@@ -135,7 +143,6 @@ export default function Qualifications() {
           <Link to="/consultation" className="btn-neon-primary">{content.qualifications_cta_book}</Link>
         </div>
       </section>
-      <img className="qualifications-img" src={switchUpImg} alt="qualifications" />
     </div>
   );
 }

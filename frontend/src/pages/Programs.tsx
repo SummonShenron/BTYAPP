@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './__styles__/BrandPages.css';
 import clientsVideo from '../assets/clients.mp4';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
@@ -161,64 +162,36 @@ export default function Programs() {
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl space-y-12">
-      {/* Header */}
-      <div className="text-center space-y-4 max-w-2xl mx-auto">
-        <span className="text-[#38C2DE] text-xs font-bold tracking-widest uppercase">
-          {content.programs_page_kicker}
-        </span>
-        <h1 className="text-4xl font-black tracking-tight text-white">
-          {content.programs_page_title}
-        </h1>
-        <p className="text-[#A0A5AA] text-sm leading-relaxed">
-          {content.programs_page_subtitle}
-        </p>
-      </div>
+      <section className="programs-hero-shell">
+        <div className="programs-hero">
+          <div className="programs-hero-copy">
+            <span className="text-[#38C2DE] text-xs font-bold tracking-widest uppercase">
+              {content.programs_page_kicker}
+            </span>
+            <h1 className="text-4xl font-black tracking-tight text-white">
+              {content.programs_page_title}
+            </h1>
+            <p className="text-[#A0A5AA] text-sm leading-relaxed">
+              {content.programs_page_subtitle}
+            </p>
+          </div>
 
-      <div
-        style={{
-          position: 'relative',
-          width: '100%',
-          maxWidth: '1100px',
-          margin: '0 auto',
-          borderRadius: '18px',
-          overflow: 'hidden',
-          border: '1px solid rgba(56, 194, 222, 0.3)',
-          background: '#000000',
-          boxShadow: '0 8px 28px rgba(0,0,0,0.18)',
-          aspectRatio: '4 / 7',
-          minHeight: '620px',
-          maxHeight: '980px',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(180deg, rgba(2,6,23,0.12), rgba(2,6,23,0.54))',
-            pointerEvents: 'none',
-            zIndex: 1,
-          }}
-        />
-        <video
-          src={clientsVideo}
-          autoPlay
-          muted
-          loop
-          playsInline
-          style={{
-            display: 'block',
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-            objectPosition: 'center center',
-            background: '#000000',
-            filter: 'brightness(0.7) saturate(0.9)',
-          }}
-        />
-      </div>
+          <div className="programs-hero-video-wrap">
+            <video
+              src={clientsVideo}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="programs-hero-video"
+            />
+          </div>
+        </div>
+      </section>
 
       {/* Programs Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+      <div className="programs-card-stack">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
         {programsDataFromContent.map((program, index) => (
           <div
             key={program.id}
@@ -280,6 +253,7 @@ export default function Programs() {
             </button>
           </div>
         ))}
+        </div>
       </div>
     </div>
   );
