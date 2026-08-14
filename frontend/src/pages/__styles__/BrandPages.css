@@ -481,11 +481,16 @@
   border: 1px solid rgba(56, 194, 222, 0.24);
   background: linear-gradient(180deg, rgba(18, 19, 22, 0.96), rgba(14, 16, 19, 0.94));
   padding: 2.1rem 1.4rem;
+  height: 620px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .testimonial-stage > * {
   position: relative;
   z-index: 1;
+  width: 100%;
 }
 
 
@@ -533,12 +538,17 @@
 
 .carousel-quote {
   max-width: 760px;
+  min-height: 320px;
   margin: 0 auto;
   font-size: clamp(1.05rem, 2.4vw, 1.5rem);
   line-height: 1.7;
   text-align: center;
   color: #d8e0e6;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .carousel-quote::before {
