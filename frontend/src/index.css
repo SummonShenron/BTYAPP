@@ -266,7 +266,7 @@ html, body {
     background-size: 280px; 
     
     /* 2. Recenter for mobile header height */
-    background-position: center 135px; 
+    background-position: center 150px; 
   }
 }
 
