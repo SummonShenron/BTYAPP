@@ -2,23 +2,23 @@ import React from "react";
 import { Link, Outlet } from 'react-router-dom';
 import Navbar from "./components/Navbar";
 import logoImg from './assets/logo.png';
-import StaticHexGrid from "./components/Honeycomb";
-import SparseBlipGrid from "./components/AmbientHero.tsx";
+import SparseBlipGrid from "./components/AmbientHero";
 
 export default function Layout() {
   return (
     <div className="bty-container">
       <Navbar />
 
-      {/* Hero Banner with Fixed Background Parallax */}
-      <div 
+     <div 
         className="bty-hero-banner" 
-        style={{ backgroundImage: `url(${logoImg})` }}
+        style={{ 
+          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)), url(${logoImg})`,
+          backgroundSize: 'cover, 450px', // Layer 1 (Gradient) covers 100%, Layer 2 (Logo) stays 450px
+        }}
       >
-        <SparseBlipGrid cellSize={20} color="#4FD4EE" maskRadius={180}/>
+        <SparseBlipGrid cellSize={20} color="#4FD4EE" maskRadius={220} />
       </div>
 
-      {/* Page Content */}
       <main className="bty-main">
         <Outlet />
       </main>

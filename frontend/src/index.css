@@ -207,23 +207,19 @@ html, body {
 }
 
 .bty-hero-banner {
+  position: relative;
   height: 260px;
   
-  /* --- FIXED PARALLAX SCROLL EFFECT --- */
+  /* Native Fixed Parallax */
   background-attachment: fixed;
   background-repeat: no-repeat;
-  
-  /* 1. Scaled down slightly from 500px to give top/bottom breathing room */
-  background-size: 450px; 
-  
-  /* 2. Pushed down from 105px to 135px so the top kettlebell ring clears the navbar */
-  background-position: center 180px; 
+  background-size: 450px;
+  background-position: center 180px;
 
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(10px);
+  /* Keeps canvas/fixed elements cleanly inside the hero window */
+  clip-path: inset(0);
   overflow: hidden;
-  position: relative;
-  transition: background 1.1s ease, border-color 1.1s ease, box-shadow 1.1s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .bty-hero-banner::before {

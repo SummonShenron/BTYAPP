@@ -1,15 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 
 interface TypingBlipGridProps {
-  cellSize?: number;        // Size of hex cells
-  color?: string;           // Grid & glow color
-  baseGridOpacity?: number; // Faint static grid brightness (e.g. 0.05 = barely visible)
-  maskRadius?: number;      // Center logo exclusion zone
+  cellSize?: number;
+  color?: string;
+  baseGridOpacity?: number;
+  maskRadius?: number;
 }
 
 interface HexBlip {
-  x: number;
-  y: number;
+  col: number;
+  row: number;
   createdAt: number;
   fadeIn: number;
   hold: number;
@@ -19,8 +19,8 @@ interface HexBlip {
 export default function TypingBlipGrid({
   cellSize = 20,
   color = '#4FD4EE',
-  baseGridOpacity = 0.05, // Subtle static background grid opacity
-  maskRadius = 160,
+  baseGridOpacity = 0.05,
+  maskRadius = 180,
 }: TypingBlipGridProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -33,19 +33,26 @@ export default function TypingBlipGrid({
     let animationFrameId: number;
     let blips: HexBlip[] = [];
 
-    // Typing cadence state
     let nextSpawnTime = 0;
     let keysLeftInWord = 0;
     let currentGridPos = { col: 0, row: 0 };
 
     const handleResize = () => {
-      const parent = canvas.parentElement;
-      if (parent) {
-        const dpr = window.devicePixelRatio || 1;
-        canvas.width = parent.clientWidth * dpr;
-        canvas.height = parent.clientHeight * dpr;
-        ctx.scale(dpr, dpr);
-      }
+      const dpr = window.devicePixelRatio || 1;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      // 1. Set internal buffer size
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+
+      // 2. Set explicit CSS dimensions to prevent browser stretching
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+
+      // 3. Reset transform matrix before scaling
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
     };
 
     handleResize();
@@ -75,9 +82,8 @@ export default function TypingBlipGrid({
     };
 
     const render = (time: number) => {
-      const parent = canvas.parentElement;
-      const width = parent?.clientWidth || canvas.width;
-      const height = parent?.clientHeight || canvas.height;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
 
       const hexRadius = cellSize;
       const hexWidth = Math.sqrt(3) * hexRadius;
@@ -98,13 +104,9 @@ export default function TypingBlipGrid({
           currentGridPos.col = Math.max(0, Math.min(cols - 1, currentGridPos.col + (Math.floor(Math.random() * 3) - 1)));
           currentGridPos.row = Math.max(0, Math.min(rows - 1, currentGridPos.row + (Math.floor(Math.random() * 3) - 1)));
 
-          const xOffset = currentGridPos.row % 2 !== 0 ? hexWidth / 2 : 0;
-          const keyX = currentGridPos.col * hexWidth + xOffset;
-          const keyY = currentGridPos.row * rowStep;
-
           blips.push({
-            x: keyX,
-            y: keyY,
+            col: currentGridPos.col,
+            row: currentGridPos.row,
             createdAt: time,
             fadeIn: 140,
             hold: 60,
@@ -120,7 +122,7 @@ export default function TypingBlipGrid({
 
       ctx.clearRect(0, 0, width, height);
 
-      // 2. DRAW FAINT STATIC BASE GRID
+      // 2. DRAW BASE GRID
       if (baseGridOpacity > 0) {
         ctx.globalCompositeOperation = 'source-over';
         ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${baseGridOpacity})`;
@@ -144,7 +146,7 @@ export default function TypingBlipGrid({
         ctx.stroke();
       }
 
-      // 3. RENDER TYPING BLIPS OVER THE STATIC GRID
+      // 3. RENDER BLIPS
       if (blips.length > 0) {
         ctx.globalCompositeOperation = 'lighter';
 
@@ -163,39 +165,48 @@ export default function TypingBlipGrid({
 
           alpha = Math.max(0, Math.min(1, alpha));
 
-          drawSingleHex(blip.x, blip.y, hexRadius);
+          const xOffset = blip.row % 2 !== 0 ? hexWidth / 2 : 0;
+          const keyX = blip.col * hexWidth + xOffset;
+          const keyY = blip.row * rowStep;
+
+          drawSingleHex(keyX, keyY, hexRadius);
           ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha * 0.65})`;
           ctx.lineWidth = 1.3;
           ctx.stroke();
         });
       }
 
-      // 4. ERASE CENTER EXCLUSION ZONE
-      if (maskRadius > 0) {
-        ctx.globalCompositeOperation = 'destination-out';
-        const centerX = width / 2;
-        const centerY = height / 2;
+      // 4. DYNAMIC LOGO EXCLUSION MASK
+        if (maskRadius > 0) {
+        const banner = document.querySelector('.bty-hero-banner');
+        if (banner) {
+            const rect = banner.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
 
-        const eraseGrad = ctx.createRadialGradient(
-          centerX,
-          centerY,
-          0,
-          centerX,
-          centerY,
-          maskRadius
-        );
+            ctx.globalCompositeOperation = 'destination-out';
 
-        eraseGrad.addColorStop(0, 'rgba(0,0,0,1)');
-        eraseGrad.addColorStop(0.6, 'rgba(0,0,0,1)');
-        eraseGrad.addColorStop(1, 'rgba(0,0,0,0)');
+            const eraseGrad = ctx.createRadialGradient(
+            centerX,
+            centerY,
+            0,
+            centerX,
+            centerY,
+            maskRadius
+            );
 
-        ctx.fillStyle = eraseGrad;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, maskRadius, 0, Math.PI * 2);
-        ctx.fill();
+            eraseGrad.addColorStop(0, 'rgba(0,0,0,1)');
+            eraseGrad.addColorStop(0.5, 'rgba(0,0,0,1)');
+            eraseGrad.addColorStop(1, 'rgba(0,0,0,0)');
 
-        ctx.globalCompositeOperation = 'source-over';
-      }
+            ctx.fillStyle = eraseGrad;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, maskRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.globalCompositeOperation = 'source-over';
+        }
+        }
 
       animationFrameId = requestAnimationFrame(render);
     };
@@ -212,10 +223,9 @@ export default function TypingBlipGrid({
     <canvas
       ref={canvasRef}
       style={{
-        position: 'absolute',
-        inset: 0,
-        width: '100%',
-        height: '100%',
+        position: 'fixed',
+        top: 0,
+        left: 0,
         pointerEvents: 'none',
       }}
     />
