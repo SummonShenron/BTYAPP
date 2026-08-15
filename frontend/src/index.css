@@ -196,18 +196,17 @@ html, body {
 }
 
 .bty-hero-banner {
-  height: 260px;
-  background: linear-gradient(
-    rgba(255, 255, 255, 0.06),
-    rgba(255, 255, 255, 0.02)
-  );
+  height: 260px; /* Exact height preserved */
+  
+  /* --- FIXED BACKGROUND SCROLL EFFECT --- */
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 500px; /* Scales logo cleanly within view */
+  background-position: center calc(50% - 100px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(10px);
   overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0 2rem;
   position: relative;
   transition: background 1.1s ease, border-color 1.1s ease, box-shadow 1.1s ease;
 }
@@ -222,20 +221,12 @@ html, body {
   );
   opacity: 0;
   transition: opacity 1.1s ease;
-  z-index: 0;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .bty-hero-banner:hover::before {
   opacity: 1;
-}
-
-
-
-.bty-hero-logo {
-  max-height: 100%;
-  max-width: 100%;
-  object-fit: contain;
-  display: block;
 }
 
 .bty-main {
