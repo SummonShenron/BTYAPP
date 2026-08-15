@@ -1,7 +1,6 @@
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import Navbar from "./components/Navbar";
-import { Outlet } from "react-router-dom";
 import logoImg from './assets/logo.png';
 
 export default function Layout() {
@@ -9,14 +8,11 @@ export default function Layout() {
     <div className="bty-container">
       <Navbar />
 
-      {/* Hero Banner (optional but recommended) */}
-      <div className="bty-hero-banner">
-        <img
-          src={logoImg}
-          alt="BTY Fitness Logo"
-          className="bty-hero-logo"
-        />
-      </div>
+      {/* Hero Banner with Fixed Image Scroll Effect */}
+      <div 
+        className="bty-hero-banner" 
+        style={{ backgroundImage: `url(${logoImg})` }}
+      />
 
       {/* Page Content */}
       <main className="bty-main">
@@ -28,7 +24,7 @@ export default function Layout() {
         {/* Discrete Coach Login Link */}
         <Link 
           to="/admin" 
-          className="hover:text-[#38C2DE] transition-colors flex items-center gap-1 opacity-60 hover:opacity-100"
+          className="hover:text-[#38C2DE] transition-colors flex items-center gap-1 opacity-60 hover:opacity-100 justify-center mt-2"
         >
           Coach Portal
         </Link>
