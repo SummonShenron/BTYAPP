@@ -163,8 +163,8 @@ export default function Consultation() {
           </div>    
           {/* MIDDLE SECTION: Fixed Window Reveal Hero Banner */}
           <div className="consultation-reveal-banner">
-            <span className="banner-kicker">Won't Happen In One Day</span>
-            <h2 className="banner-title">DON'T GIVE UP WITHOUT TRYING</h2>
+            {/* <span className="banner-kicker">Won't Happen In One Day</span>
+            <h2 className="banner-title">DON'T GIVE UP WITHOUT TRYING</h2> */}
           </div>
           <div className="glass-card-interactive p-6 sm:p-8">
             <ConsultationForm contentOverrides={content} />
