@@ -7,6 +7,7 @@ import ConsultationForm from '../components/ConsultationForm';
 import { useNavigate } from 'react-router-dom';
 import homeFeaturePhoto from '../assets/madi1.jpg';
 import logoImg from '../assets/logo.png';
+import runningVideo from '../assets/running.mp4';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
@@ -21,9 +22,9 @@ const defaultProgramContent: Record<string, string> = {
   program_card_3_title: 'Online Hybrid Fitness',
   program_card_3_description: 'Custom training plans, weekly video form audits, and direct message check-ins via our client portal.',
   program_feature_badge: 'In Action',
-  program_feature_title_line_1: 'REAL RESULTS.',
-  program_feature_title_line_2: 'NO GUESSWORK.',
-  program_feature_description: 'Every program is backed by biomechanical form analysis and personalized feedback loops.',
+  program_feature_title_line_1: 'REAL RESULTS',
+  program_feature_title_line_2: 'NO GUESSWORK',
+  program_feature_description: 'Every program is backed by biomechanical form analysis and personalized feedback loops',
   program_feature_cta_label: 'Schedule Free Assessment',
 };
 
@@ -129,25 +130,22 @@ export default function Home() {
           >
             {/* Top Media Zone */}
             <div
-              className="relative"
+              className="relative overflow-hidden"
               style={{
                 height: 'clamp(220px, 30vw, 300px)',
                 background: '#182127',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '1.5rem',
               }}
             >
-              <img 
-                src={logoImg}
-                alt="BTY Fitness Training Session" 
+              <video 
+                src={runningVideo}
+                loop
+                autoPlay
+                muted
+                playsInline
                 style={{
-                  maxWidth: '78%',
-                  maxHeight: '78%',
-                  width: 'auto',
-                  height: 'auto',
-                  objectFit: 'contain',
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
                   opacity: 0.56,
                   transition: 'opacity 0.3s ease',
                 }}
