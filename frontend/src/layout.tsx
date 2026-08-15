@@ -2,6 +2,8 @@ import React from "react";
 import { Link, Outlet } from 'react-router-dom';
 import Navbar from "./components/Navbar";
 import logoImg from './assets/logo.png';
+import StaticHexGrid from "./components/Honeycomb";
+import SparseBlipGrid from "./components/AmbientHero.tsx";
 
 export default function Layout() {
   return (
@@ -12,7 +14,9 @@ export default function Layout() {
       <div 
         className="bty-hero-banner" 
         style={{ backgroundImage: `url(${logoImg})` }}
-      />
+      >
+        <SparseBlipGrid cellSize={20} color="#4FD4EE" maskRadius={180}/>
+      </div>
 
       {/* Page Content */}
       <main className="bty-main">

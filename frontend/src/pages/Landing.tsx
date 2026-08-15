@@ -1,11 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import logoImg from '../assets/logo.png';
+import AmbientGrid from '../components/AmbientGrid';
 import './__styles__/Landing.css';
 
 export default function Landing() {
   return (
     <div className="landing-shell">
+      {/* Animated ambient background grid */}
+      <AmbientGrid 
+        cellSize={32} 
+        color="#4FD4EE" 
+        spawnInterval={600} 
+        maxActive={6} 
+        
+      />
+
       <section className="landing-center">
         <h1
           style={{

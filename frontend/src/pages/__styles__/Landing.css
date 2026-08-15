@@ -28,9 +28,7 @@
 
 .landing-shell::after {
   inset: 0;
-  background-image: linear-gradient(rgba(136, 238, 255, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(136, 238, 255, 0.06) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(circle at center, black 40%, transparent 92%);
+  /* Remove background-image, background-size, and mask-image from here */
   opacity: 0.42;
 }
 
