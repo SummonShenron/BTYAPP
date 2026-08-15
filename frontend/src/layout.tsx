@@ -8,7 +8,7 @@ export default function Layout() {
     <div className="bty-container">
       <Navbar />
 
-      {/* Hero Banner with Fixed Image Scroll Effect */}
+      {/* Hero Banner with Fixed Background Parallax */}
       <div 
         className="bty-hero-banner" 
         style={{ backgroundImage: `url(${logoImg})` }}
@@ -21,7 +21,6 @@ export default function Layout() {
 
       <footer className="bty-footer">
         © {new Date().getFullYear()} BTY Fitness by Madison Spear. All rights reserved.
-        {/* Discrete Coach Login Link */}
         <Link 
           to="/admin" 
           className="hover:text-[#38C2DE] transition-colors flex items-center gap-1 opacity-60 hover:opacity-100 justify-center mt-2"

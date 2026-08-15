@@ -185,6 +185,17 @@ html, body {
 }
 
 /* ==========================================================================
+   5. BTY LAYOUT & HERO COMPONENTS (RESPONSIVE PARALLAX FIX)
+   ========================================================================== */
+.bty-container {
+  min-height: 100vh;
+  width: 100%;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================================
    5. BTY LAYOUT & HERO COMPONENTS
    ========================================================================== */
 .bty-container {
@@ -196,14 +207,18 @@ html, body {
 }
 
 .bty-hero-banner {
-  height: 260px; /* Exact height preserved */
+  height: 260px;
   
-  /* --- FIXED BACKGROUND SCROLL EFFECT --- */
+  /* --- FIXED PARALLAX SCROLL EFFECT --- */
   background-attachment: fixed;
-  background-position: center;
   background-repeat: no-repeat;
-  background-size: 500px; /* Scales logo cleanly within view */
-  background-position: center calc(50% - 100px);
+  
+  /* 1. Scaled down slightly from 500px to give top/bottom breathing room */
+  background-size: 450px; 
+  
+  /* 2. Pushed down from 105px to 135px so the top kettlebell ring clears the navbar */
+  background-position: center 180px; 
+
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(10px);
   overflow: hidden;
