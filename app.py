@@ -14,6 +14,7 @@ from fastapi import FastAPI, Depends, BackgroundTasks, HTTPException, status, Re
 from bson import ObjectId
 from fastapi.middleware.cors import CORSMiddleware
 from backend.logging.bty_logger import setup_logging
+from backend.logging.erragent_handler import install_erragent_logging
 from backend.utils.db_utils import (
     test_connection,
     resolve_service_registry_repo,
@@ -66,10 +67,9 @@ app = FastAPI(
     description="Backend API for Madison Spear - Better Than Yesterday Fitness",
     version="1.0.0"
 )
-
 logger = setup_logging()
+install_erragent_logging(logger)
 logger.info("--- Launching BTY Fitness API ---")
-
 # CORS setup for front-end integration
 app.add_middleware(
     CORSMiddleware,
