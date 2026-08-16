@@ -9,7 +9,7 @@ const defaults: Record<string, string> = {
   qualifications_title: 'Built on education, sharpened by real client outcomes.',
   qualifications_subtitle: 'Every recommendation in BTY coaching is rooted in formal movement science - backed by an M.S.E. in Exercise Science, a B.A. in Human Performance, and practical coaching experience.',
   qualifications_item_1_title: 'M.S.E. in Exercise Science',
-  qualifications_item_1_detail: 'Advanced academic grounding in biomechanics, physiological adaptation, and performance optimization.',
+  qualifications_item_1_detail: 'Advanced academic grounding in biomechanics, physiological adaptation, and performance optimization. Advanced education on physical activity and chronic diseases.',
   qualifications_item_1_year: 'Masters',
   qualifications_item_2_title: 'B.A. in Human Performance',
   qualifications_item_2_detail: 'Comprehensive foundation in motor learning, functional anatomy, and structured athletic development.',

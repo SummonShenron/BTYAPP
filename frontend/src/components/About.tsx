@@ -8,9 +8,9 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 const defaults: Record<string, string> = {
   about_title: 'Meet Madison Spear',
   about_paragraph_1:
-    "I have been a trainer for seven years (2026) and have owned Better than Yesterday Fitness for five! I'm passionate about helping people gain the knowledge and skills to become stronger and healthier through personalized fitness coaching. I have always enjoyed working out and coaching. I was a collegiate Track & Field athelete before coaching in the sport while receiving my masters degree. I knew helping and educating people on wellness was what I wanted to do!",
+    "I have been a trainer for seven years (2026) and have owned Better than Yesterday Fitness for five! I'm passionate about helping people gain the knowledge and skills to become stronger and healthier through personalized fitness coaching. I have always enjoyed working out and coaching. I was a collegiate Track & Field athlete before coaching in the sport while receiving my master's degree. I knew helping and educating people on wellness was what I wanted to do!",
   about_paragraph_2:
-    "I am focused on helping people imporove their overall wellness at a pace that's right for them. Helping clients reach their goals through exercise tailored to their individual circumstances is my priority. I work with a wide variety of clients from those who's goals are to lose weight, gain strength and prevent injury, to those who have chronic diseases like diabetes, cardiovascular issues, cancer, and amputations.",
+    "I am focused on helping people improve their overall wellness at a pace that's right for them. Helping clients reach their goals through exercise tailored to their individual circumstances is my priority. I work with a wide variety of clients from those whose goals are to lose weight, gain strength and prevent injury, to those who have chronic diseases like diabetes, cardiovascular issues, cancer, and amputations.",
   about_paragraph_3:
     'Fitness is more than just lifting weights; it is about building a sustainable lifestyle, developing mental resilience, and committing to being Better Than Yesterday.',
   about_cta_story_label: 'Learn My Story',

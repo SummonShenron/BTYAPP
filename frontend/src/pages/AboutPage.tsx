@@ -8,7 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 const defaults: Record<string, string> = {
   about_page_kicker: 'About Madison',
   about_page_title: 'Strength coaching built for real life and lasting change.',
-  about_page_subtitle: 'BTY is less about chasing a perfect body and more about learning how to train with intention. Every plan is built around biomechanics, recovery, and momentum you can keep.',
+  about_page_subtitle: 'BTY is less about chasing a perfect body and more about learning how to train with intention. Every plan is built around biomechanics, goals and progressive overload for momentum you can keep. ',
   about_page_section_title: 'Why I coach this way',
   about_page_paragraph_1: 'Most people do not fail because they lack effort. They fail because their plan is generic, exhausting, or disconnected from their actual lifestyle. My coaching system is designed to fix that.',
   about_page_paragraph_2: 'We start by understanding your movement quality, injury history, schedule, and stress load. Then we build a structure that meets you where you are and grows with you.',

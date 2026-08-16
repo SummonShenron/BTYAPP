@@ -15,7 +15,7 @@ const defaults: Record<string, string> = {
   consultation_step_2_description: 'Define concrete targets for muscle building, fat loss, athletic power, or mobility.',
   consultation_step_3_title: '3. Custom Plan Roadmap',
   consultation_step_3_description: 'Get recommended program structures and training cadence tailored for you.',
-  consultation_quote_text: "Training isn't about pushing past bad biomechanics - it's about teaching your body how to produce power efficiently without injury.",
+  consultation_quote_text: "It’s not about being the best, it’s about being better than you were yesterday.",
   consultation_quote_author: '- Madison Spear, Head Coach',
   consultation_local_kicker: 'Personal Training in Des Moines, IA',
   consultation_local_intro: "BTY Fitness provides personalized strength coaching and fitness consultations for clients throughout Des Moines, Urbandale, West Des Moines, and the greater Iowa metro area. Based at Trainer's Edge Gym, Madison helps clients improve movement quality, build strength, and train with sustainable structure.",
