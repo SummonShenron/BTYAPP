@@ -131,7 +131,10 @@ async def global_exception_handler(request: Request, exc: Exception):
 @app.middleware("http")
 async def request_logging_middleware(request: Request, call_next):
     logger.info("[REQ] %s %s", request.method, request.url.path)
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+    except Exception as exc:
+        return await global_exception_handler(request, exc)
     logger.info("[RES] %s %s -> %s", request.method, request.url.path, response.status_code)
     return response
 
