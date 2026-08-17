@@ -131,7 +131,21 @@ async def global_exception_handler(request: Request, exc: Exception):
 @app.middleware("http")
 async def request_logging_middleware(request: Request, call_next):
     logger.info("[REQ] %s %s", request.method, request.url.path)
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+    except Exception as exc:
+        logger.error("--> Caught unhandled exception in middleware on %s [%s]: %s", request.url.path, request.method, str(exc))
+        payload = build_error_payload(
+            exc=exc,
+            service_default="btyapp",
+            source=request.url.path,
+            method=request.method,
+        )
+        dispatch_erragent_ingest(payload)
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Internal Server Error"},
+        )
     logger.info("[RES] %s %s -> %s", request.method, request.url.path, response.status_code)
     return response
 
