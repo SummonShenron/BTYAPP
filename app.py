@@ -466,8 +466,20 @@ async def ingest_error_webhook(
 @app.get("/api/erragent-debug")
 async def trigger_error():
     logger.info("--> /api/erragent-debug endpoint hit!")
-    # Intentionally trigger zero division; caught automatically by global_exception_handler!
-    return 1 / 0
+    try:
+        return 1 / 0
+    except ZeroDivisionError as exc:
+        payload = build_error_payload(
+            exc=exc,
+            service_default="btyapp",
+            source="/api/erragent-debug",
+            method="GET",
+        )
+        dispatch_erragent_ingest(payload)
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Internal Server Error", "error": "ZeroDivisionError triggered and logged"},
+        )
 
 # -------------------------------------------------------------
 # 6. HEALTH ROUTES
