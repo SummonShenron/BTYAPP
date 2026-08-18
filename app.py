@@ -182,9 +182,14 @@ async def request_logging_middleware(request: Request, call_next):
 
 @app.on_event("startup")
 async def startup_db_check():
-    """Verify DB connection on API launch."""
+    # Recalling inside the running loop installs asyncio capture.
+    install_erragent_logging(logger)
+
     connected = test_connection()
-    logger.info("Startup DB connection status: %s", "connected" if connected else "disabled_or_failed")
+    logger.info(
+        "Startup DB connection status: %s",
+        "connected" if connected else "disabled_or_failed",
+    )
 
 
 # -------------------------------------------------------------
