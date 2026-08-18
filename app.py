@@ -16,6 +16,8 @@ from bson import ObjectId
 from fastapi.middleware.cors import CORSMiddleware
 from backend.logging.bty_logger import setup_logging
 from backend.logging.erragent_handler import install_erragent_logging
+from backend.utils.notifications_utils import notify_madison_of_lead
+from dotenv import load_dotenv
 from backend.utils.db_utils import (
     test_connection,
     resolve_service_registry_repo,
@@ -59,8 +61,6 @@ from backend.utils.auth_utils import (
     get_current_client, 
     verify_admin
 )
-from backend.utils.notifications_utils import notify_madison_of_lead
-from dotenv import load_dotenv
 
 load_dotenv()
 app = FastAPI(
