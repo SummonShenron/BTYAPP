@@ -2,6 +2,7 @@
 from datetime import datetime, timezone
 import logging
 import os
+import threading
 import time
 import asyncio
 import json
@@ -512,6 +513,24 @@ async def trigger_error():
     logger.info("--> /api/erragent-debug endpoint hit!")
     # Intentionally trigger zero division; caught automatically by global_exception_handler!
     return 1 / 0
+
+@app.get("/debug/erragent-thread")
+async def test_thread():
+    def fail():
+        raise RuntimeError("errAgent thread capture test")
+
+    threading.Thread(target=fail, name="erragent-test-thread").start()
+    return {"triggered": "thread"}
+
+
+@app.get("/debug/erragent-async")
+async def test_async():
+    async def fail():
+        await asyncio.sleep(0.1)
+        raise RuntimeError("errAgent async capture test")
+
+    asyncio.create_task(fail())
+    return {"triggered": "async"}
 
 # -------------------------------------------------------------
 # 6. HEALTH ROUTES
