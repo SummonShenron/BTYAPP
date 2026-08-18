@@ -2,6 +2,7 @@
 from datetime import datetime, timezone
 import logging
 import os
+import time
 import asyncio
 import json
 import traceback
@@ -101,7 +102,7 @@ class BulkContentUpdate(BaseModel):
     items: Dict[str, str]
 
 # -------------------------------------------------------------
-# 0. GLOBAL EXCEPTION HANDLER and middleware
+# 0. GLOBAL EXCEPTION HANDLER & MIDDLEWARE
 # -------------------------------------------------------------
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
@@ -130,9 +131,52 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 @app.middleware("http")
 async def request_logging_middleware(request: Request, call_next):
+    started_at = time.perf_counter()
     logger.info("[REQ] %s %s", request.method, request.url.path)
-    response = await call_next(request)
-    logger.info("[RES] %s %s -> %s", request.method, request.url.path, response.status_code)
+
+    try:
+        response = await call_next(request)
+    except Exception:
+        logger.exception(
+            "[ERR] %s %s failed",
+            request.method,
+            request.url.path,
+            extra={
+                "erragent_context": {
+                    "method": request.method,
+                    "path": request.url.path,
+                    "environment": os.getenv("ENVIRONMENT", "production"),
+                }
+            },
+        )
+        raise
+
+    duration_ms = round((time.perf_counter() - started_at) * 1000)
+
+    if response.status_code >= 500:
+        logger.error(
+            "[RES] %s %s -> %s",
+            request.method,
+            request.url.path,
+            response.status_code,
+            extra={
+                "erragent_context": {
+                    "method": request.method,
+                    "path": request.url.path,
+                    "statusCode": response.status_code,
+                    "durationMs": duration_ms,
+                    "environment": os.getenv("ENVIRONMENT", "production"),
+                }
+            },
+        )
+    else:
+        logger.info(
+            "[RES] %s %s -> %s",
+            request.method,
+            request.url.path,
+            response.status_code,
+        )
+
     return response
 
 @app.on_event("startup")
