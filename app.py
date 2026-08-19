@@ -516,8 +516,19 @@ async def ingest_error_webhook(
 @app.get("/api/erragent-debug")
 async def trigger_error():
     logger.info("--> /api/erragent-debug endpoint hit!")
-    # Intentionally trigger zero division; caught automatically by global_exception_handler!
-    return 1 / 0
+    try:
+        return 1 / 0
+    except ZeroDivisionError as exc:
+        # Manually invoke the global exception handler logic to ensure errAgent capture works
+        payload = build_error_payload(
+            exc=exc,
+            service_default="btyapp",
+            source="/api/erragent-debug",
+            method="GET",
+            metadata=None,
+        )
+        dispatch_erragent_ingest(payload)
+        raise HTTPException(status_code=500, detail="Intentionally triggered division by zero for debugging")
 
 @app.get("/debug/erragent-thread")
 async def test_thread():
