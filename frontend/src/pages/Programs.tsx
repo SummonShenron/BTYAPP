@@ -6,7 +6,7 @@ import clientsVideo from '../assets/clients.mp4';
 import landmineImg from '../assets/landmine.jpeg';
 import lungesImg from '../assets/lunges.jpeg';
 import squatImg from '../assets/squat.jpeg';
-import medBallImg from '../assets/medball.jpeg';
+import medBallImg from '../assets/medBall.jpeg';
 import boxImg from '../assets/box.jpeg'; 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
