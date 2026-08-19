@@ -1,9 +1,23 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AccordionGallery from '../components/AccordionGallery';
 import './__styles__/BrandPages.css';
 import clientsVideo from '../assets/clients.mp4';
+import landmineImg from '../assets/landmine.jpeg';
+import lungesImg from '../assets/lunges.jpeg';
+import squatImg from '../assets/squat.jpeg';
+import medBallImg from '../assets/medball.jpeg';
+import boxImg from '../assets/box.jpeg'; 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
+
+const programGalleryItems = [
+  { image: landmineImg, label: 'Landmine Rotations', alt: 'Client performing landmine rotations' },
+  { image: lungesImg, label: 'Lunges', alt: 'Client performing lunges' },
+  { image: squatImg, label: 'Strength & Mobility', alt: 'Client performing a strength and mobility exercise' },
+  { image: medBallImg, label: 'Medicine Ball Exercises', alt: 'Client performing medicine ball exercises' },
+  { image: boxImg, label: 'Box Jumps', alt: 'Client performing box jumps' },
+];
 
 interface ProgramDetail {
   id: string;
@@ -162,34 +176,45 @@ export default function Programs() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-6xl space-y-12">
-      <section className="programs-hero-shell">
-        <div className="programs-hero">
-          <div className="programs-hero-copy">
-            <span className="text-[#38C2DE] text-xs font-bold tracking-widest uppercase">
-              {content.programs_page_kicker}
-            </span>
-            <h1 className="text-4xl font-black tracking-tight text-white">
-              {content.programs_page_title}
-            </h1>
-            <p className="text-[#A0A5AA] text-sm leading-relaxed">
-              {content.programs_page_subtitle}
-            </p>
-          </div>
+  <div className="container mx-auto px-4 py-12 max-w-6xl space-y-12">
+    {/* Top Hero Section */}
+    <div className="programs-page-hero">
+      <div className="programs-page-hero-copy">
+        <span
+          style={{
+            color: '#38C2DE',
+            fontSize: '0.75rem',
+            fontWeight: '700',
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+          }}
+        >
+          {content.programs_page_kicker}
+        </span>
+        <h1
+          style={{
+            fontSize: '2.5rem',
+            fontWeight: 900,
+            color: '#ffffff',
+            lineHeight: 1.1,
+            margin: 0,
+          }}
+        >
+          {content.programs_page_title}
+        </h1>
+        <p style={{ color: '#A0A5AA', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
+          {content.programs_page_subtitle}
+        </p>
+      </div>
 
-          <div className="programs-hero-video-wrap">
-            <video
-              src={clientsVideo}
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="programs-hero-video"
-            />
-          </div>
-        </div>
-      </section>
-
+      <div className="programs-page-gallery">
+        <AccordionGallery
+          items={programGalleryItems}
+          expandRatio={0.52}
+          trigger="hover"
+        />
+      </div>
+    </div>
       {/* Programs Grid */}
       <div className="programs-card-stack">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">

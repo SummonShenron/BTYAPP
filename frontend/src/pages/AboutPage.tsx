@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './__styles__/BrandPages.css';
-import fitnessVideo from '../assets/fitness.mp4';
+import squatImg from '../assets/squat3.jpeg';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
@@ -80,12 +80,9 @@ export default function AboutMe() {
 
         <aside className="profile-frame">
           <div className="profile-media-zone">
-            <video
-              src={fitnessVideo}
-              autoPlay
-              muted
-              loop
-              playsInline
+            <img
+              src={squatImg}
+              alt="Fitness"
               className="profile-media-image"
               style={{
                 objectFit: 'cover',

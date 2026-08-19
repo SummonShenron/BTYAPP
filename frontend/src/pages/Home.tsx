@@ -7,7 +7,8 @@ import ConsultationForm from '../components/ConsultationForm';
 import { useNavigate } from 'react-router-dom';
 import homeFeaturePhoto from '../assets/madi1.jpg';
 import logoImg from '../assets/logo.png';
-import runningVideo from '../assets/running.mp4';
+import squatImg from '../assets/squat2.jpeg';
+import squatImg1 from '../assets/squat5.jpg';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
@@ -136,18 +137,15 @@ export default function Home() {
                 background: '#182127',
               }}
             >
-              <video 
-                src={runningVideo}
-                loop
-                autoPlay
-                muted
-                playsInline
+              <img 
+                src={squatImg1}
                 style={{
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
-                  opacity: 0.56,
+                  opacity: 0.8,
                   transition: 'opacity 0.3s ease',
+                  zoom: 1.5,
                 }}
               />
             </div>

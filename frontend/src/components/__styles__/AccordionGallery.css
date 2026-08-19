@@ -1,0 +1,116 @@
+.accordion-gallery {
+  display: flex;
+  width: 100%;
+  height: clamp(380px, 43vw, 520px);
+  gap: 0.45rem;
+  overflow: hidden;
+}
+
+.accordion-gallery-panel {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(130, 230, 247, 0.2);
+  border-radius: 8px;
+  background: #171b20;
+  color: #ffffff;
+  cursor: pointer;
+  transition: flex-grow 500ms cubic-bezier(0.22, 1, 0.36, 1), border-color 250ms ease;
+}
+
+.accordion-gallery-panel:first-child {
+  border-radius: 16px 8px 8px 16px;
+}
+
+.accordion-gallery-panel:last-child {
+  border-radius: 8px 16px 16px 8px;
+}
+
+.accordion-gallery-panel:is(:hover, :focus-visible, .is-active) {
+  border-color: rgba(130, 230, 247, 0.7);
+}
+
+.accordion-gallery-panel:focus-visible {
+  outline: 2px solid #82e6f7;
+  outline-offset: -3px;
+}
+
+.accordion-gallery-panel img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: grayscale(1) brightness(0.58) contrast(1.08);
+  transform: scale(1.04);
+  transition: filter 350ms ease, transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.accordion-gallery-panel.is-active img {
+  filter: grayscale(0) brightness(0.88) saturate(0.98);
+  transform: scale(1);
+}
+
+.accordion-gallery-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 48%, rgba(5, 10, 13, 0.88) 100%);
+  pointer-events: none;
+}
+
+.accordion-gallery-label {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  max-width: calc(100% - 2rem);
+  overflow: hidden;
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.2;
+  opacity: 0;
+  text-align: left;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  transform: translateY(8px);
+  transition: opacity 220ms ease 100ms, transform 220ms ease 100ms;
+  white-space: nowrap;
+}
+
+.accordion-gallery-panel.is-active .accordion-gallery-label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 900px) {
+  .accordion-gallery {
+    height: clamp(360px, 105vw, 520px);
+  }
+}
+
+@media (max-width: 560px) {
+  .accordion-gallery {
+    height: 440px;
+    gap: 0.3rem;
+  }
+
+  .accordion-gallery-label {
+    left: 0.7rem;
+    bottom: 0.8rem;
+    max-width: calc(100% - 1.4rem);
+    font-size: 0.7rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion-gallery-panel,
+  .accordion-gallery-panel img,
+  .accordion-gallery-label {
+    transition: none;
+  }
+}
