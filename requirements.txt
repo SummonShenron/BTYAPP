@@ -10,3 +10,4 @@ PyJWT[crypto]
 pydantic[email]
 resend
 tzdata
+pytest
