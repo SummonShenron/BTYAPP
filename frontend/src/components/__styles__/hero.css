@@ -103,6 +103,27 @@
   overflow: hidden;
 }
 
+.hero-accordion-gallery .accordion-gallery {
+  height: 100%;
+  gap: 0.3rem;
+}
+
+.hero-accordion-gallery .accordion-gallery-panel:first-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.hero-accordion-gallery .accordion-gallery-panel:last-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.hero-accordion-gallery .accordion-gallery-label {
+  right: 0.65rem;
+  bottom: 0.7rem;
+  left: 0.65rem;
+  max-width: calc(100% - 1.3rem);
+  font-size: 0.66rem;
+}
+
 .photo-icon {
   font-size: 2rem;
 }

@@ -1,0 +1,94 @@
+.pixel-transition {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.pixel-transition-content {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.pixel-transition-first {
+  opacity: 1;
+}
+
+.pixel-transition-second {
+  z-index: 1;
+  opacity: 0;
+}
+
+.pixel-transition.is-showing-second .pixel-transition-first {
+  opacity: 0;
+}
+
+.pixel-transition.is-showing-second .pixel-transition-second {
+  opacity: 1;
+}
+
+.pixel-transition-grid {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--pixel-grid-size), 1fr);
+  grid-template-rows: repeat(var(--pixel-grid-size), 1fr);
+  pointer-events: none;
+}
+
+.pixel-transition-grid span {
+  background: var(--pixel-color);
+  opacity: 0;
+  transform: scale(0);
+}
+
+.pixel-transition.is-transitioning-forward .pixel-transition-grid span {
+  animation:
+    pixel-transition-cover var(--pixel-duration) ease-out var(--pixel-delay) forwards,
+    pixel-transition-uncover var(--pixel-duration) ease-in calc(var(--pixel-cover-duration) + var(--pixel-delay)) forwards;
+}
+
+.pixel-transition.is-transitioning-reverse .pixel-transition-grid span {
+  animation:
+    pixel-transition-cover var(--pixel-duration) ease-out var(--pixel-reverse-delay) forwards,
+    pixel-transition-uncover var(--pixel-duration) ease-in calc(var(--pixel-cover-duration) + var(--pixel-reverse-delay)) forwards;
+}
+
+@keyframes pixel-transition-cover {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes pixel-transition-uncover {
+  from {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pixel-transition-grid {
+    display: none;
+  }
+
+  .pixel-transition-content {
+    transition: none;
+  }
+}

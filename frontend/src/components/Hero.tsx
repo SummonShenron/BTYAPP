@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import logoImg from '../assets/logo.png';
+import AccordionGallery from './AccordionGallery';
 import heroImg from '../assets/cover_photo2.jpg';
 import heroImg3 from '../assets/squat.jpeg';
 import twinsImg from '../assets/squat4.jpeg';
@@ -23,13 +23,15 @@ const defaults: Record<string, string> = {
   hero_sidebar_text: 'Direct biomechanics assessment & custom fitness planning.',
 };
 
-// Define your 3 carousel images here (swap these variables with your actual image imports)
-const carouselImages = [heroImg, twinsImg, heroImg3];
+const heroGalleryItems = [
+  { image: heroImg, label: 'Personal Coaching', alt: 'BTY Fitness personal coaching' },
+  { image: twinsImg, label: 'Train Together', alt: 'BTY Fitness partner strength training' },
+  { image: heroImg3, label: 'Build Strength', alt: 'BTY Fitness strength training' },
+];
 
 export default function Hero() {
   const navigate = useNavigate();
   const [content, setContent] = useState<Record<string, string>>(defaults);
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -51,14 +53,6 @@ export default function Hero() {
     return () => {
       active = false;
     };
-  }, []);
-
-  // Auto-advance carousel every 4 seconds
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % carouselImages.length);
-    }, 4000);
-    return () => clearInterval(timer);
   }, []);
 
   return (
@@ -89,25 +83,13 @@ export default function Hero() {
 
         <aside className="hero-sidebar">
           <div className="hero-sidebar-card">
-            <div className="sidebar-image-slot carousel-slot">
-              {carouselImages.map((img, index) => (
-                <img
-                  key={index}
-                  src={img}
-                  alt={`BTY Fitness Slide ${index + 1}`}
-                  className={`sidebar-logo carousel-img ${index === currentIndex ? 'active' : ''}`}
-                />
-              ))}
-              <div className="carousel-indicators">
-                {carouselImages.map((_, index) => (
-                  <button
-                    key={index}
-                    className={`indicator-dot ${index === currentIndex ? 'active' : ''}`}
-                    onClick={() => setCurrentIndex(index)}
-                    aria-label={`Slide ${index + 1}`}
-                  />
-                ))}
-              </div>
+            <div className="sidebar-image-slot hero-accordion-gallery">
+              <AccordionGallery
+                items={heroGalleryItems}
+                defaultIndex={2}
+                expandRatio={0.52}
+                trigger="hover"
+              />
             </div>
 
             <div className="sidebar-card-content">

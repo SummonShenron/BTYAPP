@@ -1,0 +1,276 @@
+.drift-wall {
+  --drift-pointer-x: 0;
+  --drift-pointer-y: 0;
+  --drift-expand-origin-x: 50%;
+  --drift-expand-origin-y: 50%;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--drift-overlay);
+  perspective: var(--drift-perspective);
+  isolation: isolate;
+}
+
+.drift-wall::before,
+.drift-wall::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  right: 0;
+  left: 0;
+  height: var(--drift-fade-size);
+  pointer-events: none;
+}
+
+.drift-wall::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--drift-overlay) 0%, var(--drift-overlay) 18%, transparent 100%);
+}
+
+.drift-wall::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--drift-overlay) 0%, var(--drift-overlay) 18%, transparent 100%);
+}
+
+.drift-wall-plane {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  grid-template-columns: repeat(var(--drift-columns), var(--drift-tile-width));
+  gap: var(--drift-gap);
+  width: max-content;
+  height: 140%;
+  transform-style: preserve-3d;
+  transform:
+    translate3d(
+      calc(-50% + var(--drift-pointer-x) * var(--drift-parallax) * 24px),
+      calc(-50% + var(--drift-pointer-y) * var(--drift-parallax) * 20px),
+      calc(var(--drift-pointer-y) * var(--drift-parallax) * var(--drift-depth))
+    )
+    rotateX(var(--drift-tilt))
+    rotateY(var(--drift-turn));
+  transition: transform 180ms ease-out;
+}
+
+.drift-wall-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--drift-gap);
+  animation-duration: var(--drift-column-duration, var(--drift-duration));
+  animation-delay: var(--drift-column-delay, 0s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.drift-wall-column--up {
+  animation-name: drift-wall-up;
+}
+
+.drift-wall-column--down {
+  animation-name: drift-wall-down;
+}
+
+.drift-wall:has(.drift-wall-tile:hover) .drift-wall-column,
+.drift-wall:has(.drift-wall-tile:focus-visible) .drift-wall-column,
+.drift-wall.is-expanded .drift-wall-column {
+  animation-play-state: paused;
+}
+
+.drift-wall-tile {
+  position: relative;
+  display: block;
+  flex: 0 0 var(--drift-tile-height);
+  width: var(--drift-tile-width);
+  height: var(--drift-tile-height);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--drift-radius);
+  background: #11161a;
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.34);
+  color: #ffffff;
+  font: inherit;
+  opacity: var(--drift-dim);
+  padding: 0;
+  text-align: left;
+  transform: translateZ(0);
+  transition: opacity 220ms ease, transform 280ms cubic-bezier(0.16, 1, 0.3, 1), border-color 220ms ease;
+}
+
+.drift-wall-tile:is(:hover, :focus-visible) {
+  z-index: 2;
+  border-color: rgba(130, 230, 247, 0.78);
+  opacity: 1;
+  outline: none;
+  transform: translate3d(0, calc(var(--drift-lift) * -0.12), var(--drift-lift));
+}
+
+.drift-wall-tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(0.9) contrast(1.06) brightness(0.9);
+  transform: scale(1.08);
+}
+
+.drift-wall-tile span {
+  position: absolute;
+  right: 0.65rem;
+  bottom: 0.65rem;
+  left: 0.65rem;
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.2;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+  text-transform: uppercase;
+}
+
+.drift-wall-expanded {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 0.75rem;
+  background: rgba(6, 0, 16, 0.78);
+  cursor: zoom-out;
+  animation: drift-wall-backdrop-in 260ms ease both;
+}
+
+.drift-wall-expanded-media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(130, 230, 247, 0.62);
+  border-radius: var(--drift-radius);
+  background: #090c0f;
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.58);
+  cursor: default;
+  transform-origin: var(--drift-expand-origin-x) var(--drift-expand-origin-y);
+  animation: drift-wall-expand 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.drift-wall-expanded-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.drift-wall-expanded-media > span {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  left: 1rem;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9);
+  text-transform: uppercase;
+}
+
+.drift-wall-expanded-media > button {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 50%;
+  background: rgba(8, 11, 14, 0.78);
+  color: #ffffff;
+  font-size: 1.45rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.drift-wall-expanded.is-closing {
+  animation: drift-wall-backdrop-out 360ms ease both;
+  pointer-events: none;
+}
+
+.drift-wall-expanded.is-closing .drift-wall-expanded-media {
+  animation: drift-wall-collapse 360ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+@keyframes drift-wall-expand {
+  from { opacity: 0; transform: scale(0.28); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes drift-wall-collapse {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.28); }
+}
+
+@keyframes drift-wall-backdrop-in {
+  from { background: rgba(6, 0, 16, 0); }
+  to { background: rgba(6, 0, 16, 0.78); }
+}
+
+@keyframes drift-wall-backdrop-out {
+  from { background: rgba(6, 0, 16, 0.78); }
+  to { background: rgba(6, 0, 16, 0); }
+}
+
+@keyframes drift-wall-up {
+  from { transform: translateY(-33.333%); }
+  to { transform: translateY(-66.666%); }
+}
+
+@keyframes drift-wall-down {
+  from { transform: translateY(-66.666%); }
+  to { transform: translateY(-33.333%); }
+}
+
+@media (max-width: 560px) {
+  .drift-wall {
+    --drift-tile-width: clamp(108px, 33vw, 124px) !important;
+    --drift-tile-height: clamp(240px, 72vw, 280px) !important;
+    --drift-gap: 10px !important;
+    --drift-tilt: 8deg !important;
+    --drift-turn: -5deg !important;
+  }
+
+  .drift-wall-plane {
+    transform:
+      translate3d(-50%, -50%, 0)
+      rotateX(var(--drift-tilt))
+      rotateY(var(--drift-turn));
+  }
+
+  .drift-wall-tile img {
+    transform: scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drift-wall-column {
+    animation-play-state: paused;
+  }
+
+  .drift-wall-plane,
+  .drift-wall-tile {
+    transition: none;
+  }
+
+  .drift-wall-expanded,
+  .drift-wall-expanded-media,
+  .drift-wall-expanded.is-closing,
+  .drift-wall-expanded.is-closing .drift-wall-expanded-media {
+    animation-duration: 1ms;
+  }
+}
