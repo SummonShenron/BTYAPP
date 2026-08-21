@@ -124,6 +124,12 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
           33% { transform: translate(-2px, -1px) rotate(-3deg); }
           66% { transform: translate(1px, 1px) rotate(2deg); }
         }
+        @keyframes patchyPressDip {
+          0%, 12% { transform: translateY(0px); }
+          22% { transform: translateY(3px); }
+          38% { transform: translateY(-2px); }
+          55%, 100% { transform: translateY(0px); }
+        }
 
         .patchy-bot-float {
           animation: ${
@@ -131,6 +137,8 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
               ? 'patchyHappyHop 1.2s ease-in-out infinite'
               : status === 'error'
               ? 'patchyAlertPulse 1.4s ease-in-out infinite'
+              : status === 'thinking'
+              ? 'patchyPressDip 1.6s ease-in-out infinite'
               : 'patchyFloat 4s cubic-bezier(0.45, 0, 0.55, 1) infinite'
           };
         }
@@ -182,24 +190,68 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
           BTY
         </text>
 
-        {/* Left Arm — raised in celebration when done */}
+        {/* Left Arm — raised in celebration when done, pressing when thinking */}
         <path
           d={
             status === 'done'
               ? 'M 24 62 C 16 50, 14 36, 18 24'
+              : status === 'thinking'
+              ? 'M 24 62 C 20 56, 20 52, 22 46'
               : 'M24 62 C16 66, 16 76, 22 82'
           }
           stroke="#8E95A2"
           strokeWidth="4"
           strokeLinecap="round"
           fill="none"
-        />
+        >
+          {status === 'thinking' && (
+            <animate
+              attributeName="d"
+              dur="1.6s"
+              repeatCount="indefinite"
+              calcMode="spline"
+              keyTimes="0; 0.22; 0.38; 0.62; 0.88; 1"
+              keySplines="0.4 0 0.6 1; 0.3 0 0.3 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"
+              values="
+                M 24 62 C 20 56, 20 52, 22 46;
+                M 24 62 C 20 56, 20 52, 22 46;
+                M 24 62 C 18 48, 18 30, 20 18;
+                M 24 62 C 18 48, 18 30, 20 18;
+                M 24 62 C 20 56, 20 52, 22 46;
+                M 24 62 C 20 56, 20 52, 22 46
+              "
+            />
+          )}
+        </path>
         <circle
-          cx={status === 'done' ? 18 : 22}
-          cy={status === 'done' ? 24 : 82}
+          cx={status === 'done' ? 18 : status === 'thinking' ? 22 : 22}
+          cy={status === 'done' ? 24 : status === 'thinking' ? 46 : 82}
           r="3.5"
           fill={status === 'done' ? accentColor : '#8E95A2'}
-        />
+        >
+          {status === 'thinking' && (
+            <>
+              <animate
+                attributeName="cx"
+                dur="1.6s"
+                repeatCount="indefinite"
+                calcMode="spline"
+                keyTimes="0; 0.22; 0.38; 0.62; 0.88; 1"
+                keySplines="0.4 0 0.6 1; 0.3 0 0.3 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"
+                values="22; 22; 20; 20; 22; 22"
+              />
+              <animate
+                attributeName="cy"
+                dur="1.6s"
+                repeatCount="indefinite"
+                calcMode="spline"
+                keyTimes="0; 0.22; 0.38; 0.62; 0.88; 1"
+                keySplines="0.4 0 0.6 1; 0.3 0 0.3 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"
+                values="46; 46; 18; 18; 46; 46"
+              />
+            </>
+          )}
+        </circle>
 
         {/* Head Group */}
         <g className="patchy-bot-head">
@@ -228,13 +280,13 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
             <circle cx="58" cy="35" r="3.5" fill={accentColor} />
           </g>
 
-          {/* Mouth Expression */}
+          {/* Mouth Expression — determined grimace while pressing */}
           {status === 'done' ? (
             <path d="M41 40 Q50 48 59 40" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" fill="none" />
           ) : status === 'streaming' ? (
             <path d="M44 42 H56" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" />
           ) : status === 'thinking' ? (
-            <path d="M44 42 H56" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" />
+            <path d="M42 42 L47 41 L53 43 L58 42" stroke={accentColor} strokeWidth="2" strokeLinecap="round" fill="none" />
           ) : status === 'error' ? (
             <path d="M43 43 Q50 38 57 43" stroke={accentColor} strokeWidth="2" strokeLinecap="round" fill="none" />
           ) : (
@@ -242,14 +294,14 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
           )}
         </g>
 
-        {/* Right Arm & Hand Group */}
+        {/* Right Arm & Hand Group — pressing arm when thinking */}
         <g className={status === 'streaming' ? 'patchy-bot-magnifier-group' : undefined}>
           <path
             d={
               status === 'done'
                 ? 'M 76 62 C 84 50, 86 36, 82 24'
                 : status === 'thinking'
-                ? 'M 76 62 C 88 50, 84 32, 74 28'
+                ? 'M 76 62 C 80 56, 80 52, 78 46'
                 : status === 'streaming'
                 ? 'M 76 62 C 82 60, 74 52, 66 45'
                 : 'M 76 62 C 84 68, 84 76, 78 82'
@@ -282,15 +334,18 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
             {status === 'thinking' && (
               <animate
                 attributeName="d"
-                dur="0.6s"
+                dur="1.6s"
                 repeatCount="indefinite"
                 calcMode="spline"
-                keyTimes="0; 0.5; 1"
-                keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"
+                keyTimes="0; 0.22; 0.38; 0.62; 0.88; 1"
+                keySplines="0.4 0 0.6 1; 0.3 0 0.3 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"
                 values="
-                  M 76 62 C 88 50, 84 32, 74 28;
-                  M 76 62 C 88 44, 82 24, 72 22;
-                  M 76 62 C 88 50, 84 32, 74 28
+                  M 76 62 C 80 56, 80 52, 78 46;
+                  M 76 62 C 80 56, 80 52, 78 46;
+                  M 76 62 C 82 48, 82 30, 80 18;
+                  M 76 62 C 82 48, 82 30, 80 18;
+                  M 76 62 C 80 56, 80 52, 78 46;
+                  M 76 62 C 80 56, 80 52, 78 46
                 "
               />
             )}
@@ -301,7 +356,7 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
               status === 'done'
                 ? 82
                 : status === 'thinking'
-                ? 74
+                ? 78
                 : status === 'streaming'
                 ? 66
                 : status !== 'idle'
@@ -312,7 +367,7 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
               status === 'done'
                 ? 24
                 : status === 'thinking'
-                ? 28
+                ? 46
                 : status === 'streaming'
                 ? 45
                 : status !== 'idle'
@@ -348,25 +403,54 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
               <>
                 <animate
                   attributeName="cx"
-                  dur="0.6s"
+                  dur="1.6s"
                   repeatCount="indefinite"
                   calcMode="spline"
-                  keyTimes="0; 0.5; 1"
-                  keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"
-                  values="74; 72; 74"
+                  keyTimes="0; 0.22; 0.38; 0.62; 0.88; 1"
+                  keySplines="0.4 0 0.6 1; 0.3 0 0.3 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"
+                  values="78; 78; 80; 80; 78; 78"
                 />
                 <animate
                   attributeName="cy"
-                  dur="0.6s"
+                  dur="1.6s"
                   repeatCount="indefinite"
                   calcMode="spline"
-                  keyTimes="0; 0.5; 1"
-                  keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"
-                  values="28; 22; 28"
+                  keyTimes="0; 0.22; 0.38; 0.62; 0.88; 1"
+                  keySplines="0.4 0 0.6 1; 0.3 0 0.3 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"
+                  values="46; 46; 18; 18; 46; 46"
                 />
               </>
             )}
           </circle>
+
+          {/* Barbell — hands grip outside the plates (between plates and end
+              caps); plates are loaded on the sleeves with a subtle 2px gap
+              before each end cap, like a real barbell */}
+          {status === 'thinking' && (
+            <g>
+              <animateTransform
+                attributeName="transform"
+                type="translate"
+                dur="1.6s"
+                repeatCount="indefinite"
+                calcMode="spline"
+                keyTimes="0; 0.22; 0.38; 0.62; 0.88; 1"
+                keySplines="0.4 0 0.6 1; 0.3 0 0.3 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"
+                values="0 0; 0 0; 0 -28; 0 -28; 0 0; 0 0"
+              />
+              {/* Bar */}
+              <line x1="2" y1="46" x2="98" y2="46" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" />
+              {/* Left side: plate stack just outboard of the grip → bare sleeve → cap */}
+              <rect x="17.5" y="36" width="3.5" height="20" rx="1.5" fill={accentColor} />
+              <rect x="14.5" y="40" width="2.5" height="12" rx="1" fill={accentColor} opacity="0.75" />
+              {/* Right side: grip → plate stack just outboard → bare sleeve → cap */}
+              <rect x="79" y="36" width="3.5" height="20" rx="1.5" fill={accentColor} />
+              <rect x="83" y="40" width="2.5" height="12" rx="1" fill={accentColor} opacity="0.75" />
+              {/* End caps at the bar ends */}
+              <rect x="1" y="43" width="2" height="6" rx="1" fill="#64748b" />
+              <rect x="98" y="43" width="2" height="6" rx="1" fill="#64748b" />
+            </g>
+          )}
 
           {/* Magnifying Glass Element centered over Right Eye (58, 35) while streaming */}
           {status === 'streaming' && (

@@ -1,6 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import DriftWall from '../components/DriftWall';
 import './__styles__/BrandPages.css';
+import squatImg from '../assets/squat3.jpeg';
+import clientSquatImg from '../assets/IMG_1575.jpeg';
+import clientMobilityImg from '../assets/IMG_1578.jpeg';
+import clientPressImg from '../assets/IMG_1583.jpeg';
+import clientLungeImg from '../assets/IMG_1584.jpeg';
+import clientBalanceImg from '../assets/IMG_1588.jpeg';
+import clientWallSquatImg from '../assets/IMG_1590.jpeg';
+import balanceLungeImg from '../assets/lunges1.jpeg';
+import loadedSquatImg from '../assets/squat1.jpeg';
+import boxImg from '../assets/box.jpeg';
+import coverPhotoImg from '../assets/cover_photo.jpg';
+import coverPhoto2Img from '../assets/cover_photo2.jpg';
+import img1603 from '../assets/IMG_1603.jpeg';
+import img1605 from '../assets/IMG_1605.jpeg';
+import img1606 from '../assets/IMG_1606.jpeg';
+import img1607 from '../assets/IMG_1607.jpeg';
+import img1610 from '../assets/IMG_1610.jpeg';
+import img1611 from '../assets/IMG_1611.jpeg';
+import img1613 from '../assets/IMG_1613.jpeg';
+import landmineImg from '../assets/landmine.jpeg';
+import landmineRDLImg from '../assets/landmineRDL.jpeg';
+import lungesImg from '../assets/lunges.jpeg';
+import madi1Img from '../assets/madi1.jpg';
+import madi2Img from '../assets/madi2.jpeg';
+import medBallImg from '../assets/medBall.jpeg';
+import squatBaseImg from '../assets/squat.jpeg';
+import squat2Img from '../assets/squat2.jpeg';
+import squat4Img from '../assets/squat4.jpeg';
+import squat5Img from '../assets/squat5.jpg';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
@@ -57,6 +87,38 @@ const PLATE_CONFIG: Record<number, PlateInfo> = {
 };
 
 const PLATE_WEIGHTS = [45, 25, 10, 5, 2.5];
+
+const testimonialGalleryItems = [
+  { image: squatImg, title: 'Strength Coaching' },
+  { image: clientSquatImg, title: 'Supported Strength' },
+  { image: clientMobilityImg, title: 'Mobility' },
+  { image: clientPressImg, title: 'Progressive Strength' },
+  { image: clientLungeImg, title: 'Functional Movement' },
+  { image: clientBalanceImg, title: 'Balance & Stability' },
+  { image: clientWallSquatImg, title: 'Individual Coaching' },
+  { image: balanceLungeImg, title: 'Balance Training' },
+  { image: loadedSquatImg, title: 'Loaded Strength' },
+  { image: boxImg, title: 'Box Work' },
+  { image: coverPhotoImg, title: 'Training Environment' },
+  { image: coverPhoto2Img, title: 'Coaching Session' },
+  { image: img1603, title: 'Form Focus' },
+  { image: img1605, title: 'Guided Session' },
+  { image: img1606, title: 'Progress' },
+  { image: img1607, title: 'Consistency' },
+  { image: img1610, title: 'Movement Quality' },
+  { image: img1611, title: 'Client Work' },
+  { image: img1613, title: 'Technique' },
+  { image: landmineImg, title: 'Landmine Training' },
+  { image: landmineRDLImg, title: 'Posterior Chain' },
+  { image: lungesImg, title: 'Lunge Patterns' },
+  { image: madi1Img, title: 'Coach Madison' },
+  { image: madi2Img, title: 'Coaching' },
+  { image: medBallImg, title: 'Power Work' },
+  { image: squatBaseImg, title: 'Squat Patterning' },
+  { image: squat2Img, title: 'Loaded Movement' },
+  { image: squat4Img, title: 'Strength' },
+  { image: squat5Img, title: 'Training' },
+];
 
 const autoCalculatePlatesForTarget = (targetWeight: number, barWeight: number) => {
   let remaining = (targetWeight - barWeight) / 2;
@@ -414,6 +476,40 @@ export default function Testimonials() {
 
       <section className="testimonial-stage">
         <TestimonialsCarousel items={testimonials} />
+      </section>
+
+      <section
+        style={{
+          height: '520px',
+          width: '100%',
+          maxWidth: '980px',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          marginTop: '2rem',
+        }}
+      >
+        <DriftWall
+          items={testimonialGalleryItems}
+          columns={4}
+          tileWidth={270}
+          tileHeight={170}
+          gap={20}
+          tilt={16}
+          turn={-14}
+          perspective={1200}
+          depth={120}
+          speed={42}
+          direction="up"
+          variance={0.45}
+          parallax={0.6}
+          altColumnParallax={2.2}
+          lift={64}
+          fade={0.6}
+          dim={0.55}
+          overlayColor="#121316"
+          ctaMessage="This could be you"
+          ctaHref="/consultation"
+        />
       </section>
 
       <section className="echo-wall">

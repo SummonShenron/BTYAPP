@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AccordionGallery from './AccordionGallery';
+import PixelWipeCarousel from './PixelWipeCarousel';
 import heroImg from '../assets/cover_photo2.jpg';
 import heroImg3 from '../assets/squat.jpeg';
 import twinsImg from '../assets/squat4.jpeg';
+import pressImg from '../assets/IMG_1583.jpeg';
+import lungeImg from '../assets/IMG_1606.jpeg';
+import logoImg from '../assets/logo.png';
 import './__styles__/hero.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
@@ -27,6 +30,7 @@ const heroGalleryItems = [
   { image: heroImg, label: 'Personal Coaching', alt: 'BTY Fitness personal coaching' },
   { image: twinsImg, label: 'Train Together', alt: 'BTY Fitness partner strength training' },
   { image: heroImg3, label: 'Build Strength', alt: 'BTY Fitness strength training' },
+  { image: pressImg, label: 'Press Training', alt: 'BTY Fitness press training' },
 ];
 
 export default function Hero() {
@@ -84,11 +88,14 @@ export default function Hero() {
         <aside className="hero-sidebar">
           <div className="hero-sidebar-card">
             <div className="sidebar-image-slot hero-accordion-gallery">
-              <AccordionGallery
+              <PixelWipeCarousel
                 items={heroGalleryItems}
-                defaultIndex={2}
-                expandRatio={0.52}
-                trigger="hover"
+                gridSize={10}
+                pixelColor="#121316"
+                interval={5000}
+                animationStepDuration={0.3}
+                logoSrc={logoImg}
+                autoPlay
               />
             </div>
 

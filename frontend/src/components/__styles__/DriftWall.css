@@ -64,6 +64,14 @@
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   will-change: transform;
+  /* Per-column parallax: columns translate with the pointer, scaled by their
+     own multiplier so alternating columns drift more strongly. */
+  transform: translate3d(
+    calc(var(--drift-pointer-x) * var(--drift-column-parallax, 1) * 18px),
+    calc(var(--drift-pointer-y) * var(--drift-column-parallax, 1) * 14px),
+    0
+  );
+  transition: transform 200ms ease-out;
 }
 
 .drift-wall-column--up {
@@ -204,6 +212,67 @@
 
 .drift-wall-expanded.is-closing .drift-wall-expanded-media {
   animation: drift-wall-collapse 360ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+/* Hover CTA overlay: dims tiles and reveals a centered message card. */
+.drift-wall.has-cta:hover .drift-wall-tile:not(:hover) {
+  opacity: calc(var(--drift-dim) * 0.45);
+}
+
+.drift-wall-cta {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+
+.drift-wall.has-cta:hover .drift-wall-cta {
+  opacity: 1;
+}
+
+.drift-wall-cta-card {
+  background: rgba(9, 12, 15, 0.82);
+  border: 1px solid rgba(130, 230, 247, 0.62);
+  border-radius: var(--drift-radius);
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.58);
+  padding: 1rem 1.5rem;
+  backdrop-filter: blur(4px);
+  transform: translateY(8px) scale(0.94);
+  opacity: 0;
+  transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1), opacity 240ms ease;
+}
+
+.drift-wall-cta-link {
+  pointer-events: auto;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+}
+
+.drift-wall-cta-link:hover {
+  border-color: rgba(130, 230, 247, 0.95);
+  background: rgba(9, 12, 15, 0.92);
+}
+
+.drift-wall.has-cta:hover .drift-wall-cta-card {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.drift-wall-cta-text {
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9);
+  text-align: center;
+  display: block;
 }
 
 @keyframes drift-wall-expand {

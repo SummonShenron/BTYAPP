@@ -14,6 +14,18 @@
   place-items: center;
 }
 
+/* Full-bleed media inside the content zone (e.g. cover images) must be
+   absolutely pinned to the zone so its height resolves to the container and
+   object-fit/object-position actually crop instead of overflowing. */
+.pixel-transition-content > img,
+.pixel-transition-content > video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .pixel-transition-first {
   opacity: 1;
 }

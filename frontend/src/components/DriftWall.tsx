@@ -21,11 +21,18 @@ type DriftWallProps = {
   direction?: 'up' | 'down';
   variance?: number;
   parallax?: number;
+  // Extra parallax multiplier applied to alternating (2nd, 4th, ...) columns.
+  // 1 = no extra effect; higher = those columns respond more to pointer movement.
+  altColumnParallax?: number;
   lift?: number;
   fade?: number;
   dim?: number;
   overlayColor?: string;
   radius?: number;
+  // Optional message shown as an overlay when the wall is hovered.
+  ctaMessage?: string;
+  // Optional link the hover CTA card navigates to when clicked.
+  ctaHref?: string;
 };
 
 export default function DriftWall({
@@ -42,11 +49,14 @@ export default function DriftWall({
   direction = 'up',
   variance = 0.4,
   parallax = 0.6,
+  altColumnParallax = 1,
   lift = 64,
   fade = 0.75,
   dim = 0.7,
   overlayColor = '#060010',
   radius = 12,
+  ctaMessage,
+  ctaHref,
 }: DriftWallProps) {
   const wallRef = useRef<HTMLDivElement>(null);
   const [expandedItem, setExpandedItem] = useState<DriftWallItem | null>(null);
@@ -134,7 +144,7 @@ export default function DriftWall({
   return (
     <div
       ref={wallRef}
-      className={`drift-wall${expandedItem ? ' is-expanded' : ''}`}
+      className={`drift-wall${expandedItem ? ' is-expanded' : ''}${ctaMessage ? ' has-cta' : ''}`}
       style={wallStyle}
       onPointerMove={handlePointerMove}
       onPointerLeave={() => {
@@ -147,6 +157,8 @@ export default function DriftWall({
         {columnItems.map((column, columnIndex) => {
           const repeatedItems = [...column, ...column, ...column];
           const columnDuration = duration * (1 + ((columnIndex % 2 === 0 ? -1 : 1) * variance * 0.18));
+          // Alternating columns (2nd, 4th, ...) get a boosted parallax response.
+          const columnParallax = columnIndex % 2 === 1 ? altColumnParallax : 1;
 
           return (
             <div
@@ -154,6 +166,7 @@ export default function DriftWall({
               style={{
                 '--drift-column-duration': `${columnDuration}s`,
                 '--drift-column-delay': `${-columnIndex * duration * variance * 0.35}s`,
+                '--drift-column-parallax': columnParallax,
               } as React.CSSProperties}
               aria-hidden={columnIndex > 0 ? undefined : false}
               key={columnIndex}
@@ -211,6 +224,20 @@ export default function DriftWall({
               &times;
             </button>
           </div>
+        </div>
+      )}
+
+      {ctaMessage && (
+        <div className="drift-wall-cta">
+          {ctaHref ? (
+            <a href={ctaHref} className="drift-wall-cta-card drift-wall-cta-link">
+              <span className="drift-wall-cta-text">{ctaMessage}</span>
+            </a>
+          ) : (
+            <div className="drift-wall-cta-card" aria-hidden="true">
+              <span className="drift-wall-cta-text">{ctaMessage}</span>
+            </div>
+          )}
         </div>
       )}
     </div>

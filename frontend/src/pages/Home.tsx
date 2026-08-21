@@ -127,15 +127,18 @@ export default function Home() {
 
           {/* Right Column: Visual Media Feature Card */}
           <aside 
-            style={{ flex: '1 1 320px', minHeight: '420px' }} 
+            style={{ flex: '1 1 320px', minHeight: '420px', display: 'flex', flexDirection: 'column' }} 
             className="glass-card-interactive overflow-hidden p-0 relative"
           >
-            {/* Top Media Zone */}
+            {/* Top Media Zone — grows to fill available height */}
             <div
               className="relative overflow-hidden"
               style={{
-                aspectRatio: '1080 / 1168',
+                flex: '1 1 auto',
+                minHeight: '220px',
                 background: '#182127',
+                borderRadius: '12px',
+                margin: '0.75rem 0.75rem 0',
               }}
             >
               <PixelTransition
@@ -144,6 +147,7 @@ export default function Home() {
                     src={squatImg1}
                     alt="BTY client building strength through coached movement"
                     className="home-feature-pixel-image"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 65%', display: 'block' }}
                   />
                 }
                 secondContent={
@@ -160,8 +164,8 @@ export default function Home() {
               />
             </div>
 
-            {/* Content Zone */}
-            <div className="p-6 space-y-4">
+            {/* Content Zone — fixed, sits at the bottom */}
+            <div className="p-6 space-y-4" style={{ flex: '0 0 auto' }}>
               <span className="bg-[#38C2DE]/20 text-[#38C2DE] border border-[#38C2DE]/40 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full backdrop-blur-md">
                 {programContent.program_feature_badge}
               </span>
