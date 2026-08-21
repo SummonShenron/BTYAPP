@@ -517,7 +517,13 @@ async def ingest_error_webhook(
 async def trigger_error():
     logger.info("--> /api/erragent-debug endpoint hit!")
     # Intentionally trigger zero division; caught automatically by global_exception_handler!
-    return 1 / 0
+    try:
+        return 1 / 0
+    except ZeroDivisionError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Division by zero is not allowed."
+        ) from exc
 
 @app.get("/debug/erragent-thread")
 async def test_thread():
