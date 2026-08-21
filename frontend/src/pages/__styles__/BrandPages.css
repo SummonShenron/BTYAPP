@@ -152,6 +152,15 @@
   padding: 0;
 }
 
+.about-drift-wall {
+  min-width: 0;
+}
+
+.about-drift-wall-zone {
+  border-radius: 0;
+  background: transparent;
+}
+
 .profile-media-image {
   width: 100%;
   height: 100%;
@@ -783,5 +792,11 @@
   .cta-ribbon {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .about-drift-wall-zone {
+    height: clamp(430px, 125vw, 520px);
   }
 }

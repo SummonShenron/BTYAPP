@@ -1,7 +1,7 @@
 // pages/Consultation.tsx
 import React, { useEffect, useState } from 'react';
 import ConsultationForm from '../components/ConsultationForm';
-import switchUpImg from '../assets/switch_up_your_routine-removebg-preview.png'
+import PixelTransition from '../components/PixelTransition';
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
 const defaults: Record<string, string> = {
@@ -163,8 +163,20 @@ export default function Consultation() {
           </div>    
           {/* MIDDLE SECTION: Fixed Window Reveal Hero Banner */}
           <div className="consultation-reveal-banner">
-            {/* <span className="banner-kicker">Won't Happen In One Day</span>
-            <h2 className="banner-title">DON'T GIVE UP WITHOUT TRYING</h2> */}
+            <PixelTransition
+              firstContent={<span aria-hidden="true" />}
+              secondContent={
+                <div className="consultation-reveal-copy">
+                  <span className="banner-kicker">Won't Happen In One Day</span>
+                  <h2 className="banner-title">DON'T GIVE UP WITHOUT TRYING</h2>
+                </div>
+              }
+              gridSize={12}
+              pixelColor="#38C2DE"
+              once={false}
+              animationStepDuration={0.4}
+              className="consultation-pixel-transition"
+            />
           </div>
           <div className="glass-card-interactive p-6 sm:p-8">
             <ConsultationForm contentOverrides={content} />

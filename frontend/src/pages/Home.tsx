@@ -4,6 +4,7 @@ import Hero from '../components/Hero';
 import About from '../components/About';
 import ProgramCard from '../components/ProgramCard';
 import ConsultationForm from '../components/ConsultationForm';
+import PixelTransition from '../components/PixelTransition';
 import { useNavigate } from 'react-router-dom';
 import homeFeaturePhoto from '../assets/madi1.jpg';
 import logoImg from '../assets/logo.png';
@@ -133,20 +134,29 @@ export default function Home() {
             <div
               className="relative overflow-hidden"
               style={{
-                height: 'clamp(220px, 30vw, 300px)',
+                aspectRatio: '1080 / 1168',
                 background: '#182127',
               }}
             >
-              <img 
-                src={squatImg1}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  opacity: 0.8,
-                  transition: 'opacity 0.3s ease',
-                  zoom: 1.5,
-                }}
+              <PixelTransition
+                firstContent={
+                  <img
+                    src={squatImg1}
+                    alt="BTY client building strength through coached movement"
+                    className="home-feature-pixel-image"
+                  />
+                }
+                secondContent={
+                  <div className="home-feature-pixel-message">
+                    <span>Built One Rep at a Time</span>
+                    <strong>CONSISTENCY<br />CREATES RESULTS</strong>
+                  </div>
+                }
+                gridSize={12}
+                pixelColor="#38C2DE"
+                once={false}
+                animationStepDuration={0.32}
+                className="home-feature-pixel-transition"
               />
             </div>
 

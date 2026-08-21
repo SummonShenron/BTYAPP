@@ -1,9 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import DriftWall from '../components/DriftWall';
 import './__styles__/BrandPages.css';
 import squatImg from '../assets/squat3.jpeg';
+import clientSquatImg from '../assets/IMG_1575.jpeg';
+import clientMobilityImg from '../assets/IMG_1578.jpeg';
+import clientPressImg from '../assets/IMG_1583.jpeg';
+import clientLungeImg from '../assets/IMG_1584.jpeg';
+import clientBalanceImg from '../assets/IMG_1588.jpeg';
+import clientWallSquatImg from '../assets/IMG_1590.jpeg';
+import balanceLungeImg from '../assets/lunges1.jpeg';
+import loadedSquatImg from '../assets/squat1.jpeg';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
+
+const aboutGalleryItems = [
+  { image: squatImg, title: 'Strength Coaching' },
+  { image: clientSquatImg, title: 'Supported Strength' },
+  { image: clientMobilityImg, title: 'Mobility' },
+  { image: clientPressImg, title: 'Progressive Strength' },
+  { image: clientLungeImg, title: 'Functional Movement' },
+  { image: clientBalanceImg, title: 'Balance & Stability' },
+  { image: clientWallSquatImg, title: 'Individual Coaching' },
+  { image: balanceLungeImg, title: 'Balance Training' },
+  { image: loadedSquatImg, title: 'Loaded Strength' },
+];
 
 const defaults: Record<string, string> = {
   about_page_kicker: 'About Madison',
@@ -78,23 +99,28 @@ export default function AboutMe() {
           </div>
         </article>
 
-        <aside className="profile-frame">
-          <div className="profile-media-zone">
-            <img
-              src={squatImg}
-              alt="Fitness"
-              className="profile-media-image"
-              style={{
-                objectFit: 'cover',
-                objectPosition: 'center',
-                display: 'block',
-                width: '100%',
-                height: '100%',
-                filter: 'brightness(0.82) saturate(0.9)',
-              }}
+        <aside className="about-drift-wall">
+          <div className="profile-media-zone about-drift-wall-zone">
+            <DriftWall
+              items={aboutGalleryItems}
+              columns={2}
+              tileWidth={200}
+              tileHeight={340}
+              gap={16}
+              tilt={16}
+              turn={-14}
+              perspective={1200}
+              depth={120}
+              speed={42}
+              direction="up"
+              variance={0.4}
+              parallax={0.6}
+              lift={64}
+              fade={0.75}
+              dim={0.7}
+              overlayColor="#121316"
+              radius={12}
             />
-            <div className="profile-photo-veil" aria-hidden="true" />
-            <div className="profile-photo-ring" aria-hidden="true" />
           </div>
         </aside>
       </section>
