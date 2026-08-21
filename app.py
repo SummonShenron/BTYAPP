@@ -137,7 +137,7 @@ async def request_logging_middleware(request: Request, call_next):
 
     try:
         response = await call_next(request)
-    except Exception:
+    except Exception as exc:
         logger.exception(
             "[ERR] %s %s failed",
             request.method,
@@ -150,7 +150,18 @@ async def request_logging_middleware(request: Request, call_next):
                 }
             },
         )
-        raise
+        try:
+            response = await global_exception_handler(request, exc)
+        except HTTPException as http_exc:
+            response = JSONResponse(
+                status_code=http_exc.status_code,
+                content={"detail": http_exc.detail},
+            )
+        except Exception:
+            response = JSONResponse(
+                status_code=500,
+                content={"detail": "Internal Server Error"},
+            )
 
     duration_ms = round((time.perf_counter() - started_at) * 1000)
 
