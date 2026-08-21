@@ -71,7 +71,7 @@ export default function SonicWidget() {
           <div className="sonic-widget-header">
             <div className="sonic-widget-title-row">
               <span className="sonic-widget-status-dot"></span>
-              <h3 className="sonic-widget-title">Patchy — Madison's Assistant</h3>
+              <h3 className="sonic-widget-title">Madison's Assistant</h3>
             </div>
             <button
               onClick={() => setIsOpen(false)}
