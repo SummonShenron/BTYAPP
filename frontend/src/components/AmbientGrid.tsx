@@ -28,7 +28,7 @@ export default function AmbientGrid({
   fadeDuration = 800,
   maxActive = 6,
   baseOpacity = 0.08,
-  centerMaskRadius = 240, // Adjust to cover the logo width
+  centerMaskRadius = 300, // Adjust to cover the logo width
 }: AmbientGridProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 

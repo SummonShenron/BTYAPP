@@ -9,7 +9,7 @@ export default function Landing() {
     <div className="landing-shell">
       {/* Animated ambient background grid */}
       <AmbientGrid 
-        cellSize={32} 
+        cellSize={20} 
         color="#4FD4EE" 
         spawnInterval={600} 
         maxActive={6} 
