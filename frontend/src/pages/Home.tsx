@@ -137,7 +137,8 @@ export default function Home() {
                 flex: '1 1 auto',
                 minHeight: '220px',
                 background: '#182127',
-                borderRadius: '16px'
+                borderRadius: '12px',
+                margin: '0.75rem 0.75rem 0',
               }}
             >
               <PixelTransition

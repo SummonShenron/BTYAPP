@@ -11,3 +11,4 @@ pydantic[email]
 resend
 tzdata
 pytest
+pytest-asyncio
