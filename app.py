@@ -292,6 +292,9 @@ async def submit_consultation(
         synthetic.is_synthetic,
     )
 
+    if not lead.email or '@' not in lead.email:
+        raise HTTPException(status_code=422, detail="Invalid email address format.")
+
     if synthetic.is_synthetic:
         return {
             "success": True,
