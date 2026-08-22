@@ -300,6 +300,8 @@ async def submit_consultation(
         }
 
     saved_lead = await save_lead(lead)
+    if not saved_lead:
+        raise HTTPException(status_code=400, detail="Invalid consultation lead data.")
     logger.info("Consultation lead saved with id=%s", saved_lead.get("_id"))
     
     # Send background email alert to jackharper0517@outlook.com
