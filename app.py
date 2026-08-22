@@ -63,6 +63,15 @@ from backend.utils.auth_utils import (
     get_current_client, 
     verify_admin
 )
+from backend.utils.synthetic_utils import (
+    SyntheticContext,
+    get_synthetic_context,
+    synthetic_mutations_safe,
+    synthetic_response_fields,
+    SYNTHETIC_HEADER,
+    CORRELATION_HEADER,
+    REASON_HEADER,
+)
 
 load_dotenv()
 app = FastAPI(
@@ -214,6 +223,29 @@ async def health_check():
     return {"status": "online", "brand": "BTY Fitness"}
 
 
+@app.get("/api/synthetic/capabilities")
+async def get_synthetic_capabilities():
+    """
+    Read-only capability check for fuzz/chaos testing tools (e.g. errAgent's
+    Patchy). Callers MUST check this before sending X-ErrAgent-Synthetic
+    traffic against a deployment — the env flag alone is not proof of safety;
+    it must be paired with this endpoint confirming synthetic mode is honored.
+    """
+    return {
+        "service": "btyapp",
+        "environment": os.getenv("ENVIRONMENT", os.getenv("APP_ENV", "production")),
+        "synthetic_mutations_safe": synthetic_mutations_safe(),
+        "synthetic_header": SYNTHETIC_HEADER,
+        "correlation_header": CORRELATION_HEADER,
+        "reason_header": REASON_HEADER,
+        "guarded_endpoints": [
+            "/api/consultations",
+            "/api/consultation",
+            "/api/bookings",
+        ],
+    }
+
+
 @app.post("/api/client-errors", status_code=status.HTTP_202_ACCEPTED)
 async def report_client_error(payload: ClientErrorPayload):
     """
@@ -244,12 +276,29 @@ async def report_client_error(payload: ClientErrorPayload):
     return {"status": "accepted"}
 
 @app.post("/api/consultations", status_code=status.HTTP_201_CREATED)
-async def submit_consultation(lead: ConsultationLead, background_tasks: BackgroundTasks):
+async def submit_consultation(
+    lead: ConsultationLead,
+    background_tasks: BackgroundTasks,
+    synthetic: SyntheticContext = Depends(get_synthetic_context),
+):
     """
     Public Endpoint: Lead capture form on the landing page / consultation page.
-    Saves to MongoDB and fires an alert email task to Madison.
+    Saves to MongoDB and fires an alert email task to Madison, unless the
+    request is tagged synthetic (see GET /api/synthetic/capabilities).
     """
-    logger.info("Consultation submission received for email=%s", lead.email)
+    logger.info(
+        "Consultation submission received for email=%s synthetic=%s",
+        lead.email,
+        synthetic.is_synthetic,
+    )
+
+    if synthetic.is_synthetic:
+        return {
+            "success": True,
+            "message": "Synthetic consultation validated; no lead was created and no email was sent.",
+            **synthetic_response_fields(synthetic),
+        }
+
     saved_lead = await save_lead(lead)
     logger.info("Consultation lead saved with id=%s", saved_lead.get("_id"))
     
@@ -259,15 +308,20 @@ async def submit_consultation(lead: ConsultationLead, background_tasks: Backgrou
     
     return {
         "success": True,
-        "message": "Consultation request received! Madison will reach out shortly."
+        "message": "Consultation request received! Madison will reach out shortly.",
+        **synthetic_response_fields(synthetic),
     }
 
 
 @app.post("/api/consultation", status_code=status.HTTP_201_CREATED)
-async def submit_consultation_alias(lead: ConsultationLead, background_tasks: BackgroundTasks):
+async def submit_consultation_alias(
+    lead: ConsultationLead,
+    background_tasks: BackgroundTasks,
+    synthetic: SyntheticContext = Depends(get_synthetic_context),
+):
     """Backward-compatible alias for clients posting to singular endpoint path."""
     logger.info("Consultation alias endpoint hit: /api/consultation")
-    return await submit_consultation(lead, background_tasks)
+    return await submit_consultation(lead, background_tasks, synthetic)
 
 
 # -------------------------------------------------------------
@@ -278,13 +332,20 @@ async def submit_consultation_alias(lead: ConsultationLead, background_tasks: Ba
 async def create_booking(
     booking: AppointmentBooking, 
     background_tasks: BackgroundTasks,
-    user: Optional[dict] = Depends(get_optional_user) # Supports guest or logged-in clients
+    user: Optional[dict] = Depends(get_optional_user), # Supports guest or logged-in clients
+    synthetic: SyntheticContext = Depends(get_synthetic_context),
 ):
     """
     Book an appointment from Book.tsx.
-    Saves document to MongoDB 'bookings' collection and fires an email notification to Madison.
+    Saves document to MongoDB 'bookings' collection and fires an email notification
+    to Madison, unless the request is tagged synthetic (see GET /api/synthetic/capabilities).
     """
-    logger.info("Booking submission received for email=%s session_type=%s", booking.email, booking.session_type)
+    logger.info(
+        "Booking submission received for email=%s session_type=%s synthetic=%s",
+        booking.email,
+        booking.session_type,
+        synthetic.is_synthetic,
+    )
 
     # If the user selected a concrete scheduler slot, validate it against the recurring schedule.
     if booking.preferred_date and booking.preferred_slot_start:
@@ -314,6 +375,15 @@ async def create_booking(
         if matched_slot.get("is_booked"):
             raise HTTPException(status_code=409, detail="Selected time slot is already booked.")
 
+    if synthetic.is_synthetic:
+        return {
+            "success": True,
+            "booking_id": None,
+            "message": "Synthetic booking validated; no appointment was created and no email was sent.",
+            "client_type": "Registered Client" if user else "Guest",
+            **synthetic_response_fields(synthetic),
+        }
+
     # 1. Save document to MongoDB
     saved_booking = await save_booking(booking)
     logger.info("Booking saved with id=%s", saved_booking.get("_id"))
@@ -330,7 +400,8 @@ async def create_booking(
         "success": True,
         "booking_id": saved_booking["_id"],
         "message": "Booking received and saved! Confirmation email queued for Madison.",
-        "client_type": saved_booking["client_type"]
+        "client_type": saved_booking["client_type"],
+        **synthetic_response_fields(synthetic),
     }
 
 
