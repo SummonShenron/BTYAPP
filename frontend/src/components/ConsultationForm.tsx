@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { reportFrontendError } from '../utils/errorReporter';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
@@ -82,10 +83,15 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialProgr
             goals: ''
         });
         } else {
+        reportFrontendError(`Consultation submission failed with status ${response.status}`, {
+          source: 'contact_form',
+          status: response.status,
+        });
         alert(content.consultation_form_error_alert);
         }
     } catch (error) {
         console.error('Error submitting consultation:', error);
+        reportFrontendError(error, { source: 'contact_form' });
         alert(content.consultation_form_network_alert);
     }
     };

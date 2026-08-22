@@ -56,6 +56,7 @@ from backend.utils.app_utils import (
     send_erragent_ingest,
     dispatch_erragent_ingest,
     build_error_payload,
+    send_erragent_client_error,
 )
 from backend.utils.auth_utils import ( 
     get_optional_user, 
@@ -95,6 +96,17 @@ class IngestPayload(BaseModel):
 
 class StatusUpdate(BaseModel):
     status: str
+
+
+class ClientErrorPayload(BaseModel):
+    service: str
+    environment: str = "production"
+    release: Optional[str] = None
+    route: Optional[str] = None
+    source: str = "frontend"
+    message: str
+    stack: Optional[str] = None
+    metadata: Dict[str, Any] = {}
 
 class ContentValueUpdate(BaseModel):
     value: str
@@ -200,6 +212,36 @@ async def startup_db_check():
 async def health_check():
     logger.info("Health check requested")
     return {"status": "online", "brand": "BTY Fitness"}
+
+
+@app.post("/api/client-errors", status_code=status.HTTP_202_ACCEPTED)
+async def report_client_error(payload: ClientErrorPayload):
+    """
+    Receives errors captured by the BTY frontend (window.onerror, React error
+    boundary, unhandled rejections, failed API calls) and forwards them to
+    errAgent for triage. Never surfaces errAgent downtime to the browser.
+    """
+    safe_payload = {
+        "service": "btyapp",
+        "environment": payload.environment,
+        "release": payload.release,
+        "route": payload.route,
+        "source": payload.source,
+        "message": payload.message[:4000],
+        "stack": payload.stack[:12000] if payload.stack else None,
+        "metadata": payload.metadata,
+    }
+
+    try:
+        result = await send_erragent_client_error(safe_payload)
+        logger.info(
+            "--> [errAgent] client-error forwarded status=%s",
+            result.get("status_code"),
+        )
+    except Exception as exc:
+        logger.error("--> [errAgent] client-error forward failed: %s", str(exc))
+
+    return {"status": "accepted"}
 
 @app.post("/api/consultations", status_code=status.HTTP_201_CREATED)
 async def submit_consultation(lead: ConsultationLead, background_tasks: BackgroundTasks):

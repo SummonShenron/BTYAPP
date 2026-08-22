@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@clerk/clerk-react';
+import { reportFrontendError } from '../utils/errorReporter';
 import './__styles__/ScheduleManager.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
@@ -103,7 +104,9 @@ export default function ScheduleManager() {
   const getAuthTokenOrThrow = async () => {
     const token = await getToken();
     if (!token) {
-      throw new Error('Authentication token unavailable. Please refresh and sign in again.');
+      const authError = new Error('Authentication token unavailable. Please refresh and sign in again.');
+      reportFrontendError(authError, { source: 'clerk_session' });
+      throw authError;
     }
     return token;
   };
@@ -160,6 +163,7 @@ export default function ScheduleManager() {
           : DEFAULT_SETTINGS.weekly_blocks,
       });
     } catch (err) {
+      reportFrontendError(err, { source: 'availability_api', action: 'fetch_schedule_settings' });
       setError(err instanceof Error ? err.message : 'Failed to load schedule settings');
     } finally {
       setLoading(false);

@@ -1,5 +1,6 @@
 // pages/BookSession.tsx
 import React, { useEffect, useMemo, useState } from 'react';
+import { reportFrontendError } from '../utils/errorReporter';
 import './__styles__/BookSession.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
@@ -191,6 +192,7 @@ export default function BookSession() {
         setSelectedSlotKey('');
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Unable to load schedule slots.';
+        reportFrontendError(error, { source: 'availability_api', duration_minutes: selectedSession.duration_minutes });
         if (active) {
           setSlotError(message);
         }
@@ -350,6 +352,7 @@ export default function BookSession() {
       setIsSubmitted(true);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to submit booking request.';
+      reportFrontendError(error, { source: 'booking_submission', session_type: selectedSessionType });
       setSubmitError(message);
     } finally {
       setIsSubmitting(false);

@@ -114,6 +114,44 @@ async def send_erragent_ingest(payload: Dict[str, Any]) -> Dict[str, Any]:
     return await asyncio.to_thread(post_erragent_ingest, payload)
 
 
+def post_erragent_client_error(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Forwards a browser-reported error to errAgent's client-errors endpoint."""
+    erragent_url = os.getenv("ERRAGENT_URL", "").rstrip("/")
+    ingest_secret = os.getenv("ERRAGENT_INGEST_SECRET")
+    app_id = os.getenv("ERRAGENT_APP_ID", "bty")
+
+    if not erragent_url or not ingest_secret:
+        raise RuntimeError("ERRAGENT_URL or ERRAGENT_INGEST_SECRET is not configured")
+
+    body = json.dumps(payload).encode("utf-8")
+    req = urllib_request.Request(
+        f"{erragent_url}/api/v1/client-errors",
+        data=body,
+        headers={
+            "Content-Type": "application/json",
+            "x-ingest-secret": ingest_secret,
+            "x-app-id": app_id,
+        },
+        method="POST",
+    )
+
+    try:
+        with urllib_request.urlopen(req, timeout=5) as response:
+            return {
+                "status_code": response.getcode(),
+                "body": response.read().decode("utf-8"),
+            }
+    except urllib_error.HTTPError as exc:
+        return {
+            "status_code": exc.code,
+            "body": exc.read().decode("utf-8", errors="replace"),
+        }
+
+
+async def send_erragent_client_error(payload: Dict[str, Any]) -> Dict[str, Any]:
+    return await asyncio.to_thread(post_erragent_client_error, payload)
+
+
 # --- NON-BLOCKING BACKGROUND DISPATCH & PAYLOAD BUILDER ---
 async def safe_send_erragent_ingest(payload: Dict[str, Any]) -> None:
     """Executes send_erragent_ingest safely in the background."""
