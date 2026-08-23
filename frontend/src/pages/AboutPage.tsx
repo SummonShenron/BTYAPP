@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import DriftWall from '../components/DriftWall';
+import FlipRevealCarousel from '../components/FlipRevealCarousel';
 import './__styles__/BrandPages.css';
 import squatImg from '../assets/squat3.jpeg';
 import clientSquatImg from '../assets/IMG_1575.jpeg';
@@ -101,25 +101,13 @@ export default function AboutMe() {
 
         <aside className="about-drift-wall">
           <div className="profile-media-zone about-drift-wall-zone">
-            <DriftWall
+            <FlipRevealCarousel
               items={aboutGalleryItems}
-              columns={2}
-              tileWidth={200}
-              tileHeight={340}
-              gap={16}
-              tilt={16}
-              turn={-14}
-              perspective={1200}
-              depth={120}
-              speed={42}
-              direction="up"
-              variance={0.4}
-              parallax={0.6}
-              lift={64}
-              fade={0.75}
-              dim={0.7}
-              overlayColor="#121316"
-              radius={12}
+              columns={14}
+              rows={18}
+              flipDuration={2.2}
+              stagger={2.6}
+              autoPlay
             />
           </div>
         </aside>
