@@ -140,6 +140,11 @@ async def request_validation_handler(request: Request, exc: RequestValidationErr
             status_code=422,
             content={"detail": "Invalid email address format"},
         )
+    if any(error.get("type") == "model_attributes_type" for error in errors):
+        return JSONResponse(
+            status_code=422,
+            content={"detail": "Invalid input format"},
+        )
     return JSONResponse(status_code=422, content={"detail": errors})
 
 
