@@ -13,6 +13,7 @@ from typing import List, Optional, Dict, Any
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from fastapi import FastAPI, Depends, BackgroundTasks, HTTPException, status, Request, Header
+from fastapi.exceptions import RequestValidationError
 from bson import ObjectId
 from fastapi.middleware.cors import CORSMiddleware
 from backend.logging.bty_logger import setup_logging
@@ -126,6 +127,22 @@ class BulkContentUpdate(BaseModel):
 # -------------------------------------------------------------
 # 0. GLOBAL EXCEPTION HANDLER & MIDDLEWARE
 # -------------------------------------------------------------
+@app.exception_handler(RequestValidationError)
+async def request_validation_handler(request: Request, exc: RequestValidationError):
+    """Return stable, safe validation messages for public form endpoints."""
+    errors = exc.errors()
+    email_error = next(
+        (error for error in errors if "email" in {str(part) for part in error.get("loc", ())}),
+        None,
+    )
+    if email_error:
+        return JSONResponse(
+            status_code=422,
+            content={"detail": "Invalid email address format"},
+        )
+    return JSONResponse(status_code=422, content={"detail": errors})
+
+
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     # Re-raise standard FastAPI HTTP exceptions so they return their intended status code (e.g. 401, 404)
