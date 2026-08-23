@@ -37,7 +37,6 @@
   -webkit-backface-visibility: hidden;
   transform-style: preserve-3d;
   transition: transform var(--flip-duration) cubic-bezier(0.6, 0, 0.4, 1);
-  will-change: transform;
 }
 
 /* --- Caption --- */

@@ -26,14 +26,20 @@ type FlipRevealCarouselProps = {
 export default function FlipRevealCarousel({
   items,
   columns = 6,
-  rows = 9,
+  rows = 8,
   flipDuration = 2.2,
   stagger = 2.6,
   autoPlay = true,
   className = '',
 }: FlipRevealCarouselProps) {
-  const safeColumns = Math.max(1, Math.round(columns));
-  const safeRows = Math.max(1, Math.round(rows));
+  // Hard cap regardless of props — each tile promotes its own GPU layer, and
+  // mobile browsers crash once that count gets into the hundreds.
+  const MAX_TILES = 96;
+  const requestedColumns = Math.max(1, Math.round(columns));
+  const requestedRows = Math.max(1, Math.round(rows));
+  const scaleDown = Math.sqrt(MAX_TILES / (requestedColumns * requestedRows));
+  const safeColumns = scaleDown < 1 ? Math.max(1, Math.round(requestedColumns * scaleDown)) : requestedColumns;
+  const safeRows = scaleDown < 1 ? Math.max(1, Math.round(requestedRows * scaleDown)) : requestedRows;
   const maxDistance = safeColumns - 1 + (safeRows - 1);
   const delayUnit = maxDistance > 0 ? stagger / maxDistance : 0;
   const totalDurationMs = (flipDuration + stagger) * 835;
@@ -101,15 +107,16 @@ export default function FlipRevealCarousel({
   const layerAItem = items[layerAIndex] ?? items[0];
   const layerBItem = items[layerBIndex] ?? items[0];
 
-  const tileImageStyle = (row: number, col: number): React.CSSProperties => ({
-    position: 'absolute',
-    width: `${safeColumns * 100}%`,
-    height: `${safeRows * 100}%`,
-    left: `-${col * 100}%`,
-    top: `-${row * 100}%`,
-    objectFit: 'cover',
-    display: 'block',
-    maxWidth: 'none',
+  // Each face samples the shared source image via background-position instead
+  // of rendering its own full-size <img> copy — hundreds of duplicated
+  // full-resolution rasters is what was crashing mobile GPUs.
+  const tileBackgroundStyle = (image: string, row: number, col: number): React.CSSProperties => ({
+    backgroundImage: `url(${image})`,
+    backgroundSize: `${safeColumns * 100}% ${safeRows * 100}%`,
+    backgroundPosition: `${safeColumns > 1 ? (col / (safeColumns - 1)) * 100 : 0}% ${
+      safeRows > 1 ? (row / (safeRows - 1)) * 100 : 0
+    }%`,
+    backgroundRepeat: 'no-repeat',
   });
 
   return (
@@ -119,6 +126,7 @@ export default function FlipRevealCarousel({
     >
       <div
         className="flip-reveal-grid"
+        aria-hidden="true"
         style={{
           gridTemplateColumns: `repeat(${safeColumns}, 1fr)`,
           gridTemplateRows: `repeat(${safeRows}, 1fr)`,
@@ -133,16 +141,20 @@ export default function FlipRevealCarousel({
             <div className="flip-reveal-stage">
               <div
                 className="flip-reveal-face"
-                style={{ transform: `rotateY(${angleA}deg)`, transitionDelay: `${delay}s` }}
-              >
-                <img src={layerAItem.image} alt={aIsFront ? layerAItem.alt ?? layerAItem.title ?? '' : ''} style={tileImageStyle(row, col)} />
-              </div>
+                style={{
+                  transform: `rotateY(${angleA}deg)`,
+                  transitionDelay: `${delay}s`,
+                  ...tileBackgroundStyle(layerAItem.image, row, col),
+                }}
+              />
               <div
                 className="flip-reveal-face"
-                style={{ transform: `rotateY(${angleB}deg)`, transitionDelay: `${delay}s` }}
-              >
-                <img src={layerBItem.image} alt={!aIsFront ? layerBItem.alt ?? layerBItem.title ?? '' : ''} style={tileImageStyle(row, col)} />
-              </div>
+                style={{
+                  transform: `rotateY(${angleB}deg)`,
+                  transitionDelay: `${delay}s`,
+                  ...tileBackgroundStyle(layerBItem.image, row, col),
+                }}
+              />
             </div>
           </div>
           );
