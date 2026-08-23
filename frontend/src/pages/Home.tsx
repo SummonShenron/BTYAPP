@@ -147,7 +147,7 @@ export default function Home() {
                     src={squatImg1}
                     alt="BTY client building strength through coached movement"
                     className="home-feature-pixel-image"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 65%', display: 'block' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 53%', display: 'block' }}
                   />
                 }
                 secondContent={

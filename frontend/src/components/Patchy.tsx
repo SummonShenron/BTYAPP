@@ -5,9 +5,9 @@ import React from 'react';
 
 // Chat lifecycle steps for the embedded assistant:
 //   idle      → standing by, no question in flight
-//   thinking  → question sent, agent graph is working
-//   streaming → answer tokens are arriving
-//   done      → answer complete (brief celebration)
+//   thinking  → question sent, agent graph is working (barbell lift)
+//   streaming → answer tokens are arriving (magnifying glass scan)
+//   done      → answer complete (head tilt, wink, antenna ping & visor sheen)
 //   error     → request failed
 export type PatchyStatus =
   | 'idle'
@@ -30,7 +30,7 @@ const ACCENT: Record<PatchyStatus, string> = {
 };
 
 const GLOW: Record<PatchyStatus, string> = {
-  done: 'rgba(34, 197, 94, 0.3)',
+  done: 'rgba(34, 197, 94, 0.25)',
   streaming: 'rgba(168, 85, 247, 0.25)',
   thinking: 'rgba(234, 179, 8, 0.25)',
   error: 'rgba(239, 68, 68, 0.25)',
@@ -85,13 +85,6 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
             filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.85));
           }
         }
-        @keyframes patchyHappyHop {
-          0%, 100% { transform: translateY(0px); }
-          30% { transform: translateY(-7px); }
-          50% { transform: translateY(0px); }
-          65% { transform: translateY(-3px); }
-          80% { transform: translateY(0px); }
-        }
         @keyframes patchyGlowPulse {
           0%, 100% { opacity: 0.8; }
           50% { opacity: 1; }
@@ -102,13 +95,33 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
           50% { transform: rotate(0deg); }
           75% { transform: rotate(5deg); }
         }
+        @keyframes patchyHeadTiltDone {
+          0% { transform: rotate(0deg); }
+          40% { transform: rotate(-8deg); }
+          70% { transform: rotate(-5deg); }
+          100% { transform: rotate(-6deg); }
+        }
         @keyframes patchyBlink {
           0%, 45%, 52%, 100% { transform: scaleY(1); }
           48% { transform: scaleY(0.08); }
         }
+        @keyframes patchyWinkOnce {
+          0% { transform: scaleY(1); }
+          25%, 55% { transform: scaleY(0.12); }
+          75%, 100% { transform: scaleY(1); }
+        }
         @keyframes patchyRadarPulse {
           0% { r: 4px; opacity: 0.9; stroke-width: 1.5px; }
           100% { r: 18px; opacity: 0; stroke-width: 0.5px; }
+        }
+        @keyframes patchyAntennaPing {
+          0% { r: 4px; opacity: 1; stroke-width: 2px; }
+          100% { r: 16px; opacity: 0; stroke-width: 0.5px; }
+        }
+        @keyframes patchySuccessSheen {
+          0% { transform: translateX(-40px); opacity: 0; }
+          30% { opacity: 0.7; }
+          100% { transform: translateX(50px); opacity: 0; }
         }
         @keyframes patchyGlint {
           0%, 60% { transform: translateX(-50px); opacity: 0; }
@@ -133,9 +146,7 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
 
         .patchy-bot-float {
           animation: ${
-            status === 'done'
-              ? 'patchyHappyHop 1.2s ease-in-out infinite'
-              : status === 'error'
+            status === 'error'
               ? 'patchyAlertPulse 1.4s ease-in-out infinite'
               : status === 'thinking'
               ? 'patchyPressDip 1.6s ease-in-out infinite'
@@ -143,9 +154,20 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
           };
         }
         .patchy-bot-head { transform-origin: 50px 45px; animation: patchyHeadTilt 7s ease-in-out infinite; }
+        .patchy-bot-head-done { transform-origin: 50px 45px; animation: patchyHeadTiltDone 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         .patchy-bot-eyes { transform-origin: center; transform-box: fill-box; animation: patchyBlink 4.2s infinite; }
+        .patchy-bot-left-eye-wink {
+          transform-origin: 42px 35px;
+          animation: patchyWinkOnce 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.15s 1 forwards, patchyBlink 4.2s infinite 1.5s;
+        }
+        .patchy-bot-right-eye-done {
+          transform-origin: 58px 35px;
+          animation: patchyBlink 4.2s infinite 1.5s;
+        }
         .patchy-bot-radar-1 { animation: patchyRadarPulse 2.2s ease-out infinite; }
         .patchy-bot-radar-2 { animation: patchyRadarPulse 2.2s ease-out 1.1s infinite; }
+        .patchy-bot-ping { animation: patchyAntennaPing 1.2s cubic-bezier(0, 0.2, 0.8, 1) 1 forwards; }
+        .patchy-bot-sheen { animation: patchySuccessSheen 1.8s ease-in-out infinite; }
         .patchy-bot-glint { animation: patchyGlint 4s ease-in-out infinite; }
         .patchy-bot-left-foot { animation: patchyFootDangle 4s ease-in-out infinite; }
         .patchy-bot-right-foot { animation: patchyFootDangle 4s ease-in-out 0.3s infinite; }
@@ -164,9 +186,15 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
         {/* Backdrop Glow */}
         <circle cx="50" cy="50" r="38" fill={glowColor} className={status === 'done' ? 'patchy-bot-glow' : undefined} />
 
-        {/* Radar Wave Emission */}
-        <circle cx="50" cy="10" r="4" stroke={accentColor} fill="none" className="patchy-bot-radar-1" />
-        <circle cx="50" cy="10" r="4" stroke={accentColor} fill="none" className="patchy-bot-radar-2" />
+        {/* Radar / Ping Emissions */}
+        {status === 'done' ? (
+          <circle cx="50" cy="10" r="4" stroke={accentColor} fill="none" className="patchy-bot-ping" />
+        ) : (
+          <>
+            <circle cx="50" cy="10" r="4" stroke={accentColor} fill="none" className="patchy-bot-radar-1" />
+            <circle cx="50" cy="10" r="4" stroke={accentColor} fill="none" className="patchy-bot-radar-2" />
+          </>
+        )}
 
         {/* Feet */}
         <rect className="patchy-bot-left-foot" x="35" y="85" width="12" height="6" rx="2" fill="#8E95A2" />
@@ -176,7 +204,7 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
         <rect x="34" y="56" width="32" height="30" rx="7" fill="#121316" stroke="#2A2A32" strokeWidth="2" />
 
         {/* BTY Chest Brandmark */}
-        <rect x="41" y="63" width="18" height="14" rx="3" fill="#0C1016" stroke="#1F242D" />
+        <rect x="41" y="63" width="18" height="14" rx="3" fill="#0C1016" stroke={status === 'done' ? '#174722' : '#1F242D'} />
         <text
           x="50"
           y="73.5"
@@ -190,12 +218,10 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
           BTY
         </text>
 
-        {/* Left Arm — raised in celebration when done, pressing when thinking */}
+        {/* Left Arm — pressing when thinking, resting otherwise */}
         <path
           d={
-            status === 'done'
-              ? 'M 24 62 C 16 50, 14 36, 18 24'
-              : status === 'thinking'
+            status === 'thinking'
               ? 'M 24 62 C 20 56, 20 52, 22 46'
               : 'M24 62 C16 66, 16 76, 22 82'
           }
@@ -224,8 +250,8 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
           )}
         </path>
         <circle
-          cx={status === 'done' ? 18 : status === 'thinking' ? 22 : 22}
-          cy={status === 'done' ? 24 : status === 'thinking' ? 46 : 82}
+          cx={22}
+          cy={status === 'thinking' ? 46 : 82}
           r="3.5"
           fill={status === 'done' ? accentColor : '#8E95A2'}
         >
@@ -254,7 +280,7 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
         </circle>
 
         {/* Head Group */}
-        <g className="patchy-bot-head">
+        <g className={status === 'done' ? 'patchy-bot-head-done' : 'patchy-bot-head'}>
           {/* Antenna */}
           <line x1="50" y1="20" x2="50" y2="12" stroke="#8E95A2" strokeWidth="2.5" strokeLinecap="round" />
           <circle cx="50" cy="10" r="4" fill={accentColor} />
@@ -270,17 +296,33 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
           <g>
             <rect x="33" y="25" width="34" height="24" rx="6" fill={visorBg} stroke={visorBorder} />
             <g clipPath="url(#patchy-visor-screen-clip)">
-              <path d="M30 20 L34 20 L28 52 L24 52 Z" fill="#FFFFFF" className="patchy-bot-glint" />
+              {status === 'done' ? (
+                <path d="M 25 15 L 35 15 L 20 55 L 10 55 Z" fill="#FFFFFF" className="patchy-bot-sheen" />
+              ) : (
+                <path d="M30 20 L34 20 L28 52 L24 52 Z" fill="#FFFFFF" className="patchy-bot-glint" />
+              )}
             </g>
           </g>
 
-          {/* Blinking Eyes */}
-          <g className="patchy-bot-eyes">
-            <circle cx="42" cy="35" r="3.5" fill={accentColor} />
-            <circle cx="58" cy="35" r="3.5" fill={accentColor} />
+          {/* Eyes (Left Eye winks when status === 'done') */}
+          <g className={status === 'done' ? undefined : 'patchy-bot-eyes'}>
+            <circle
+              cx="42"
+              cy="35"
+              r="3.5"
+              fill={accentColor}
+              className={status === 'done' ? 'patchy-bot-left-eye-wink' : undefined}
+            />
+            <circle
+              cx="58"
+              cy="35"
+              r="3.5"
+              fill={accentColor}
+              className={status === 'done' ? 'patchy-bot-right-eye-done' : undefined}
+            />
           </g>
 
-          {/* Mouth Expression — determined grimace while pressing */}
+          {/* Mouth Expression */}
           {status === 'done' ? (
             <path d="M41 40 Q50 48 59 40" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" fill="none" />
           ) : status === 'streaming' ? (
@@ -294,13 +336,11 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
           )}
         </g>
 
-        {/* Right Arm & Hand Group — pressing arm when thinking */}
+        {/* Right Arm & Hand Group */}
         <g className={status === 'streaming' ? 'patchy-bot-magnifier-group' : undefined}>
           <path
             d={
-              status === 'done'
-                ? 'M 76 62 C 84 50, 86 36, 82 24'
-                : status === 'thinking'
+              status === 'thinking'
                 ? 'M 76 62 C 80 56, 80 52, 78 46'
                 : status === 'streaming'
                 ? 'M 76 62 C 82 60, 74 52, 66 45'
@@ -353,26 +393,18 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
 
           <circle
             cx={
-              status === 'done'
-                ? 82
-                : status === 'thinking'
+              status === 'thinking'
                 ? 78
                 : status === 'streaming'
                 ? 66
-                : status !== 'idle'
-                ? 78
-                : undefined
+                : 78
             }
             cy={
-              status === 'done'
-                ? 24
-                : status === 'thinking'
+              status === 'thinking'
                 ? 46
                 : status === 'streaming'
                 ? 45
-                : status !== 'idle'
-                ? 82
-                : undefined
+                : 82
             }
             r="3.5"
             fill={accentColor}
@@ -423,9 +455,7 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
             )}
           </circle>
 
-          {/* Barbell — hands grip outside the plates (between plates and end
-              caps); plates are loaded on the sleeves with a subtle 2px gap
-              before each end cap, like a real barbell */}
+          {/* Barbell — overhead lifting when thinking */}
           {status === 'thinking' && (
             <g>
               <animateTransform
@@ -438,15 +468,11 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
                 keySplines="0.4 0 0.6 1; 0.3 0 0.3 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"
                 values="0 0; 0 0; 0 -28; 0 -28; 0 0; 0 0"
               />
-              {/* Bar */}
               <line x1="2" y1="46" x2="98" y2="46" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" />
-              {/* Left side: plate stack just outboard of the grip → bare sleeve → cap */}
               <rect x="17.5" y="36" width="3.5" height="20" rx="1.5" fill={accentColor} />
               <rect x="14.5" y="40" width="2.5" height="12" rx="1" fill={accentColor} opacity="0.75" />
-              {/* Right side: grip → plate stack just outboard → bare sleeve → cap */}
               <rect x="79" y="36" width="3.5" height="20" rx="1.5" fill={accentColor} />
               <rect x="83" y="40" width="2.5" height="12" rx="1" fill={accentColor} opacity="0.75" />
-              {/* End caps at the bar ends */}
               <rect x="1" y="43" width="2" height="6" rx="1" fill="#64748b" />
               <rect x="98" y="43" width="2" height="6" rx="1" fill="#64748b" />
             </g>
@@ -455,11 +481,8 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
           {/* Magnifying Glass Element centered over Right Eye (58, 35) while streaming */}
           {status === 'streaming' && (
             <g>
-              {/* Handle */}
               <line x1="66" y1="45" x2="61" y2="39" stroke="#8E95A2" strokeWidth="3" strokeLinecap="round" />
-              {/* Lens Rim framing right eye */}
               <circle cx="58" cy="35" r="6.5" stroke={accentColor} strokeWidth="2" fill="rgba(168, 85, 247, 0.35)" />
-              {/* Glint on Lens */}
               <path d="M55 33 Q57 31 59 32" stroke="#FFFFFF" strokeWidth="1.2" strokeLinecap="round" opacity="0.85" fill="none" />
             </g>
           )}

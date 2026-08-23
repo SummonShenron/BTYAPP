@@ -280,7 +280,6 @@ const BarbellGraphic = ({
 function TestimonialsCarousel({ items }: { items: TestimonialItem[] }) {
   const [index, setIndex] = useState(0);
 
-  // auto-advance every 6s, pauses only on unmount
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % items.length);
@@ -324,6 +323,19 @@ export default function Testimonials() {
   const [prLiftName, setPrLiftName] = useState<string>('Squat');
   const [prName, setPrName] = useState<string>('');
   const [savedPRs, setSavedPRs] = useState<PRRecord[]>([]);
+
+  // Mobile viewport tracking for DriftWall columns
+  const [isMobile, setIsMobile] = useState<boolean>(
+    () => typeof window !== 'undefined' && window.innerWidth <= 768
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const normalizePrRecord = (record: any): PRRecord => ({
     id: record.id ?? record._id ?? `${record.liftName}-${record.weight}-${Date.now()}`,
@@ -482,7 +494,7 @@ export default function Testimonials() {
         style={{
           height: '520px',
           width: '100%',
-          maxWidth: '980px',
+          maxWidth: '1140px',
           marginLeft: 'auto',
           marginRight: 'auto',
           marginTop: '2rem',
@@ -490,10 +502,10 @@ export default function Testimonials() {
       >
         <DriftWall
           items={testimonialGalleryItems}
-          columns={4}
-          tileWidth={270}
-          tileHeight={170}
-          gap={20}
+          columns={isMobile ? 2 : 4}
+          tileWidth={isMobile ? 150 : 270}
+          tileHeight={isMobile ? 120 : 170}
+          gap={isMobile ? 12 : 20}
           tilt={16}
           turn={-14}
           perspective={1200}
@@ -501,8 +513,8 @@ export default function Testimonials() {
           speed={42}
           direction="up"
           variance={0.45}
-          parallax={0.6}
-          altColumnParallax={2.2}
+          parallax={0.9}
+          altColumnParallax={2.9}
           lift={64}
           fade={0.6}
           dim={0.55}
