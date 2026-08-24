@@ -20,7 +20,8 @@ logger = logging.getLogger("BTY Logger")
 SYNTHETIC_HEADER = "x-erragent-synthetic"
 CORRELATION_HEADER = "x-erragent-correlation-id"
 REASON_HEADER = "x-erragent-synthetic-reason"
-
+PRODUCTION_READ_ONLY = os.getenv("BTY_PRODUCTION_READ_ONLY") == "true"
+ALLOW_SYNTHETICS = os.getenv("ERRAGENT_ALLOW_PRODUCTION_SYNTHETICS") == "true"
 
 def synthetic_mutations_safe() -> bool:
     """Whether this deployment has opted in to honoring synthetic requests."""

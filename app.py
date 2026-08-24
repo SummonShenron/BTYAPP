@@ -83,6 +83,9 @@ app = FastAPI(
 logger = setup_logging()
 install_erragent_logging(logger)
 logger.info("--- Launching BTY Fitness API ---")
+logger.info("BTY synthetic mutations safe: %s", os.getenv("ERRAGENT_BTY_SYNTHETIC_MUTATIONS_SAFE"))
+logger.info("BTY production read-only: %s", os.getenv("BTY_PRODUCTION_READ_ONLY"))
+logger.info("Allow production synthetics: %s", os.getenv("ERRAGENT_ALLOW_PRODUCTION_SYNTHETICS"))
 # CORS setup for front-end integration
 app.add_middleware(
     CORSMiddleware,
