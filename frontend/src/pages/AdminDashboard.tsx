@@ -465,6 +465,10 @@ export default function AdminDashboard() {
   const activeSection = contentSections.find((section) => section.id === activeContentSection) || contentSections[0];
   const visibleContentEntries = Object.entries(contentFieldLabels).filter(([key]) => activeSection.matches(key));
 
+  useEffect(() => {
+    (window as any).__patchy_get_token = async () => await getToken();
+  }, [getToken]);
+
   return (
     <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '2.5rem 1.5rem', color: '#fff' }}>
       <div
