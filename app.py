@@ -308,8 +308,8 @@ async def submit_consultation(
     Saves to MongoDB and fires an alert email task to Madison, unless the
     request is tagged synthetic (see GET /api/synthetic/capabilities).
     """
-    if not lead or not lead.email:
-        raise HTTPException(status_code=422, detail="Invalid consultation payload")
+    if not lead or not lead.email or not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", lead.email):
+        raise HTTPException(status_code=422, detail="Invalid email address format")
 
     logger.info(
         "Consultation submission received for email=%s synthetic=%s",
