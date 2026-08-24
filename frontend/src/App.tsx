@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { SignedIn, SignedOut, RedirectToSignIn, useAuth } from '@clerk/clerk-react';
+import { SignedIn, SignedOut, RedirectToSignIn, useAuth, SignIn } from '@clerk/clerk-react';
 
 import Layout from './layout';
 import Landing from './pages/Landing.tsx';
@@ -30,7 +30,6 @@ function AdminTokenInjector({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-
 export default function App() {
   const location = useLocation();
   const isLandingRoute = location.pathname === '/';
@@ -47,8 +46,23 @@ export default function App() {
   return (
     <div style={{ position: 'relative', minHeight: '100vh' }}>
       <SeoManager pathname={location.pathname} />
+
       <Routes>
         <Route path="/" element={<Landing />} />
+
+        {/* NEW: Your actual sign-in page */}
+        <Route
+          path="/sign-in"
+          element={
+            <SignIn
+              appearance={{
+                elements: {
+                  socialButtons: "flex"
+                }
+              }}
+            />
+          }
+        />
 
         <Route element={<Layout />}>
           <Route path="/home" element={<Home />} />
@@ -62,6 +76,7 @@ export default function App() {
           <Route path="/calculator" element={<Calculator />} />
           <Route path="/des-moines-personal-training" element={<DesMoinesPersonalTraining />} />
 
+          {/* FIXED ADMIN ROUTE */}
           <Route
             path="/admin"
             element={
