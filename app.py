@@ -372,7 +372,7 @@ async def create_booking(
         synthetic.is_synthetic,
     )
 
-    if not booking or not booking.email or "@" not in booking.email or "." not in booking.email:
+    if not booking or not booking.email or not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", booking.email):
         raise HTTPException(status_code=422, detail="Invalid email address format")
 
     # If the user selected a concrete scheduler slot, validate it against the recurring schedule.
