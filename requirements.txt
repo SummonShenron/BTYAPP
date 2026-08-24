@@ -12,3 +12,4 @@ resend
 tzdata
 pytest
 pytest-asyncio
+playwright

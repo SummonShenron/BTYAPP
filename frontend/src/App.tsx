@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react';
+import { SignedIn, SignedOut, RedirectToSignIn, useAuth } from '@clerk/clerk-react';
 
 import Layout from './layout';
 import Landing from './pages/Landing.tsx';
@@ -21,7 +21,12 @@ import DesMoinesPersonalTraining from './pages/DesMoinesPersonalTraining.tsx';
 export default function App() {
   const location = useLocation();
   const isLandingRoute = location.pathname === '/';
+  const { getToken } = useAuth();
 
+  useEffect(() => {
+    (window as any).__patchy_get_token = async () => await getToken();
+  }, [getToken]);
+  
   React.useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   }, [location.pathname]);
