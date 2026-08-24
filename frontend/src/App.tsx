@@ -18,6 +18,19 @@ import SeoManager from './components/SeoManager';
 import Calculator from './pages/Calculator.tsx';
 import DesMoinesPersonalTraining from './pages/DesMoinesPersonalTraining.tsx';
 
+function AdminTokenInjector({ children }: { children: React.ReactNode }) {
+  const { getToken, isLoaded, isSignedIn } = useAuth();
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      (window as any).__patchy_get_token = async () => await getToken();
+    }
+  }, [isLoaded, isSignedIn, getToken]);
+
+  return <>{children}</>;
+}
+
+
 export default function App() {
   const location = useLocation();
   const isLandingRoute = location.pathname === '/';
@@ -26,7 +39,7 @@ export default function App() {
   useEffect(() => {
     (window as any).__patchy_get_token = async () => await getToken();
   }, [getToken]);
-  
+
   React.useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   }, [location.pathname]);
@@ -54,8 +67,11 @@ export default function App() {
             element={
               <>
                 <SignedIn>
-                  <AdminDashboard />
+                  <AdminTokenInjector>
+                    <AdminDashboard />
+                  </AdminTokenInjector>
                 </SignedIn>
+
                 <SignedOut>
                   <RedirectToSignIn redirectUrl="/admin" />
                 </SignedOut>
