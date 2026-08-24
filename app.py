@@ -311,8 +311,8 @@ async def submit_consultation(
     Saves to MongoDB and fires an alert email task to Madison, unless the
     request is tagged synthetic (see GET /api/synthetic/capabilities).
     """
-    if not lead or not lead.email:
-        raise HTTPException(status_code=422, detail="Invalid consultation payload")
+    if not lead or not lead.email or not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", lead.email):
+        raise HTTPException(status_code=422, detail="Invalid email address format")
 
     logger.info(
         "Consultation submission received for email=%s synthetic=%s",
@@ -374,6 +374,9 @@ async def create_booking(
         booking.session_type,
         synthetic.is_synthetic,
     )
+
+    if not booking or not booking.email or "@" not in booking.email or "." not in booking.email:
+        raise HTTPException(status_code=422, detail="Invalid email address format")
 
     # If the user selected a concrete scheduler slot, validate it against the recurring schedule.
     if booking.preferred_date and booking.preferred_slot_start:
