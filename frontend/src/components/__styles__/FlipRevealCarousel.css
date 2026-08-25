@@ -1,4 +1,4 @@
-.diagonal-carousel-container {
+.lightning-carousel-container {
   position: relative;
   width: 100%;
   height: 100%;
@@ -8,7 +8,7 @@
   background-color: #0e1014;
 }
 
-.diagonal-layer {
+.lightning-layer {
   position: absolute;
   inset: 0;
   background-position: center;
@@ -23,102 +23,165 @@
 
 .next-layer {
   z-index: 2;
-  animation-name: diagonalReveal;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-name: lightningJaggedExpand;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   animation-fill-mode: forwards;
 }
 
-/* --- AMBIENT GLOW AURA (SOFT OUTER HALO) --- */
-.diagonal-accent-glow {
-  position: absolute;
-  inset: -20px; /* Expands past edges for seamless bleed */
-  z-index: 3;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(56, 194, 222, 0.8) 0%,
-    rgba(56, 194, 222, 0.3) 40%,
-    transparent 75%
-  );
-  filter: blur(16px);
-  mix-blend-mode: screen;
-  animation-name: diagonalGlowSweep;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  animation-fill-mode: forwards;
-  pointer-events: none;
-  will-change: clip-path, opacity;
-}
-
-/* --- SHARP TAPERED ENERGY BLADE (CORE EDGE) --- */
-.diagonal-accent-stripe {
+/* --- SVG SEAM EDGES --- */
+.lightning-edge-svg {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px #38C2DE) drop-shadow(0 0 14px #38C2DE);
+  will-change: transform, opacity;
+}
+
+.lightning-edge-path {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.edge-top {
+  animation-name: topEdgeTranslate;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: forwards;
+}
+
+.edge-bottom {
+  animation-name: bottomEdgeTranslate;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: forwards;
+}
+
+/* --- INITIAL LIGHTNING BOLT OVERLAY --- */
+.lightning-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   z-index: 4;
-  background: linear-gradient(
-    90deg,
-    rgba(56, 194, 222, 0.1) 0%,
-    #38C2DE 60%,
-    #ffffff 100%
-  );
-  filter: drop-shadow(0 0 10px #38C2DE) drop-shadow(0 0 20px #38C2DE);
-  animation-name: diagonalStripeSweep;
+  pointer-events: none;
+  filter: drop-shadow(0 0 8px #38C2DE) drop-shadow(0 0 18px #38C2DE);
+  animation-name: lightningFadeOut;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+.lightning-path {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 250;
+  stroke-dashoffset: 250;
+  animation-name: drawLightningCrack;
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   animation-fill-mode: forwards;
-  pointer-events: none;
-  will-change: clip-path, opacity;
 }
 
-/* KEYFRAMES */
+/* --- KEYFRAMES --- */
 
-/* Image Reveal */
-@keyframes diagonalReveal {
+/* 1. Fast draw along the lightning path (0% -> 25%) */
+@keyframes drawLightningCrack {
   0% {
-    clip-path: polygon(0 0, -30% 0, -60% 100%, 0 100%);
+    stroke-dashoffset: 250;
+  }
+  25% {
+    stroke-dashoffset: 0;
   }
   100% {
-    clip-path: polygon(0 0, 160% 0, 130% 100%, 0 100%);
+    stroke-dashoffset: 0;
   }
 }
 
-/* Soft Outer Ambient Glow Sweep */
-@keyframes diagonalGlowSweep {
-  0% {
-    clip-path: polygon(-70% 100%, -40% 0%, -15% 0%, -45% 100%);
-    opacity: 0;
+/* 2. Vanish main bolt when split begins */
+@keyframes lightningFadeOut {
+  0%, 24% {
+    opacity: 1;
   }
-  8% { opacity: 0.9; }
-  90% { opacity: 0.9; }
-  100% {
-    clip-path: polygon(115% 100%, 145% 0%, 170% 0%, 140% 100%);
+  25%, 100% {
     opacity: 0;
   }
 }
 
-/* 6-Point Tapered Blade Sweep (Pinch Top/Bottom, Bulge Center) */
-@keyframes diagonalStripeSweep {
-  0% {
+/* 3. Smooth Non-Flipping Clip-Path Expansion */
+@keyframes lightningJaggedExpand {
+  /* PHASE A: Sealed along initial crack line */
+  0%, 22% {
     clip-path: polygon(
-      -30% 0%, -28% 0%, 
-      -40% 50%, 
-      -58% 100%, -60% 100%, 
-      -48% 50%
+      115% -10%, 82% 22%, 72% 18%, 48% 56%, 35% 52%, -15% 110%,
+      -15% 110%, 35% 52%, 48% 56%, 72% 18%, 82% 22%, 115% -10%
     );
     opacity: 0;
   }
-  5% { opacity: 1; }
-  92% { opacity: 1; }
+
+  /* PHASE B: Initial Break (-8% top-left offset / +8% bottom-right offset) */
+  26%, 48% {
+    clip-path: polygon(
+      107% -18%, 74% 14%, 64% 10%, 40% 48%, 27% 44%, -23% 102%,
+      -7% 118%, 43% 60%, 56% 64%, 80% 26%, 90% 30%, 123% -2%
+    );
+    opacity: 1;
+  }
+
+  /* PHASE C: Clean expansion outward without crossing vertex paths */
   100% {
     clip-path: polygon(
-      160% 0%, 162% 0%, 
-      150% 50%, 
-      132% 100%, 130% 100%, 
-      142% 50%
+      -5% -130%, -38% -98%, -48% -102%, -72% -64%, -85% -68%, -135% -10%,
+      105% 230%, 155% 172%, 168% 176%, 192% 138%, 202% 142%, 235% 110%
     );
+    opacity: 1;
+  }
+}
+
+/* 4. Top Seam Line - Pushes Up & Left */
+@keyframes topEdgeTranslate {
+  0%, 22% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  26%, 48% {
+    transform: translate(-8%, -8%);
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-120%, -120%);
     opacity: 0;
   }
 }
 
-/* Copy Overlay */
-.diagonal-carousel-copy {
+/* 5. Bottom Seam Line - Pushes Down & Right */
+@keyframes bottomEdgeTranslate {
+  0%, 22% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  26%, 48% {
+    transform: translate(8%, 8%);
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(120%, 120%);
+    opacity: 0;
+  }
+}
+
+/* Typography Overlay */
+.lightning-carousel-copy {
   position: absolute;
   inset: 0;
   z-index: 10;
@@ -135,7 +198,7 @@
   pointer-events: none;
 }
 
-.diagonal-carousel-copy .banner-title {
+.lightning-carousel-copy .banner-title {
   font-size: 1.25rem;
   font-weight: 800;
   font-style: italic;

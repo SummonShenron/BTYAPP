@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import DiagonalSweepCarousel from '../components/FlipRevealCarousel';
+import LightningRevealCarousel from '../components/FlipRevealCarousel';
 import './__styles__/BrandPages.css';
 import squatImg from '../assets/squat3.jpeg';
 import clientSquatImg from '../assets/IMG_1575.jpeg';
@@ -101,7 +101,7 @@ export default function AboutMe() {
 
         <aside className="about-drift-wall">
           <div className="profile-media-zone about-drift-wall-zone">
-            <DiagonalSweepCarousel
+            <LightningRevealCarousel
             items={aboutGalleryItems}
             autoPlay
             interval={0}
