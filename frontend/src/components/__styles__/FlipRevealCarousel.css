@@ -1,127 +1,146 @@
-.flip-reveal-carousel {
-  --flip-duration: 0.55s;
+.diagonal-carousel-container {
   position: relative;
   width: 100%;
   height: 100%;
+  min-height: 280px;
+  border-radius: 16px;
   overflow: hidden;
-  border-radius: 12px;
-  background: #182127;
+  background-color: #0e1014;
 }
 
-.flip-reveal-grid {
+.diagonal-layer {
   position: absolute;
   inset: 0;
-  display: grid;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  will-change: clip-path;
 }
 
-/* Clipping box only — kept free of 3D transforms so overflow:hidden plays
-   nicely with the preserve-3d stage nested inside (Safari quirk). Cyan tint
-   shows through during the perpendicular moment of each tile's flip. */
-.flip-reveal-tile {
-  position: relative;
-  overflow: hidden;
-  background: rgba(56, 194, 222, 0.35);
+.current-layer {
+  z-index: 1;
 }
 
-.flip-reveal-stage {
+.next-layer {
+  z-index: 2;
+  animation-name: diagonalReveal;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: forwards;
+}
+
+/* --- AMBIENT GLOW AURA (SOFT OUTER HALO) --- */
+.diagonal-accent-glow {
+  position: absolute;
+  inset: -20px; /* Expands past edges for seamless bleed */
+  z-index: 3;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(56, 194, 222, 0.8) 0%,
+    rgba(56, 194, 222, 0.3) 40%,
+    transparent 75%
+  );
+  filter: blur(16px);
+  mix-blend-mode: screen;
+  animation-name: diagonalGlowSweep;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: forwards;
+  pointer-events: none;
+  will-change: clip-path, opacity;
+}
+
+/* --- SHARP TAPERED ENERGY BLADE (CORE EDGE) --- */
+.diagonal-accent-stripe {
   position: absolute;
   inset: 0;
-  perspective: 700px;
-  transform-style: preserve-3d;
-}
-
-.flip-reveal-face {
-  position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform-style: preserve-3d;
-  transition: transform var(--flip-duration) cubic-bezier(0.6, 0, 0.4, 1);
-}
-
-/* --- Caption --- */
-.flip-reveal-caption {
-  position: absolute;
   z-index: 4;
-  left: 1rem;
-  bottom: 3.25rem;
+  background: linear-gradient(
+    90deg,
+    rgba(56, 194, 222, 0.1) 0%,
+    #38C2DE 60%,
+    #ffffff 100%
+  );
+  filter: drop-shadow(0 0 10px #38C2DE) drop-shadow(0 0 20px #38C2DE);
+  animation-name: diagonalStripeSweep;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: forwards;
+  pointer-events: none;
+  will-change: clip-path, opacity;
+}
+
+/* KEYFRAMES */
+
+/* Image Reveal */
+@keyframes diagonalReveal {
+  0% {
+    clip-path: polygon(0 0, -30% 0, -60% 100%, 0 100%);
+  }
+  100% {
+    clip-path: polygon(0 0, 160% 0, 130% 100%, 0 100%);
+  }
+}
+
+/* Soft Outer Ambient Glow Sweep */
+@keyframes diagonalGlowSweep {
+  0% {
+    clip-path: polygon(-70% 100%, -40% 0%, -15% 0%, -45% 100%);
+    opacity: 0;
+  }
+  8% { opacity: 0.9; }
+  90% { opacity: 0.9; }
+  100% {
+    clip-path: polygon(115% 100%, 145% 0%, 170% 0%, 140% 100%);
+    opacity: 0;
+  }
+}
+
+/* 6-Point Tapered Blade Sweep (Pinch Top/Bottom, Bulge Center) */
+@keyframes diagonalStripeSweep {
+  0% {
+    clip-path: polygon(
+      -30% 0%, -28% 0%, 
+      -40% 50%, 
+      -58% 100%, -60% 100%, 
+      -48% 50%
+    );
+    opacity: 0;
+  }
+  5% { opacity: 1; }
+  92% { opacity: 1; }
+  100% {
+    clip-path: polygon(
+      160% 0%, 162% 0%, 
+      150% 50%, 
+      132% 100%, 130% 100%, 
+      142% 50%
+    );
+    opacity: 0;
+  }
+}
+
+/* Copy Overlay */
+.diagonal-carousel-copy {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.25rem;
+  background: linear-gradient(
+    to top,
+    rgba(10, 14, 18, 0.85) 0%,
+    rgba(10, 14, 18, 0.2) 50%,
+    rgba(10, 14, 18, 0) 100%
+  );
   pointer-events: none;
 }
 
-.flip-reveal-caption span {
-  display: inline-block;
-  background: rgba(9, 12, 15, 0.72);
-  border: 1px solid rgba(130, 230, 247, 0.4);
-  border-radius: 999px;
-  padding: 0.35rem 0.85rem;
-  color: #ffffff;
-  font-size: 0.68rem;
+.diagonal-carousel-copy .banner-title {
+  font-size: 1.25rem;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  font-style: italic;
+  color: #ffffff;
   text-transform: uppercase;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(4px);
-}
-
-/* --- Controls --- */
-.flip-reveal-controls {
-  position: absolute;
-  z-index: 4;
-  left: 0;
-  right: 0;
-  bottom: 0.85rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.85rem;
-}
-
-.flip-reveal-arrow {
-  display: grid;
-  place-items: center;
-  width: 1.9rem;
-  height: 1.9rem;
-  border-radius: 50%;
-  border: 1px solid rgba(130, 230, 247, 0.45);
-  background: rgba(9, 12, 15, 0.66);
-  color: #82e6f7;
-  font-size: 1.05rem;
-  line-height: 1;
-  cursor: pointer;
-  backdrop-filter: blur(4px);
-  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
-}
-
-.flip-reveal-arrow:hover {
-  background: rgba(56, 194, 222, 0.22);
-  border-color: rgba(130, 230, 247, 0.85);
-  transform: scale(1.06);
-}
-
-.flip-reveal-dots {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.flip-reveal-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  border: none;
-  padding: 0;
-  background: rgba(255, 255, 255, 0.28);
-  cursor: pointer;
-  transition: background 160ms ease, width 200ms ease;
-}
-
-.flip-reveal-dot.active {
-  background: #38c2de;
-  width: 18px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .flip-reveal-face {
-    transition: none;
-  }
+  letter-spacing: 0.5px;
+  line-height: 1.2;
 }

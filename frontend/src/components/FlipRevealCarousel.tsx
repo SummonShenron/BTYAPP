@@ -1,193 +1,96 @@
-// src/components/FlipRevealCarousel.tsx
-// Full-bleed photo carousel where a grid of tiles individually 3D-flips to
-// reveal the next photo already sitting behind it — no cover color, no delay,
-// like an airport split-flap board built out of photographs.
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import './__styles__/FlipRevealCarousel.css';
+import React, { useEffect, useState, useRef } from "react";
+import '../components/__styles__/FlipRevealCarousel.css';
 
-export type FlipRevealItem = {
+interface CarouselItem {
   image: string;
   title?: string;
-  alt?: string;
-};
+  kicker?: string;
+}
 
-type FlipRevealCarouselProps = {
-  items: FlipRevealItem[];
-  columns?: number;
-  rows?: number;
-  // seconds a single tile takes to flip
-  flipDuration?: number;
-  // total extra seconds spread across the diagonal wave of tiles
-  stagger?: number;
+interface DiagonalSweepCarouselProps {
+  items: CarouselItem[];
   autoPlay?: boolean;
-  className?: string;
-};
+  interval?: number;
+  duration?: number; // Animation duration in ms
+}
 
-export default function FlipRevealCarousel({
+export default function DiagonalSweepCarousel({
   items,
-  columns = 6,
-  rows = 8,
-  flipDuration = 2.2,
-  stagger = 2.6,
   autoPlay = true,
-  className = '',
-}: FlipRevealCarouselProps) {
-  // Hard cap regardless of props — each tile promotes its own GPU layer, and
-  // mobile browsers crash once that count gets into the hundreds.
-  const MAX_TILES = 96;
-  const requestedColumns = Math.max(1, Math.round(columns));
-  const requestedRows = Math.max(1, Math.round(rows));
-  const scaleDown = Math.sqrt(MAX_TILES / (requestedColumns * requestedRows));
-  const safeColumns = scaleDown < 1 ? Math.max(1, Math.round(requestedColumns * scaleDown)) : requestedColumns;
-  const safeRows = scaleDown < 1 ? Math.max(1, Math.round(requestedRows * scaleDown)) : requestedRows;
-  const maxDistance = safeColumns - 1 + (safeRows - 1);
-  const delayUnit = maxDistance > 0 ? stagger / maxDistance : 0;
-  const totalDurationMs = (flipDuration + stagger) * 835;
+  interval = 4500,
+  duration = 850,
+}: DiagonalSweepCarouselProps) {
+  const [index, setIndex] = useState(0);
+  const [nextIndex, setNextIndex] = useState(1);
+  const [animating, setAnimating] = useState(false);
 
-  // Two persistent 3D "faces" per tile hold image indices; only the face
-  // currently facing away from the viewer is ever re-targeted, so a tile
-  // never appears to pop mid-flip.
-  const [layerAIndex, setLayerAIndex] = useState(0);
-  const [layerBIndex, setLayerBIndex] = useState(items.length > 1 ? 1 : 0);
-  const [displayIndex, setDisplayIndex] = useState(0);
-  // Rotation toggles between 0deg/180deg (never accumulates), so each flip
-  // reverses direction from the last — forward, then back, then forward.
-  const [flipped, setFlipped] = useState(false);
-  const flippedRef = useRef(false);
+  const timeoutRef = useRef<number | null>(null);
 
-  const triggerFlip = useCallback(
-    (targetIndex: number) => {
-      if (items.length < 2) return;
-      const normalized = ((targetIndex % items.length) + items.length) % items.length;
-      if (normalized === displayIndex) return;
+  const triggerNext = () => {
+    if (animating) return;
 
-      const aIsFrontNow = !flippedRef.current;
-      if (aIsFrontNow) {
-        setLayerBIndex(normalized);
-      } else {
-        setLayerAIndex(normalized);
-      }
+    const incomingIndex = (index + 1) % items.length;
+    setNextIndex(incomingIndex);
+    setAnimating(true);
 
-      setDisplayIndex(normalized);
-      flippedRef.current = !flippedRef.current;
-      setFlipped(flippedRef.current);
-    },
-    [items.length, displayIndex]
-  );
+    setTimeout(() => {
+      setIndex(incomingIndex);
+      setAnimating(false);
+    }, duration);
+  };
 
   useEffect(() => {
-    if (!autoPlay || items.length < 2) return;
-    // Single wave at a time: wait for this flip to fully finish before the
-    // next one begins.
-    const id = setTimeout(() => {
-      triggerFlip(displayIndex + 1);
-    }, totalDurationMs);
-    return () => clearTimeout(id);
-  }, [autoPlay, totalDurationMs, items.length, displayIndex, triggerFlip]);
+    if (!autoPlay || animating) return;
 
-  const aIsFront = !flipped;
-  const angleA = flipped ? 180 : 0;
-  const angleB = flipped ? 0 : 180;
+    timeoutRef.current = window.setTimeout(triggerNext, interval);
 
-  const tiles = useMemo(() => {
-    const list: { row: number; col: number; distance: number }[] = [];
-    for (let row = 0; row < safeRows; row += 1) {
-      for (let col = 0; col < safeColumns; col += 1) {
-        list.push({ row, col, distance: row + col });
+    return () => {
+      if (timeoutRef.current !== null) {
+        clearTimeout(timeoutRef.current);
       }
-    }
-    return list;
-  }, [safeRows, safeColumns]);
+    };
+  }, [index, animating, autoPlay, interval]);
 
-  if (items.length === 0) {
-    return null;
-  }
-
-  const current = items[displayIndex];
-  const layerAItem = items[layerAIndex] ?? items[0];
-  const layerBItem = items[layerBIndex] ?? items[0];
-
-  // Each face samples the shared source image via background-position instead
-  // of rendering its own full-size <img> copy — hundreds of duplicated
-  // full-resolution rasters is what was crashing mobile GPUs.
-  const tileBackgroundStyle = (image: string, row: number, col: number): React.CSSProperties => ({
-    backgroundImage: `url(${image})`,
-    backgroundSize: `${safeColumns * 100}% ${safeRows * 100}%`,
-    backgroundPosition: `${safeColumns > 1 ? (col / (safeColumns - 1)) * 100 : 0}% ${
-      safeRows > 1 ? (row / (safeRows - 1)) * 100 : 0
-    }%`,
-    backgroundRepeat: 'no-repeat',
-  });
+  const currentItem = items[index];
+  const nextItem = items[nextIndex];
 
   return (
-    <div
-      className={`flip-reveal-carousel${className ? ` ${className}` : ''}`}
-      style={{ '--flip-duration': `${flipDuration}s` } as React.CSSProperties}
-    >
+    <div className="diagonal-carousel-container">
+      {/* BASE LAYER: Current Image */}
       <div
-        className="flip-reveal-grid"
-        aria-hidden="true"
-        style={{
-          gridTemplateColumns: `repeat(${safeColumns}, 1fr)`,
-          gridTemplateRows: `repeat(${safeRows}, 1fr)`,
-        }}
-      >
-        {tiles.map(({ row, col, distance }) => {
-          // Forward (flipped=true) sweeps top-left → bottom-right; the return
-          // trip (flipped=false) reverses so it sweeps bottom-right → top-left.
-          const delay = (flipped ? distance : maxDistance - distance) * delayUnit;
-          return (
-          <div className="flip-reveal-tile" key={`${row}-${col}`} style={{ transitionDelay: `${delay}s` }}>
-            <div className="flip-reveal-stage">
-              <div
-                className="flip-reveal-face"
-                style={{
-                  transform: `rotateY(${angleA}deg)`,
-                  transitionDelay: `${delay}s`,
-                  ...tileBackgroundStyle(layerAItem.image, row, col),
-                }}
-              />
-              <div
-                className="flip-reveal-face"
-                style={{
-                  transform: `rotateY(${angleB}deg)`,
-                  transitionDelay: `${delay}s`,
-                  ...tileBackgroundStyle(layerBItem.image, row, col),
-                }}
-              />
-            </div>
-          </div>
-          );
-        })}
+        className="diagonal-layer current-layer"
+        style={{ backgroundImage: `url(${currentItem.image})` }}
+      />
+
+      {/* REVEAL LAYERS: Triggered on transition */}
+      {animating && (
+        <>
+          {/* Incoming Image Layer */}
+          <div
+            className="diagonal-layer next-layer"
+            style={{
+              backgroundImage: `url(${nextItem.image})`,
+              animationDuration: `${duration}ms`,
+            }}
+          />
+
+          {/* Leading Blue Edge Accent Bar */}
+          <div
+            className="diagonal-accent-stripe"
+            style={{ animationDuration: `${duration}ms` }}
+          />
+        </>
+      )}
+
+      {/* Copy / Overlay Text */}
+      <div className="diagonal-carousel-copy">
+        {currentItem.kicker && (
+          <span className="banner-kicker">{currentItem.kicker}</span>
+        )}
+        {currentItem.title && (
+          <h2 className="banner-title">{currentItem.title}</h2>
+        )}
       </div>
-
-      {current?.title && (
-        <div className="flip-reveal-caption">
-          <span>{current.title}</span>
-        </div>
-      )}
-
-      {items.length > 1 && (
-        <div className="flip-reveal-controls">
-          <button type="button" className="flip-reveal-arrow" onClick={() => triggerFlip(displayIndex - 1)} aria-label="Previous photo">
-            ‹
-          </button>
-          <div className="flip-reveal-dots">
-            {items.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                className={`flip-reveal-dot${i === displayIndex ? ' active' : ''}`}
-                onClick={() => triggerFlip(i)}
-                aria-label={`Go to photo ${i + 1}`}
-              />
-            ))}
-          </div>
-          <button type="button" className="flip-reveal-arrow" onClick={() => triggerFlip(displayIndex + 1)} aria-label="Next photo">
-            ›
-          </button>
-        </div>
-      )}
     </div>
   );
 }
