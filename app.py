@@ -511,7 +511,7 @@ async def update_lead_status(lead_id: str, status_data: StatusUpdate, admin: dic
         object_id = ObjectId(lead_id)
         
         # Update document in MongoDB collection
-        result = await leads_collection.update_one(
+        result = leads_collection.update_one(
             {"_id": object_id},
             {"$set": {"status": status_data.status}}
         )
