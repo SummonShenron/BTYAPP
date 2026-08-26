@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PixelWipeCarousel from './PixelWipeCarousel';
+import PixelWipeCarousel, { PixelWipeItem } from './PixelWipeCarousel';
 import heroImg from '../assets/cover_photo2.jpg';
 import heroImg3 from '../assets/squat.jpeg';
 import twinsImg from '../assets/squat4.jpeg';
@@ -26,11 +26,11 @@ const defaults: Record<string, string> = {
   hero_sidebar_text: 'Direct biomechanics assessment & custom fitness planning.',
 };
 
-const heroGalleryItems = [
+const heroGalleryItems: PixelWipeItem[] = [
   { image: heroImg, label: 'Personal Coaching', alt: 'BTY Fitness personal coaching' },
-  { image: twinsImg, label: 'Train Together', alt: 'BTY Fitness partner strength training' },
-  { image: heroImg3, label: 'Build Strength', alt: 'BTY Fitness strength training' },
-  { image: pressImg, label: 'Press Training', alt: 'BTY Fitness press training' },
+  { image: twinsImg, label: 'Work Hard', alt: 'BTY Fitness partner strength training', objectPosition: 'center 43%' },
+  { image: heroImg3, label: 'Build Strength', alt: 'BTY Fitness strength training', objectPosition: 'center 57%' },
+  { image: pressImg, label: 'Press Training', alt: 'BTY Fitness press training', objectPosition: 'center 60%' },
 ];
 
 export default function Hero() {
@@ -92,7 +92,7 @@ export default function Hero() {
                 items={heroGalleryItems}
                 gridSize={10}
                 pixelColor="#121316"
-                interval={5000}
+                interval={3000}
                 animationStepDuration={0.3}
                 logoSrc={logoImg}
                 autoPlay

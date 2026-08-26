@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './__styles__/BrandPages.css';
 import switchUpImg from '../assets/switch_up_your_routine-removebg-preview.png';
@@ -33,6 +33,24 @@ const defaults: Record<string, string> = {
 
 export default function Qualifications() {
   const [content, setContent] = useState<Record<string, string>>(defaults);
+  const mediaRef = useRef<HTMLDivElement>(null);
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const pointerX = (event.clientX - bounds.left) / bounds.width - 0.5;
+    const pointerY = (event.clientY - bounds.top) / bounds.height - 0.5;
+    if (mediaRef.current) {
+      mediaRef.current.style.setProperty('--pointer-x', pointerX.toFixed(3));
+      mediaRef.current.style.setProperty('--pointer-y', pointerY.toFixed(3));
+    }
+  };
+
+  const handlePointerLeave = () => {
+    if (mediaRef.current) {
+      mediaRef.current.style.setProperty('--pointer-x', '0');
+      mediaRef.current.style.setProperty('--pointer-y', '0');
+    }
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -106,13 +124,18 @@ export default function Qualifications() {
           <div className="qualifications-header-copy">
             <span className="brand-kicker">{content.qualifications_kicker}</span>
             <h1 className="brand-title">{content.qualifications_title}</h1>
-            <p className="brand-subtitle">
-              {content.qualifications_subtitle}
-            </p>
+            <p className="brand-subtitle">{content.qualifications_subtitle}</p>
           </div>
 
-          <div className="qualifications-header-media">
-            <img className="qualifications-img" src={switchUpImg} alt="qualifications" />
+          <div 
+            ref={mediaRef}
+            className="qualifications-header-media"
+            onPointerMove={handlePointerMove}
+            onPointerLeave={handlePointerLeave}
+          >
+            <div className="qualifications-img-card">
+              <img className="qualifications-img" src={switchUpImg} alt="qualifications" />
+            </div>
           </div>
         </div>
       </header>

@@ -48,10 +48,43 @@
   min-width: 0;
 }
 
+/* BrandPages.css */
 .qualifications-header-media {
+  --pointer-x: 0;
+  --pointer-y: 0;
+  perspective: 1000px;
   display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
+}
+
+.qualifications-img-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+  /* Completely flat / on-axis by default when vars are 0 */
+  transform: 
+    translate3d(
+      calc(var(--pointer-x) * 32px),
+      calc(var(--pointer-y) * 32px),
+      0px
+    )
+    rotateX(calc(var(--pointer-y) * -22deg))
+    rotateY(calc(var(--pointer-x) * 22deg));
+  /* Smooth reset transition when pointer leaves */
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+}
+
+.qualifications-header-media:hover .qualifications-img-card {
+  /* Fast tracking while mouse is actively moving */
+  transition: transform 0.1s ease-out, filter 0.3s ease;
+  filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.55));
+}
+
+.qualifications-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
 }
 
 .page-grid {

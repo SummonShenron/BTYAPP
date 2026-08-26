@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AccordionGallery from '../components/AccordionGallery';
+import AccordionGallery, { AccordionGalleryItem } from '../components/AccordionGallery';
 import './__styles__/BrandPages.css';
 import clientsVideo from '../assets/clients.mp4';
 import landmineImg from '../assets/landmine.jpeg';
@@ -13,14 +13,49 @@ import hurdlesImg from '../assets/IMG_1605.jpeg';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
-const programGalleryItems = [
-  { image: medBallImg, label: 'Medicine Ball Exercises', alt: 'Client performing medicine ball exercises' },
-  { image: landmineImg, label: 'Landmine Rotations', alt: 'Client performing landmine rotations' },
-  { image: lungesImg, label: 'Lunges', alt: 'Client performing lunges' },
-  { image: squatImg, label: 'Strength & Mobility', alt: 'Client performing a strength and mobility exercise' },
-  { image: boxImg, label: 'Box Jumps', alt: 'Client performing box jumps' },
-  { image: sleighImg, label: 'Sleigh Pushes', alt: 'Client performing sleigh pushes' },
-  { image: hurdlesImg, label: 'Hurdle Drills', alt: 'Client performing hurdle drills' },
+const programGalleryItems: AccordionGalleryItem[] = [
+  { 
+    image: medBallImg, 
+    label: 'Medicine Ball Exercises', 
+    alt: 'Client performing medicine ball exercises',
+    objectPosition: 'center 45%' 
+  },
+  { 
+    image: landmineImg, 
+    label: 'Landmine Rotations', 
+    alt: 'Client performing landmine rotations',
+    objectPosition: 'center' 
+  },
+  { 
+    image: lungesImg, 
+    label: 'Lunges', 
+    alt: 'Client performing lunges',
+    objectPosition: 'center 40%'
+  },
+  { 
+    image: squatImg, 
+    label: 'Strength & Mobility', 
+    alt: 'Client performing a strength and mobility exercise',
+    objectPosition: 'center 60%'
+  },
+  { 
+    image: boxImg, 
+    label: 'Box Jumps', 
+    alt: 'Client performing box jumps',
+    objectPosition: 'center 40%'
+  },
+  { 
+    image: sleighImg, 
+    label: 'Sled Pushes', 
+    alt: 'Client performing sled pushes',
+    objectPosition: 'center 25%' // Keeps upper body and head in frame
+  },
+  { 
+    image: hurdlesImg, 
+    label: 'Hurdle Drills', 
+    alt: 'Client performing hurdle drills',
+    objectPosition: 'center 10%' // Adjusts vertical center near top
+  },
 ];
 
 interface ProgramDetail {

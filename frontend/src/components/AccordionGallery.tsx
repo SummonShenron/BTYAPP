@@ -6,6 +6,7 @@ export type AccordionGalleryItem = {
   label: string;
   alt?: string;
   link?: string;
+  objectPosition?: string;
 };
 
 type AccordionGalleryProps = {
@@ -20,6 +21,7 @@ export default function AccordionGallery({
   defaultIndex = 0,
   expandRatio = 0.52,
   trigger = 'hover',
+  
 }: AccordionGalleryProps) {
   const initialIndex = Math.min(Math.max(defaultIndex, 0), Math.max(items.length - 1, 0));
   const [activeIndex, setActiveIndex] = useState(initialIndex);
@@ -39,7 +41,12 @@ export default function AccordionGallery({
         };
         const panelContent = (
           <>
-            <img src={item.image} alt={item.alt ?? item.label} loading="lazy" />
+            <img
+              src={item.image}
+              alt={item.alt ?? item.label}
+              loading="lazy"
+              style={{ objectPosition: item.objectPosition || 'center top' }}
+            />
             <span className="accordion-gallery-shade" aria-hidden="true" />
             <span className="accordion-gallery-label">{item.label}</span>
           </>

@@ -7,6 +7,7 @@ export type PixelWipeItem = {
   image: string;
   label?: string;
   alt?: string;
+  objectPosition?: string;
 };
 
 type PixelWipeCarouselProps = {
@@ -111,15 +112,19 @@ export default function PixelWipeCarousel({
   return (
     <div className={`pixel-wipe-carousel${className ? ` ${className}` : ''}`} style={style}>
       {/* Slides */}
-      {items.map((item, i) => (
+        {items.map((item, i) => (
         <div
-          key={item.image}
-          className={`pixel-wipe-slide${i === index ? ' is-active' : ''}`}
-          aria-hidden={i !== index}
+            key={item.image}
+            className={`pixel-wipe-slide${i === index ? ' is-active' : ''}`}
+            aria-hidden={i !== index}
         >
-          <img src={item.image} alt={item.alt ?? item.label ?? ''} />
+            <img
+            src={item.image}
+            alt={item.alt ?? item.label ?? ''}
+            style={{ objectPosition: item.objectPosition || 'center' }}
+            />
         </div>
-      ))}
+        ))}
 
       {/* Pixel wipe overlay */}
       <div className={`pixel-wipe-grid${isWiping ? ' is-wiping' : ''}`} aria-hidden="true">
