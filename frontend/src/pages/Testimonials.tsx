@@ -481,6 +481,21 @@ export default function Testimonials() {
       name: content.testimonials_item_4_name,
       role: content.testimonials_item_4_role,
     },
+    {
+      quote: content.testimonials_item_5_quote,
+      name: content.testimonials_item_5_name,
+      role: content.testimonials_item_5_role,
+    },
+    {
+      quote: content.testimonials_item_6_quote,
+      name: content.testimonials_item_6_name,
+      role: content.testimonials_item_6_role,
+    },
+    {
+      quote: content.testimonials_item_7_quote,
+      name: content.testimonials_item_7_name,
+      role: content.testimonials_item_7_role,
+    }
   ];
 
   return (
