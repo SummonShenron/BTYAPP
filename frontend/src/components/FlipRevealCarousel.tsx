@@ -55,22 +55,34 @@ export default function LightningRevealCarousel({
 
   return (
     <div className="lightning-carousel-container">
-      {/* Base Current Image */}
+      {/* Base Current Image & Title */}
       <div
         className="lightning-layer current-layer"
         style={{ backgroundImage: `url(${currentItem.image})` }}
-      />
+      >
+        {currentItem.title && (
+          <div className="lightning-carousel-copy">
+            <h2 className="banner-title">{currentItem.title}</h2>
+          </div>
+        )}
+      </div>
 
       {animating && (
         <>
-          {/* Phase 2: Incoming Image Expands Outward from Cut */}
+          {/* Incoming Image & Title (Clipped together inside the expanding seam) */}
           <div
             className="lightning-layer next-layer"
             style={{
               backgroundImage: `url(${nextItem.image})`,
               animationDuration: `${duration}ms`,
             }}
-          />
+          >
+            {nextItem.title && (
+              <div className="lightning-carousel-copy">
+                <h2 className="banner-title">{nextItem.title}</h2>
+              </div>
+            )}
+          </div>
 
           {/* Glowing Cyan Seam - Top Edge */}
           <svg
@@ -98,7 +110,7 @@ export default function LightningRevealCarousel({
             />
           </svg>
 
-          {/* Phase 1: Jagged Lightning Crack Draw */}
+          {/* Initial Lightning Crack Draw */}
           <svg
             className="lightning-svg"
             viewBox="0 0 100 100"
@@ -112,12 +124,6 @@ export default function LightningRevealCarousel({
             />
           </svg>
         </>
-      )}
-
-      {currentItem.title && (
-        <div className="lightning-carousel-copy">
-          <h2 className="banner-title">{currentItem.title}</h2>
-        </div>
       )}
     </div>
   );

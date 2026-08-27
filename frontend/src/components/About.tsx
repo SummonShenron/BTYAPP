@@ -77,7 +77,7 @@ export const About: React.FC = () => {
           <p className="about-text">
             {content.about_paragraph_3}
           </p>
-          <div className="flex flex-wrap gap-3">
+          <div className="about-actions">
             <Link to="/about" className="btn-neon-primary">{content.about_cta_story_label}</Link>
             <Link to="/qualifications" className="btn-neon-outline">{content.about_cta_credentials_label}</Link>
           </div>

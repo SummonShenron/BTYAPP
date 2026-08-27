@@ -156,7 +156,7 @@ export default function DriftWall({
       <div className="drift-wall-plane">
         {columnItems.map((column, columnIndex) => {
           const repeatedItems = [...column, ...column, ...column];
-          const columnDuration = duration * (1 + ((columnIndex % 2 === 0 ? -1 : 1) * variance * 0.18));
+          const columnDuration = duration * (1 + ((columnIndex % 2 === 0 ? -1 : 1) * variance * 0.35));
           // Alternating columns (2nd, 4th, ...) get a boosted parallax response.
           const columnParallax = columnIndex % 2 === 1 ? altColumnParallax : 1;
 

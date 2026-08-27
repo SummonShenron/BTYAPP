@@ -4,7 +4,7 @@ import LightningRevealCarousel from '../components/FlipRevealCarousel';
 import './__styles__/BrandPages.css';
 import squatImg from '../assets/squat3.jpeg';
 import clientSquatImg from '../assets/IMG_1575.jpeg';
-import clientMobilityImg from '../assets/IMG_1578.jpeg';
+import clientMobilityImg from '../assets/IMG_1685.jpeg';
 import clientPressImg from '../assets/IMG_1583.jpeg';
 import clientLungeImg from '../assets/IMG_1584.jpeg';
 import clientBalanceImg from '../assets/IMG_1588.jpeg';
@@ -17,7 +17,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 const aboutGalleryItems = [
   { image: squatImg, title: 'Strength Coaching' },
   { image: clientSquatImg, title: 'Supported Strength' },
-  { image: clientMobilityImg, title: 'Mobility' },
+  { image: clientMobilityImg, title: 'Push Ups' },
   { image: clientPressImg, title: 'Progressive Strength' },
   { image: clientLungeImg, title: 'Functional Movement' },
   { image: clientBalanceImg, title: 'Balance & Stability' },

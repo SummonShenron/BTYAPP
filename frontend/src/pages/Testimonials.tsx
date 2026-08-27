@@ -525,27 +525,27 @@ export default function Testimonials() {
         }}
       >
         <DriftWall
-          items={testimonialGalleryItems}
-          columns={isMobile ? 2 : 4}
-          tileWidth={isMobile ? 150 : 270}
-          tileHeight={isMobile ? 120 : 170}
-          gap={isMobile ? 12 : 20}
-          tilt={16}
-          turn={-14}
-          perspective={1200}
-          depth={120}
-          speed={42}
-          direction="up"
-          variance={0.45}
-          parallax={0.9}
-          altColumnParallax={2.9}
-          lift={64}
-          fade={0.6}
-          dim={0.55}
-          overlayColor="#121316"
-          ctaMessage="This could be you"
-          ctaHref="/consultation"
-        />
+        items={testimonialGalleryItems}
+        columns={isMobile ? 2 : 4}
+        tileWidth={isMobile ? 150 : 235} // Reduced from 270
+        tileHeight={isMobile ? 120 : 170}
+        gap={isMobile ? 12 : 16}         // Reduced from 20
+        tilt={16}
+        turn={-10}                       // Softened from -14
+        perspective={1200}
+        depth={120}
+        speed={42}
+        direction="up"
+        variance={0.45}
+        parallax={0.9}
+        altColumnParallax={2.9}
+        lift={64}
+        fade={0.6}
+        dim={0.55}
+        overlayColor="#121316"
+        ctaMessage="This could be you"
+        ctaHref="/consultation"
+      />
       </section>
 
       <section className="echo-wall">

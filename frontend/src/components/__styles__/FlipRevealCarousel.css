@@ -87,14 +87,16 @@
   animation-fill-mode: forwards;
 }
 
-/* --- KEYFRAMES --- */
+/* ==========================================================================
+   KEYFRAMES (Tight 8% Mid-State Expansion & Synchronized Seams)
+   ========================================================================== */
 
-/* 1. Fast draw along the lightning path (0% -> 25%) */
+/* 1. Fast draw along the lightning path (0% -> 22%) */
 @keyframes drawLightningCrack {
   0% {
     stroke-dashoffset: 250;
   }
-  25% {
+  22% {
     stroke-dashoffset: 0;
   }
   100% {
@@ -102,20 +104,20 @@
   }
 }
 
-/* 2. Vanish main bolt when split begins */
+/* 2. Fade main bolt overlay when seam begins splitting */
 @keyframes lightningFadeOut {
-  0%, 24% {
+  0%, 20% {
     opacity: 1;
   }
-  25%, 100% {
+  22%, 100% {
     opacity: 0;
   }
 }
 
-/* 3. Smooth Non-Flipping Clip-Path Expansion */
+/* 3. Clip-Path Expansion */
 @keyframes lightningJaggedExpand {
-  /* PHASE A: Sealed along initial crack line */
-  0%, 22% {
+  /* PHASE A: Sealed initial crack line */
+  0%, 20% {
     clip-path: polygon(
       115% -10%, 82% 22%, 72% 18%, 48% 56%, 35% 52%, -15% 110%,
       -15% 110%, 35% 52%, 48% 56%, 72% 18%, 82% 22%, 115% -10%
@@ -123,8 +125,12 @@
     opacity: 0;
   }
 
-  /* PHASE B: Initial Break (-8% top-left offset / +8% bottom-right offset) */
-  26%, 48% {
+  22% {
+    opacity: 1;
+  }
+
+  /* PHASE B: Tight 8% mid-state opening (keeps reveal narrow before coasting) */
+  55% {
     clip-path: polygon(
       107% -18%, 74% 14%, 64% 10%, 40% 48%, 27% 44%, -23% 102%,
       -7% 118%, 43% 60%, 56% 64%, 80% 26%, 90% 30%, 123% -2%
@@ -132,50 +138,50 @@
     opacity: 1;
   }
 
-  /* PHASE C: Clean expansion outward without crossing vertex paths */
+  /* PHASE C: Full smooth expansion out of frame */
   100% {
     clip-path: polygon(
-      -5% -130%, -38% -98%, -48% -102%, -72% -64%, -85% -68%, -135% -10%,
-      105% 230%, 155% 172%, 168% 176%, 192% 138%, 202% 142%, 235% 110%
+      -15% -140%, -48% -108%, -58% -112%, -82% -74%, -95% -78%, -145% -20%,
+      115% 240%, 165% 182%, 178% 186%, 202% 148%, 212% 152%, 245% 120%
     );
     opacity: 1;
   }
 }
 
-/* 4. Top Seam Line - Pushes Up & Left */
+/* 4. Top Seam Line - Synchronized (-8% mid / -130% end) */
 @keyframes topEdgeTranslate {
-  0%, 22% {
+  0%, 20% {
     transform: translate(0, 0);
     opacity: 0;
   }
-  26%, 48% {
+  22% {
+    opacity: 1;
+  }
+  55% {
     transform: translate(-8%, -8%);
     opacity: 1;
   }
-  85% {
-    opacity: 1;
-  }
   100% {
-    transform: translate(-120%, -120%);
+    transform: translate(-130%, -130%);
     opacity: 0;
   }
 }
 
-/* 5. Bottom Seam Line - Pushes Down & Right */
+/* 5. Bottom Seam Line - Synchronized (+8% mid / +130% end) */
 @keyframes bottomEdgeTranslate {
-  0%, 22% {
+  0%, 20% {
     transform: translate(0, 0);
     opacity: 0;
   }
-  26%, 48% {
+  22% {
+    opacity: 1;
+  }
+  55% {
     transform: translate(8%, 8%);
     opacity: 1;
   }
-  85% {
-    opacity: 1;
-  }
   100% {
-    transform: translate(120%, 120%);
+    transform: translate(130%, 130%);
     opacity: 0;
   }
 }

@@ -473,6 +473,13 @@ html, body {
   color: var(--text-muted);
 }
 
+.about-actions {
+  display: flex;
+  justify-content: center; /* Aligns buttons to the start of the flex container */
+  flex-wrap: wrap;
+  gap: 1.5rem; /* Controls space specifically for this section */
+  margin-top: 1.5rem;
+}
 /* ==========================================================================
    7. FORM STYLES
    ========================================================================== */

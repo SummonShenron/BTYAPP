@@ -64,14 +64,13 @@
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   will-change: transform;
-  /* Per-column parallax: columns translate with the pointer, scaled by their
-     own multiplier so alternating columns drift more strongly. */
   transform: translate3d(
     calc(var(--drift-pointer-x) * var(--drift-column-parallax, 1) * 18px),
     calc(var(--drift-pointer-y) * var(--drift-column-parallax, 1) * 14px),
     0
   );
-  transition: transform 200ms ease-out;
+  /* Smoothed transform transition to stop mouse displacement jitter */
+  transition: transform 450ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .drift-wall-column--up {
@@ -84,8 +83,33 @@
 
 .drift-wall:has(.drift-wall-tile:hover) .drift-wall-column,
 .drift-wall:has(.drift-wall-tile:focus-visible) .drift-wall-column,
+.drift-wall:hover .drift-wall-column,
 .drift-wall.is-expanded .drift-wall-column {
   animation-play-state: paused;
+}
+
+/* Prevent CTA card and link from intercepting mouse focus on tile hover */
+.drift-wall:has(.drift-wall-tile:hover) .drift-wall-cta,
+.drift-wall:has(.drift-wall-tile:hover) .drift-wall-cta-card,
+.drift-wall:has(.drift-wall-tile:hover) .drift-wall-cta-link {
+  pointer-events: none !important;
+}
+
+.drift-wall:has(.drift-wall-tile:hover) .drift-wall-plane,
+.drift-wall:has(.drift-wall-tile:hover) .drift-wall-column {
+  --drift-pointer-x: 0;
+  --drift-pointer-y: 0;
+  transition: transform 300ms ease-out;
+}
+
+/* Prevent CTA card from stealing pointer focus when hovering a tile */
+.drift-wall:has(.drift-wall-tile:hover) .drift-wall-cta {
+  pointer-events: none;
+}
+
+.drift-wall-tile:is(:hover, :focus-visible) img {
+  filter: saturate(1.05) contrast(1.08) brightness(1);
+  transform: scale(1.18);
 }
 
 .drift-wall-tile {
@@ -113,7 +137,7 @@
   border-color: rgba(130, 230, 247, 0.78);
   opacity: 1;
   outline: none;
-  transform: translate3d(0, calc(var(--drift-lift) * -0.12), var(--drift-lift));
+  /* Removed transform: translateY(-4px) to prevent hit-test boundary loops */
 }
 
 .drift-wall-tile img {
@@ -124,6 +148,7 @@
   object-position: center;
   filter: saturate(0.9) contrast(1.06) brightness(0.9);
   transform: scale(1.08);
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), filter 300ms ease;
 }
 
 .drift-wall-tile span {
