@@ -4,8 +4,8 @@ import PixelWipeCarousel, { PixelWipeItem } from './PixelWipeCarousel';
 import heroImg from '../assets/cover_photo2.jpg';
 import heroImg3 from '../assets/squat.jpeg';
 import twinsImg from '../assets/squat4.jpeg';
-import pressImg from '../assets/IMG_1583.jpeg';
-import lungeImg from '../assets/IMG_1606.jpeg';
+import pressImg from '../assets/IMG_1685.jpeg';
+import mtnClimbersImg from '../assets/IMG_1677.jpeg';
 import logoImg from '../assets/logo.png';
 import './__styles__/hero.css';
 
@@ -30,7 +30,8 @@ const heroGalleryItems: PixelWipeItem[] = [
   { image: heroImg, label: 'Personal Coaching', alt: 'BTY Fitness personal coaching' },
   { image: twinsImg, label: 'Work Hard', alt: 'BTY Fitness partner strength training', objectPosition: 'center 43%' },
   { image: heroImg3, label: 'Build Strength', alt: 'BTY Fitness strength training', objectPosition: 'center 57%' },
-  { image: pressImg, label: 'Press Training', alt: 'BTY Fitness press training', objectPosition: 'center 60%' },
+  { image: pressImg, label: 'Push Training', alt: 'BTY Fitness push training', objectPosition: 'center 37%' },
+  { image: mtnClimbersImg, label: 'Mountain Climbers', alt: 'BTY Fitness mountain climbers', objectPosition: 'center 35%' },
 ];
 
 export default function Hero() {
