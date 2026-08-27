@@ -23,7 +23,7 @@ export default function DesMoinesPersonalTraining() {
             <strong style={{ color: '#38C2DE' }}>Location:</strong> Trainer&apos;s Edge Gym, 3845 100th St, Urbandale, IA 50322
           </div>
           <div>
-            <strong style={{ color: '#38C2DE' }}>Phone:</strong> (515) 509-3623
+            
           </div>
           <div>
             <strong style={{ color: '#38C2DE' }}>Services:</strong> 1-on-1 strength coaching, hybrid programming, movement assessments, and custom fitness planning.
