@@ -9,7 +9,9 @@ interface AmbientGridProps {
   fadeDuration?: number;
   maxActive?: number;
   baseOpacity?: number;
-  centerMaskRadius?: number; // Radius around center to stay dark/clean
+  centerMaskRadius?: number;
+  centerMaskRadiusX?: number; // Horizontal clear radius
+  centerMaskRadiusY?: number; // Vertical clear radius (stretch for text)
 }
 
 interface LightPoint {
@@ -28,7 +30,9 @@ export default function AmbientGrid({
   fadeDuration = 800,
   maxActive = 6,
   baseOpacity = 0.08,
-  centerMaskRadius = 300, // Adjust to cover the logo width
+  centerMaskRadius = 200,
+  centerMaskRadiusX,
+  centerMaskRadiusY,
 }: AmbientGridProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -170,31 +174,35 @@ export default function AmbientGrid({
         ctx.stroke();
       });
 
-      // 3. ERASE CENTER LOGO ZONE (Destination-Out)
-      if (centerMaskRadius > 0) {
+      // 3. ERASE LOGO + TEXT ZONE (Elliptical Destination-Out)
+      const maskX = centerMaskRadiusX ?? centerMaskRadius;
+      const maskY = centerMaskRadiusY ?? centerMaskRadius;
+
+      if (maskX > 0 && maskY > 0) {
+        ctx.save();
         ctx.globalCompositeOperation = 'destination-out';
-        
+
         const centerX = width / 2;
-        const centerY = height / 2 - (height * 0.08);
+        const centerY = height / 2 - height * 0.06;
 
-        const eraseGrad = ctx.createRadialGradient(
-          centerX,
-          centerY,
-          0,
-          centerX,
-          centerY,
-          centerMaskRadius
-        );
+        // Scale vertical Y axis relative to X to turn the radial gradient into an ellipse
+        const scaleY = maskY / maskX;
 
-        // Core center fully erased, soft gradient fade out toward edge
+        ctx.translate(centerX, centerY);
+        ctx.scale(1, scaleY);
+
+        const eraseGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, maskX);
+
         eraseGrad.addColorStop(0, 'rgba(0,0,0,1)');
         eraseGrad.addColorStop(0.55, 'rgba(0,0,0,0.95)');
         eraseGrad.addColorStop(1, 'rgba(0,0,0,0)');
 
         ctx.fillStyle = eraseGrad;
         ctx.beginPath();
-        ctx.arc(centerX, centerY, centerMaskRadius, 0, Math.PI * 2);
+        ctx.arc(0, 0, maskX, 0, Math.PI * 2);
         ctx.fill();
+
+        ctx.restore();
       }
 
       ctx.globalCompositeOperation = 'source-over';
@@ -208,7 +216,19 @@ export default function AmbientGrid({
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [cellSize, color, radius, spawnInterval, holdTime, fadeDuration, maxActive, baseOpacity, centerMaskRadius]);
+  }, [
+    cellSize,
+    color,
+    radius,
+    spawnInterval,
+    holdTime,
+    fadeDuration,
+    maxActive,
+    baseOpacity,
+    centerMaskRadius,
+    centerMaskRadiusX,
+    centerMaskRadiusY,
+  ]);
 
   return (
     <canvas

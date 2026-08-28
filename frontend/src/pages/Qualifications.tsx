@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './__styles__/BrandPages.css';
-import switchUpImg from '../assets/switch_up_your_routine-removebg-preview.png';
+import madi1Img from '../assets/madi1.jpg';
+import madi2Img from '../assets/madi2.jpeg';
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 
 const defaults: Record<string, string> = {
@@ -133,8 +135,13 @@ export default function Qualifications() {
             onPointerMove={handlePointerMove}
             onPointerLeave={handlePointerLeave}
           >
-            <div className="qualifications-img-card">
-              <img className="qualifications-img" src={switchUpImg} alt="qualifications" />
+            {/* Primary / Back Image */}
+            <div className="qualifications-img-card card-back">
+              <img className="qualifications-img" src={madi1Img} alt="Madison coaching" />
+            </div>
+            {/* Secondary / Overlapping Front Image */}
+            <div className="qualifications-img-card card-front">
+              <img className="qualifications-img" src={madi2Img} alt="Madison training" />
             </div>
           </div>
         </div>

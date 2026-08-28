@@ -59,6 +59,12 @@ const defaults: Record<string, string> = {
   testimonials_item_7_quote: "I love working out with my trainer Madison Spear. I’ve had some surgeries over the past few years and she tailors my workouts to accommodate my needs. I hold her in the highest regard and would recommend Madison to anyone. Go BTY!!!",
   testimonials_item_7_name: 'Lorel J.',
   testimonials_item_7_role: 'Performance Client',
+  testimonials_item_8_quote: "I have been a client of Madison for five years. During that period of time, I’ve had a couple of minor health issues, and Madison’s flexible attitude allowed me to continue training in spite of them. When I arrive for my training sessions, Madison always has a documented plan that we follow, and it allows us to use our time together effectively. Madison is professional, has a sweet disposition, and lots of energy. How can you ask for more?",
+  testimonials_item_8_name: 'Marybeth L.',
+  testimonials_item_8_role: 'Performance Client',
+  testimonials_item_9_quote: "I am incredible impressed with BTY Fitness! Madison is supportive, personable, knowledgeable and encouraging. I truly enjoy our sessions and feel supported in my journey to build my strength and endurance. I feel fortunate to have been connected with a trainer who values overall health and wellness. Our values align perfectly!",
+  testimonials_item_9_name: 'Abby S.',
+  testimonials_item_9_role: 'Performance Client',
   testimonials_cta_title: 'Ready to start your own story?',
   testimonials_cta_subtitle: "Book a free consult and let's map out a plan that fits your goals.",
   testimonials_cta_button: 'Book a Consultation',
@@ -495,7 +501,17 @@ export default function Testimonials() {
       quote: content.testimonials_item_7_quote,
       name: content.testimonials_item_7_name,
       role: content.testimonials_item_7_role,
-    }
+    },
+    {
+      quote: content.testimonials_item_8_quote,
+      name: content.testimonials_item_8_name,
+      role: content.testimonials_item_8_role,
+    },
+    {
+      quote: content.testimonials_item_9_quote,
+      name: content.testimonials_item_9_name,
+      role: content.testimonials_item_9_role,
+    },
   ];
 
   return (

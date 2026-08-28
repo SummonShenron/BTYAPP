@@ -21,18 +21,31 @@ export default function AccordionGallery({
   defaultIndex = 0,
   expandRatio = 0.52,
   trigger = 'hover',
-  
 }: AccordionGalleryProps) {
   const initialIndex = Math.min(Math.max(defaultIndex, 0), Math.max(items.length - 1, 0));
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const activeRatio = Math.min(Math.max(expandRatio, 0.35), 0.8);
   const collapsedRatio = items.length > 1 ? (1 - activeRatio) / (items.length - 1) : 1;
 
+  const handlePointerLeave = (e: React.PointerEvent) => {
+    // Ignore touch pointer leave events to prevent mobile tap flickering
+    if (trigger === 'hover' && e.pointerType !== 'touch') {
+      setActiveIndex(initialIndex);
+    }
+  };
+
+  const handlePointerEnter = (e: React.PointerEvent, index: number) => {
+    // Only expand on hover for actual mouse pointers
+    if (trigger === 'hover' && e.pointerType !== 'touch') {
+      setActiveIndex(index);
+    }
+  };
+
   return (
     <div
       className="accordion-gallery"
       aria-label="Madison and BTY Fitness gallery"
-      onPointerLeave={trigger === 'hover' ? () => setActiveIndex(initialIndex) : undefined}
+      onPointerLeave={handlePointerLeave}
     >
       {items.map((item, index) => {
         const isActive = index === activeIndex;
@@ -54,7 +67,7 @@ export default function AccordionGallery({
         const sharedProps = {
           className: `accordion-gallery-panel${isActive ? ' is-active' : ''}`,
           style: panelStyle,
-          onPointerEnter: trigger === 'hover' ? () => setActiveIndex(index) : undefined,
+          onPointerEnter: (e: React.PointerEvent) => handlePointerEnter(e, index),
           onFocus: () => setActiveIndex(index),
           onClick: () => setActiveIndex(index),
           'aria-label': `View ${item.label}`,

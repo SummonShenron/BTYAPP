@@ -50,41 +50,100 @@
 
 /* BrandPages.css */
 .qualifications-header-media {
-  --pointer-x: 0;
-  --pointer-y: 0;
-  perspective: 1000px;
+  position: relative;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
-}
-
-.qualifications-img-card {
-  transform-style: preserve-3d;
-  will-change: transform;
-  /* Completely flat / on-axis by default when vars are 0 */
-  transform: 
-    translate3d(
-      calc(var(--pointer-x) * 32px),
-      calc(var(--pointer-y) * 32px),
-      0px
-    )
-    rotateX(calc(var(--pointer-y) * -22deg))
-    rotateY(calc(var(--pointer-x) * 22deg));
-  /* Smooth reset transition when pointer leaves */
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
-}
-
-.qualifications-header-media:hover .qualifications-img-card {
-  /* Fast tracking while mouse is actively moving */
-  transition: transform 0.1s ease-out, filter 0.3s ease;
-  filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.55));
-}
-
-.qualifications-img {
+  min-height: 380px;
   width: 100%;
-  height: auto;
+}
+
+/* Card Base Setup with Smooth Transitions */
+.qualifications-img-card {
+  position: absolute;
+  width: 230px;
+  height: 310px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+/* Force image bounds */
+.qualifications-img-card img.qualifications-img,
+.qualifications-img-card img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
   display: block;
-  object-fit: contain;
+}
+
+/* Default State: Card 1 Back, Card 2 Front */
+.qualifications-img-card.card-back {
+  right: 130px;
+  top: 30px;
+  z-index: 1;
+  filter: brightness(0.85);
+}
+
+.qualifications-img-card.card-front {
+  right: 0;
+  top: 0;
+  z-index: 2;
+  filter: brightness(1);
+  border: 1px solid rgba(56, 194, 222, 0.35);
+}
+
+/* Hover State: Swap positions cleanly */
+.qualifications-header-media:hover .card-back {
+  right: 0;
+  top: 0;
+  z-index: 3;
+  filter: brightness(1);
+  border: 1px solid rgba(56, 194, 222, 0.35);
+  transform: scale(1.02);
+}
+
+.qualifications-header-media:hover .card-front {
+  right: 130px;
+  top: 30px;
+  z-index: 1;
+  filter: brightness(0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transform: scale(0.98);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .qualifications-header-media {
+    min-height: 260px;
+    justify-content: center;
+  }
+
+  .qualifications-img-card {
+    width: 160px;
+    height: 220px;
+  }
+
+  .qualifications-img-card.card-back {
+    right: 100px;
+    top: 20px;
+  }
+
+  .qualifications-img-card.card-front {
+    right: 0;
+    top: 0;
+  }
+}
+
+.qualifications-img-card img.qualifications-img,
+.qualifications-img-card img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block;
 }
 
 .page-grid {
