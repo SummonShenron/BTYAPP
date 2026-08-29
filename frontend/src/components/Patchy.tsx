@@ -253,7 +253,7 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
             status === 'done'
               ? 'M 24 62 C 10 66, 10 48, 20 42'
               : status === 'thinking' || status === 'streaming'
-              ? 'M 24 62 C 20 56, 20 52, 22 46'
+              ? 'M 24 62 C 22 56, 22 52, 26 46'
               : 'M24 62 C16 66, 16 76, 22 82'
           }
           stroke="#8E95A2"
@@ -270,12 +270,12 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
               keyTimes="0; 0.22; 0.38; 0.62; 0.88; 1"
               keySplines="0.4 0 0.6 1; 0.3 0 0.3 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"
               values="
-                M 24 62 C 20 56, 20 52, 22 46;
-                M 24 62 C 20 56, 20 52, 22 46;
-                M 24 62 C 18 48, 18 30, 20 18;
-                M 24 62 C 18 48, 18 30, 20 18;
-                M 24 62 C 20 56, 20 52, 22 46;
-                M 24 62 C 20 56, 20 52, 22 46
+                M 24 62 C 22 56, 22 52, 26 46;
+                M 24 62 C 22 56, 22 52, 26 46;
+                M 24 62 C 21 48, 21 30, 24 18;
+                M 24 62 C 21 48, 21 30, 24 18;
+                M 24 62 C 22 56, 22 52, 26 46;
+                M 24 62 C 22 56, 22 52, 26 46
               "
             />
           )}
@@ -285,15 +285,15 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
               dur="2.6s"
               repeatCount="indefinite"
               values="
-                M 24 62 C 20 56, 20 52, 22 46;
-                M 24 62 C 20 56, 20 52, 22 46;
-                M 24 62 C 19 52, 19 40, 21 32;
-                M 24 62 C 20 54, 20 42, 22 34;
-                M 24 62 C 19 50, 19 38, 21 30;
-                M 24 62 C 18 48, 18 30, 20 18;
-                M 24 62 C 18 48, 18 30, 20 18;
-                M 24 62 C 20 56, 20 52, 22 46;
-                M 24 62 C 20 56, 20 52, 22 46
+                M 24 62 C 22 56, 22 52, 26 46;
+                M 24 62 C 22 56, 22 52, 26 46;
+                M 24 62 C 22 52, 22 40, 25 32;
+                M 24 62 C 22 54, 22 42, 26 34;
+                M 24 62 C 22 50, 22 38, 25 30;
+                M 24 62 C 21 48, 21 30, 24 18;
+                M 24 62 C 21 48, 21 30, 24 18;
+                M 24 62 C 22 56, 22 52, 26 46;
+                M 24 62 C 22 56, 22 52, 26 46
               "
             />
           )}
@@ -302,7 +302,6 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
         {/* Left Bicep Peak & Flex Lines when Done */}
         {status === 'done' && (
           <g>
-            
             <g className="patchy-bot-flex-sparkle">
               <line x1="5" y1="46" x2="9" y2="44" stroke={accentColor} strokeWidth="1.5" strokeLinecap="round" />
               <line x1="4" y1="53" x2="8" y2="53" stroke={accentColor} strokeWidth="1.5" strokeLinecap="round" />
@@ -315,7 +314,7 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
             status === 'done'
               ? 20
               : status === 'thinking' || status === 'streaming'
-              ? 22
+              ? 26
               : 22
           }
           cy={
@@ -337,7 +336,7 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
                 calcMode="spline"
                 keyTimes="0; 0.22; 0.38; 0.62; 0.88; 1"
                 keySplines="0.4 0 0.6 1; 0.3 0 0.3 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"
-                values="22; 22; 20; 20; 22; 22"
+                values="26; 26; 24; 24; 26; 26"
               />
               <animate
                 attributeName="cy"
@@ -356,7 +355,7 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
                 attributeName="cx"
                 dur="2.6s"
                 repeatCount="indefinite"
-                values="22; 22; 21; 22; 21; 20; 20; 22; 22"
+                values="26; 26; 25; 26; 25; 24; 24; 26; 26"
               />
               <animate
                 attributeName="cy"
@@ -432,7 +431,7 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
               status === 'done'
                 ? 'M 76 62 C 90 66, 90 48, 80 42'
                 : status === 'thinking' || status === 'streaming'
-                ? 'M 76 62 C 80 56, 80 52, 78 46'
+                ? 'M 76 62 C 78 56, 78 52, 74 46'
                 : 'M 76 62 C 84 68, 84 76, 78 82'
             }
             stroke="#8E95A2"
@@ -469,12 +468,12 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
                 keyTimes="0; 0.22; 0.38; 0.62; 0.88; 1"
                 keySplines="0.4 0 0.6 1; 0.3 0 0.3 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"
                 values="
-                  M 76 62 C 80 56, 80 52, 78 46;
-                  M 76 62 C 80 56, 80 52, 78 46;
-                  M 76 62 C 82 48, 82 30, 80 18;
-                  M 76 62 C 82 48, 82 30, 80 18;
-                  M 76 62 C 80 56, 80 52, 78 46;
-                  M 76 62 C 80 56, 80 52, 78 46
+                  M 76 62 C 78 56, 78 52, 74 46;
+                  M 76 62 C 78 56, 78 52, 74 46;
+                  M 76 62 C 79 48, 79 30, 76 18;
+                  M 76 62 C 79 48, 79 30, 76 18;
+                  M 76 62 C 78 56, 78 52, 74 46;
+                  M 76 62 C 78 56, 78 52, 74 46
                 "
               />
             )}
@@ -484,15 +483,15 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
                 dur="2.6s"
                 repeatCount="indefinite"
                 values="
-                  M 76 62 C 80 56, 80 52, 78 46;
-                  M 76 62 C 80 56, 80 52, 78 46;
-                  M 76 62 C 81 52, 81 40, 79 32;
-                  M 76 62 C 80 54, 80 42, 78 34;
-                  M 76 62 C 81 50, 81 38, 79 30;
-                  M 76 62 C 82 48, 82 30, 80 18;
-                  M 76 62 C 82 48, 82 30, 80 18;
-                  M 76 62 C 80 56, 80 52, 78 46;
-                  M 76 62 C 80 56, 80 52, 78 46
+                  M 76 62 C 78 56, 78 52, 74 46;
+                  M 76 62 C 78 56, 78 52, 74 46;
+                  M 76 62 C 78 52, 78 40, 75 32;
+                  M 76 62 C 78 54, 78 42, 74 34;
+                  M 76 62 C 78 50, 78 38, 75 30;
+                  M 76 62 C 79 48, 79 30, 76 18;
+                  M 76 62 C 79 48, 79 30, 76 18;
+                  M 76 62 C 78 56, 78 52, 74 46;
+                  M 76 62 C 78 56, 78 52, 74 46
                 "
               />
             )}
@@ -501,7 +500,6 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
           {/* Right Bicep Peak & Flex Lines when Done */}
           {status === 'done' && (
             <g>
-              
               <g className="patchy-bot-flex-sparkle">
                 <line x1="95" y1="46" x2="91" y2="44" stroke={accentColor} strokeWidth="1.5" strokeLinecap="round" />
                 <line x1="96" y1="53" x2="92" y2="53" stroke={accentColor} strokeWidth="1.5" strokeLinecap="round" />
@@ -514,7 +512,7 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
               status === 'done'
                 ? 80
                 : status === 'thinking' || status === 'streaming'
-                ? 78
+                ? 74
                 : 78
             }
             cy={
@@ -558,7 +556,7 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
                   calcMode="spline"
                   keyTimes="0; 0.22; 0.38; 0.62; 0.88; 1"
                   keySplines="0.4 0 0.6 1; 0.3 0 0.3 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"
-                  values="78; 78; 80; 80; 78; 78"
+                  values="74; 74; 76; 76; 74; 74"
                 />
                 <animate
                   attributeName="cy"
@@ -577,7 +575,7 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
                   attributeName="cx"
                   dur="2.6s"
                   repeatCount="indefinite"
-                  values="78; 78; 79; 78; 79; 80; 80; 78; 78"
+                  values="74; 74; 75; 74; 75; 76; 76; 74; 74"
                 />
                 <animate
                   attributeName="cy"
@@ -603,12 +601,14 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
                 values="0 0; 0 0; 0 -28; 0 -28; 0 0; 0 0"
               />
               <line x1="2" y1="46" x2="98" y2="46" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" />
-              <rect x="17.5" y="36" width="3.5" height="20" rx="1.5" fill={accentColor} />
-              <rect x="14.5" y="40" width="2.5" height="12" rx="1" fill={accentColor} opacity="0.75" />
-              <rect x="79" y="36" width="3.5" height="20" rx="1.5" fill={accentColor} />
-              <rect x="83" y="40" width="2.5" height="12" rx="1" fill={accentColor} opacity="0.75" />
-              <rect x="1" y="43" width="2" height="6" rx="1" fill="#64748b" />
-              <rect x="98" y="43" width="2" height="6" rx="1" fill="#64748b" />
+              {/* Left Plates */}
+              <rect x="13.5" y="36" width="3.5" height="20" rx="1.5" fill={accentColor} />
+              <rect x="10.5" y="40" width="2.5" height="12" rx="1" fill={accentColor} opacity="0.75" />
+              <rect x="7" y="43" width="2" height="6" rx="1" fill="#64748b" />
+              {/* Right Plates */}
+              <rect x="83" y="36" width="3.5" height="20" rx="1.5" fill={accentColor} />
+              <rect x="87" y="40" width="2.5" height="12" rx="1" fill={accentColor} opacity="0.75" />
+              <rect x="91" y="43" width="2" height="6" rx="1" fill="#64748b" />
             </g>
           )}
 
@@ -632,12 +632,14 @@ const Patchy: React.FC<PatchyProps> = ({ status = 'idle', className }) => {
                 "
               />
               <line x1="2" y1="46" x2="98" y2="46" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" />
-              <rect x="17.5" y="36" width="3.5" height="20" rx="1.5" fill={accentColor} />
-              <rect x="14.5" y="40" width="2.5" height="12" rx="1" fill={accentColor} opacity="0.75" />
-              <rect x="79" y="36" width="3.5" height="20" rx="1.5" fill={accentColor} />
-              <rect x="83" y="40" width="2.5" height="12" rx="1" fill={accentColor} opacity="0.75" />
-              <rect x="1" y="43" width="2" height="6" rx="1" fill="#64748b" />
-              <rect x="98" y="43" width="2" height="6" rx="1" fill="#64748b" />
+              {/* Left Plates */}
+              <rect x="13.5" y="36" width="3.5" height="20" rx="1.5" fill={accentColor} />
+              <rect x="10.5" y="40" width="2.5" height="12" rx="1" fill={accentColor} opacity="0.75" />
+              <rect x="7" y="43" width="2" height="6" rx="1" fill="#64748b" />
+              {/* Right Plates */}
+              <rect x="83" y="36" width="3.5" height="20" rx="1.5" fill={accentColor} />
+              <rect x="87" y="40" width="2.5" height="12" rx="1" fill={accentColor} opacity="0.75" />
+              <rect x="91" y="43" width="2" height="6" rx="1" fill="#64748b" />
             </g>
           )}
         </g>
