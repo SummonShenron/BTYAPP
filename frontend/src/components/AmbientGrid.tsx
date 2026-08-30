@@ -30,7 +30,7 @@ export default function AmbientGrid({
   fadeDuration = 800,
   maxActive = 6,
   baseOpacity = 0.08,
-  centerMaskRadius = 200,
+  centerMaskRadius = 300,
   centerMaskRadiusX,
   centerMaskRadiusY,
 }: AmbientGridProps) {
