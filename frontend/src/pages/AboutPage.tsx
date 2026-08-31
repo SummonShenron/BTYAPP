@@ -17,7 +17,6 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8005';
 const aboutGalleryItems = [
   { image: squatImg, title: 'Strength Coaching' },
   { image: clientSquatImg, title: 'Supported Strength' },
-  { image: clientMobilityImg, title: 'Push Ups' },
   { image: clientPressImg, title: 'Progressive Strength' },
   { image: clientLungeImg, title: 'Functional Movement' },
   { image: clientBalanceImg, title: 'Balance & Stability' },
