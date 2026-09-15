@@ -18,8 +18,8 @@ from fastapi import FastAPI, Depends, BackgroundTasks, HTTPException, status, Re
 from fastapi.exceptions import RequestValidationError
 from bson import ObjectId
 from fastapi.middleware.cors import CORSMiddleware
+import erragent
 from backend.logging.bty_logger import setup_logging
-from backend.logging.erragent_handler import install_erragent_logging
 from backend.utils.notifications_utils import notify_madison_of_lead
 from dotenv import load_dotenv
 from backend.utils.db_utils import (
@@ -53,13 +53,9 @@ from backend.utils.schedule_utils import (
     find_slot,
 )
 from backend.utils.app_utils import (
-    resolve_target_repo, 
+    resolve_target_repo,
     pick_repo_from_metadata,
-    post_erragent_ingest,
-    send_erragent_ingest,
-    dispatch_erragent_ingest,
     build_error_payload,
-    send_erragent_client_error,
 )
 from backend.utils.auth_utils import ( 
     get_optional_user, 
@@ -83,7 +79,7 @@ app = FastAPI(
     version="1.0.0"
 )
 logger = setup_logging()
-install_erragent_logging(logger)
+erragent.install(logger)
 logger.info("--- Launching BTY Fitness API ---")
 logger.info("BTY synthetic mutations safe: %s", os.getenv("ERRAGENT_BTY_SYNTHETIC_MUTATIONS_SAFE"))
 logger.info("BTY production read-only: %s", os.getenv("BTY_PRODUCTION_READ_ONLY"))
@@ -170,7 +166,13 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
     # 2. Fire-and-forget in background
-    dispatch_erragent_ingest(payload)
+    erragent.report_incident_nowait(
+        error_message=payload["error_message"],
+        stack_trace=payload["stack_trace"],
+        service=payload["service_name"],
+        environment=payload["environment"],
+        metadata=payload["metadata"],
+    )
 
     # 3. Return clean 500
     return JSONResponse(
@@ -183,55 +185,50 @@ async def request_logging_middleware(request: Request, call_next):
     started_at = time.perf_counter()
     logger.info("[REQ] %s %s", request.method, request.url.path)
 
-    try:
-        response = await call_next(request)
-    except Exception:
-        logger.exception(
-            "[ERR] %s %s failed",
-            request.method,
-            request.url.path,
-            extra={
-                "erragent_context": {
-                    "method": request.method,
-                    "path": request.url.path,
-                    "environment": os.getenv("ENVIRONMENT", "production"),
-                }
-            },
-        )
-        raise
+    with erragent.context(
+        method=request.method,
+        path=request.url.path,
+        environment=os.getenv("ENVIRONMENT", "production"),
+    ):
+        try:
+            response = await call_next(request)
+        except Exception:
+            logger.exception(
+                "[ERR] %s %s failed",
+                request.method,
+                request.url.path,
+            )
+            raise
 
-    duration_ms = round((time.perf_counter() - started_at) * 1000)
+        duration_ms = round((time.perf_counter() - started_at) * 1000)
 
-    if response.status_code >= 500:
-        logger.error(
-            "[RES] %s %s -> %s",
-            request.method,
-            request.url.path,
-            response.status_code,
-            extra={
-                "erragent_context": {
-                    "method": request.method,
-                    "path": request.url.path,
-                    "statusCode": response.status_code,
-                    "durationMs": duration_ms,
-                    "environment": os.getenv("ENVIRONMENT", "production"),
-                }
-            },
-        )
-    else:
-        logger.info(
-            "[RES] %s %s -> %s",
-            request.method,
-            request.url.path,
-            response.status_code,
-        )
+        if response.status_code >= 500:
+            logger.error(
+                "[RES] %s %s -> %s",
+                request.method,
+                request.url.path,
+                response.status_code,
+                extra={
+                    "erragent_context": {
+                        "statusCode": response.status_code,
+                        "durationMs": duration_ms,
+                    }
+                },
+            )
+        else:
+            logger.info(
+                "[RES] %s %s -> %s",
+                request.method,
+                request.url.path,
+                response.status_code,
+            )
 
     return response
 
 @app.on_event("startup")
 async def startup_db_check():
     # Recalling inside the running loop installs asyncio capture.
-    install_erragent_logging(logger)
+    erragent.install(logger)
 
     connected = test_connection()
     logger.info(
@@ -280,19 +277,17 @@ async def report_client_error(payload: ClientErrorPayload):
     boundary, unhandled rejections, failed API calls) and forwards them to
     errAgent for triage. Never surfaces errAgent downtime to the browser.
     """
-    safe_payload = {
-        "service": "btyapp",
-        "environment": payload.environment,
-        "release": payload.release,
-        "route": payload.route,
-        "source": payload.source,
-        "message": payload.message[:4000],
-        "stack": payload.stack[:12000] if payload.stack else None,
-        "metadata": payload.metadata,
-    }
-
     try:
-        result = await send_erragent_client_error(safe_payload)
+        result = await erragent.report_client_error(
+            message=payload.message[:4000],
+            service="btyapp",
+            environment=payload.environment,
+            release=payload.release,
+            route=payload.route,
+            source=payload.source,
+            stack=payload.stack[:12000] if payload.stack else None,
+            metadata=payload.metadata,
+        )
         logger.info(
             "--> [errAgent] client-error forwarded status=%s",
             result.get("status_code"),

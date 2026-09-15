@@ -13,6 +13,7 @@ import uuid
 from dataclasses import dataclass
 from typing import Optional
 
+import erragent
 from fastapi import Header, HTTPException, Request, status
 
 logger = logging.getLogger("BTY Logger")
@@ -54,46 +55,45 @@ async def get_synthetic_context(
     if not requested:
         return SyntheticContext(is_synthetic=False, correlation_id=correlation_id, requested=False)
 
-    if not synthetic_mutations_safe():
-        logger.warning(
-            "Synthetic request rejected: ERRAGENT_BTY_SYNTHETIC_MUTATIONS_SAFE is not enabled",
+    with erragent.context(
+        correlation_id=correlation_id,
+        route=request.url.path,
+        method=request.method,
+    ):
+        if not synthetic_mutations_safe():
+            logger.warning(
+                "Synthetic request rejected: ERRAGENT_BTY_SYNTHETIC_MUTATIONS_SAFE is not enabled",
+                extra={
+                    "erragent_context": {
+                        "synthetic": True,
+                        "synthetic_honored": False,
+                    }
+                },
+            )
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=(
+                    "Synthetic mutations are not enabled on this deployment. "
+                    "Check GET /api/synthetic/capabilities before sending synthetic traffic."
+                ),
+            )
+
+        logger.info(
+            "Synthetic request honored; real side effects will be suppressed",
             extra={
                 "erragent_context": {
                     "synthetic": True,
-                    "synthetic_honored": False,
-                    "correlation_id": correlation_id,
-                    "route": request.url.path,
-                    "method": request.method,
+                    "synthetic_honored": True,
+                    "reason": x_erragent_synthetic_reason,
                 }
             },
         )
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=(
-                "Synthetic mutations are not enabled on this deployment. "
-                "Check GET /api/synthetic/capabilities before sending synthetic traffic."
-            ),
+        return SyntheticContext(
+            is_synthetic=True,
+            correlation_id=correlation_id,
+            reason=x_erragent_synthetic_reason,
+            requested=True,
         )
-
-    logger.info(
-        "Synthetic request honored; real side effects will be suppressed",
-        extra={
-            "erragent_context": {
-                "synthetic": True,
-                "synthetic_honored": True,
-                "correlation_id": correlation_id,
-                "reason": x_erragent_synthetic_reason,
-                "route": request.url.path,
-                "method": request.method,
-            }
-        },
-    )
-    return SyntheticContext(
-        is_synthetic=True,
-        correlation_id=correlation_id,
-        reason=x_erragent_synthetic_reason,
-        requested=True,
-    )
 
 
 def synthetic_response_fields(ctx: SyntheticContext) -> dict:
