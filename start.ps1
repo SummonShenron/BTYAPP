@@ -4,7 +4,7 @@ $ProjectDir = $PSScriptRoot
 Write-Host "Starting BTY Application..." -ForegroundColor Cyan
 
 # 1. Launch FastAPI Backend on Port 8000
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "`$Host.UI.RawUI.WindowTitle = 'BTY Backend (FastAPI)'; cd '$ProjectDir'; .\.venv\Scripts\uvicorn app:app --reload --host 127.0.0.1 --port 8005"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "`$Host.UI.RawUI.WindowTitle = 'BTY Backend (FastAPI)'; cd '$ProjectDir'; .\.venv\Scripts\erragent dev --root . --port 8176 .\.venv\Scripts\uvicorn app:app --reload --host 127.0.0.1 --port 8005"
 
 # Small delay to let the backend bind ports cleanly
 Start-Sleep -Seconds 2
