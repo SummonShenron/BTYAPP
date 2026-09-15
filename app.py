@@ -55,7 +55,6 @@ from backend.utils.schedule_utils import (
 from backend.utils.app_utils import (
     resolve_target_repo,
     pick_repo_from_metadata,
-    build_error_payload,
 )
 from backend.utils.auth_utils import ( 
     get_optional_user, 
@@ -155,26 +154,14 @@ async def global_exception_handler(request: Request, exc: Exception):
     if isinstance(exc, HTTPException):
         raise exc
 
-    logger.error("--> Caught unhandled exception on %s [%s]: %s", request.url.path, request.method, str(exc))
+    # Reporting already happened in request_logging_middleware's `except` block via
+    # logger.exception(...), which — unlike a plain logger.error(...) here — carries a real
+    # traceback (exc_info=True), so both the cloud and local-dev pipelines can actually resolve
+    # which file the bug is in. Reporting it again here duplicated every unhandled exception into
+    # 2-3 incidents with different message text (so errAgent's fingerprint-based dedup couldn't
+    # recognize them as the same event), one of which had no real traceback and produced a
+    # useless remediation guess against the wrong file.
 
-    # 1. Build standardized error payload
-    payload = build_error_payload(
-        exc=exc,
-        service_default="btyapp",
-        source=request.url.path,
-        method=request.method,
-    )
-
-    # 2. Fire-and-forget in background
-    erragent.report_incident_nowait(
-        error_message=payload["error_message"],
-        stack_trace=payload["stack_trace"],
-        service=payload["service_name"],
-        environment=payload["environment"],
-        metadata=payload["metadata"],
-    )
-
-    # 3. Return clean 500
     return JSONResponse(
         status_code=500,
         content={"detail": "Internal Server Error"},
